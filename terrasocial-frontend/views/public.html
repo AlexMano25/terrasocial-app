@@ -1,0 +1,686 @@
+<!-- Accueil Public TERRASOCIAL -->
+
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Accès à la Terre, Dignité pour Tous</h1>
+        <p class="hero-subtitle">
+            TERRASOCIAL vous offre une plateforme participative pour accéder à la terre
+            et réaliser vos projets fonciers en toute confiance.
+        </p>
+
+        <div class="hero-actions">
+            <a href="#/offres" class="btn btn-primary btn-large">Découvrir les Offres</a>
+            <a href="#/signup" class="btn btn-secondary btn-large">S'Inscrire Gratuitement</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="section-header">
+        <h2>Pourquoi Choisir TERRASOCIAL?</h2>
+        <p>Une plateforme conçue pour vous faciliter l'accès à la terre</p>
+    </div>
+
+    <div class="grid-3">
+        <div class="feature-card">
+            <div class="feature-icon">🏡</div>
+            <h3>Lots Vérifiés</h3>
+            <p>Accédez à une sélection de terrains vérifiés et authentifiés par notre équipe.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>Communauté</h3>
+            <p>Rejoignez une communauté de personnes partageant les mêmes objectifs fonciers.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h3>Transparent</h3>
+            <p>Processus entièrement transparent avec documentation complète et assistance juridique.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🛡️</div>
+            <h3>Sécurité</h3>
+            <p>Vos données personnelles et financières sont protégées par les dernières normes de sécurité.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3>Flexible</h3>
+            <p>Options de paiement flexibles adaptées à votre situation financière.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="feature-icon">🤝</div>
+            <h3>Support</h3>
+            <p>Équipe d'experts disponible pour vous accompagner à chaque étape.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section">
+    <div class="section-header">
+        <h2>TERRASOCIAL en Chiffres</h2>
+    </div>
+
+    <div class="grid-3">
+        <div class="stat-card">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Terrains Disponibles</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-number">2,500+</div>
+            <div class="stat-label">Utilisateurs Satisfaits</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Taux de Satisfaction</div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest Offers Section -->
+<section class="offers-section">
+    <div class="section-header">
+        <h2>Dernières Offres</h2>
+        <a href="#/offres" class="btn btn-secondary">Voir Toutes les Offres</a>
+    </div>
+
+    <div data-load="lots" class="grid-3">
+        <div class="card">
+            <div class="spinner"></div>
+            <p style="text-align: center;">Chargement des offres...</p>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Prêt à Commencer?</h2>
+        <p>Rejoignez des milliers de personnes qui ont réalisé leurs rêves fonciers avec TERRASOCIAL</p>
+
+        <div class="cta-actions">
+            <button class="btn btn-accent btn-large" onclick="
+                if (auth.isAuthenticated) {
+                    router.navigate('/client');
+                } else {
+                    router.navigate('/signup');
+                }
+            ">
+                Accéder à Mon Espace
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="how-it-works">
+    <div class="section-header">
+        <h2>Comment Ça Marche?</h2>
+    </div>
+
+    <div class="steps-container">
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>Créez un Compte</h3>
+            <p>Inscrivez-vous gratuitement en quelques minutes</p>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>Explorez les Offres</h3>
+            <p>Consultez les terrains disponibles adaptés à vos besoins</p>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>Souscrivez</h3>
+            <p>Exprimez votre intérêt et commencez les démarches</p>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <h3>Finalisez</h3>
+            <p>Complétez les formalités administratives et juridiques</p>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="section-header">
+        <h2>Témoignages</h2>
+    </div>
+
+    <div class="grid-2">
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"TERRASOCIAL m'a permis de trouver le terrain idéal pour mon projet agricole. L'équipe a été très professionnelle et supportive."</p>
+            </div>
+            <div class="testimonial-author">
+                <strong>Abdoulaye K.</strong>
+                <span>Agriculteur</span>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"La transparence et la sécurité des transactions m'ont vraiment rassurée. Je recommande TERRASOCIAL à tous mes amis."</p>
+            </div>
+            <div class="testimonial-author">
+                <strong>Fatou D.</strong>
+                <span>Entrepreneur</span>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"Accès facile, processus clair et équipe d'experts toujours disponible. Parfait pour un premier achat foncier!"</p>
+            </div>
+            <div class="testimonial-author">
+                <strong>Mamadou S.</strong>
+                <span>Investisseur</span>
+            </div>
+        </div>
+
+        <div class="testimonial-card">
+            <div class="testimonial-content">
+                <p>"TERRASOCIAL a révolutionné ma façon d'accéder aux opportunités immobilières. Merci pour votre service excellent!"</p>
+            </div>
+            <div class="testimonial-author">
+                <strong>Aissatou M.</strong>
+                <span>Professionnelle</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <div class="section-header">
+        <h2>Questions Fréquemment Posées</h2>
+    </div>
+
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-question">
+                <h4>Est-ce que TERRASOCIAL est une banque?</h4>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Non. TERRASOCIAL n'est pas une banque, microfinance ou coopérative. C'est une plateforme de mise en relation pour l'accès foncier participatif.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                <h4>Y a-t-il des frais d'inscription?</h4>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Non, l'inscription sur TERRASOCIAL est totalement gratuite. Aucun frais caché.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                <h4>Comment sont vérifiés les terrains?</h4>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Tous nos terrains subissent une vérification juridique et administrative stricte avant d'être listés sur la plateforme.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">
+                <h4>Puis-je modifier ma souscription?</h4>
+                <span class="faq-icon">+</span>
+            </div>
+            <div class="faq-answer">
+                <p>Oui, vous pouvez modifier votre souscription avant sa finalisation. Consultez notre support pour plus de détails.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="newsletter-content">
+        <h2>Restez Informé</h2>
+        <p>Recevez les dernières offres et actualités de TERRASOCIAL dans votre boîte mail</p>
+
+        <form class="newsletter-form" onsubmit="
+            event.preventDefault();
+            const email = event.target.querySelector('input[type=email]').value;
+            showToast('Merci! Vérifiez votre email de confirmation.', 'success');
+            event.target.reset();
+        ">
+            <input type="email" placeholder="Votre email" required>
+            <button type="submit" class="btn btn-accent">S'Abonner</button>
+        </form>
+    </div>
+</section>
+
+<!-- Disclaimer Banner -->
+<section class="disclaimer-banner">
+    <div class="disclaimer-box">
+        <strong>⚠️ Disclaimer Légal Important</strong>
+        <p>Ce programme n'est ni une banque, ni une microfinance, ni une coopérative d'épargne et de crédit.</p>
+        <a href="#/legal/disclaimer" class="text-link">Lire le disclaimer complet</a>
+    </div>
+</section>
+
+<style>
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        margin: -1rem -1rem 2rem;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .hero-actions .btn {
+        min-width: 200px;
+    }
+
+    /* Features Section */
+    .features-section,
+    .stats-section,
+    .offers-section,
+    .cta-section,
+    .how-it-works,
+    .testimonials-section,
+    .faq-section,
+    .newsletter-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-header {
+        text-align: center;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .section-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        text-align: center;
+        width: 100%;
+    }
+
+    .feature-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-large);
+        padding: 2rem;
+        text-align: center;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-large);
+        border-color: var(--primary-color);
+    }
+
+    .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: var(--primary-color);
+    }
+
+    .feature-card p {
+        color: var(--text-secondary);
+    }
+
+    /* Stats Section */
+    .stat-card {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+        color: white;
+        border-radius: var(--radius-large);
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    /* CTA Section */
+    .cta-section {
+        background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+        color: white;
+        border-radius: var(--radius-large);
+        padding: 3rem;
+        text-align: center;
+    }
+
+    .cta-content h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .cta-content p {
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+        opacity: 0.9;
+    }
+
+    .cta-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+    }
+
+    /* How It Works */
+    .steps-container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .step {
+        background: var(--bg-primary);
+        border: 2px solid var(--primary-color);
+        border-radius: var(--radius-large);
+        padding: 2rem;
+        text-align: center;
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .step-number {
+        background: var(--primary-color);
+        color: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+    }
+
+    .step h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .arrow {
+        font-size: 1.5rem;
+        color: var(--primary-color);
+        display: none;
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+        background: var(--bg-primary);
+        border-left: 4px solid var(--primary-color);
+        border-radius: var(--radius-medium);
+        padding: 1.5rem;
+    }
+
+    .testimonial-content {
+        margin-bottom: 1rem;
+        font-style: italic;
+        color: var(--text-secondary);
+    }
+
+    .testimonial-author {
+        display: block;
+    }
+
+    .testimonial-author strong {
+        color: var(--primary-color);
+    }
+
+    .testimonial-author span {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    /* FAQ */
+    .faq-container {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .faq-item {
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-medium);
+        margin-bottom: 1rem;
+        overflow: hidden;
+    }
+
+    .faq-question {
+        background: var(--bg-secondary);
+        padding: 1rem;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: var(--transition);
+    }
+
+    .faq-question:hover {
+        background: var(--bg-tertiary);
+    }
+
+    .faq-question h4 {
+        margin: 0;
+        color: var(--primary-color);
+    }
+
+    .faq-icon {
+        font-size: 1.5rem;
+        transition: var(--transition);
+    }
+
+    .faq-item.active .faq-icon {
+        transform: rotate(45deg);
+    }
+
+    .faq-answer {
+        padding: 1rem;
+        background: var(--bg-primary);
+        max-height: 0;
+        overflow: hidden;
+        transition: var(--transition);
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+        padding: 1rem;
+    }
+
+    .faq-answer p {
+        margin: 0;
+    }
+
+    /* Newsletter */
+    .newsletter-section {
+        background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+        color: white;
+        border-radius: var(--radius-large);
+        padding: 3rem 2rem;
+        text-align: center;
+    }
+
+    .newsletter-form {
+        display: flex;
+        gap: 1rem;
+        max-width: 500px;
+        margin: 1.5rem auto 0;
+        flex-wrap: wrap;
+    }
+
+    .newsletter-form input {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.75rem;
+        border: none;
+        border-radius: var(--radius-medium);
+    }
+
+    .newsletter-form .btn {
+        white-space: nowrap;
+    }
+
+    /* Disclaimer Banner */
+    .disclaimer-banner {
+        margin-top: 3rem;
+    }
+
+    .disclaimer-box {
+        background: rgba(255, 152, 0, 0.1);
+        border-left: 4px solid var(--accent-color);
+        border-radius: var(--radius-medium);
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .disclaimer-box strong {
+        display: block;
+        color: var(--accent-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .text-link {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .text-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 1.8rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1rem;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+        }
+
+        .hero-actions .btn {
+            width: 100%;
+        }
+
+        .steps-container {
+            flex-direction: column;
+        }
+
+        .arrow {
+            display: block;
+            transform: rotate(90deg);
+            margin: -0.5rem 0;
+        }
+
+        .steps-container .step {
+            width: 100%;
+        }
+
+        .newsletter-form {
+            flex-direction: column;
+        }
+
+        .newsletter-form input {
+            min-width: auto;
+        }
+
+        .grid-3 {
+            grid-template-columns: 1fr;
+        }
+
+        .grid-2 {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<!-- FAQ Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question?.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+    });
+</script>

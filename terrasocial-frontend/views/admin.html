@@ -1,0 +1,755 @@
+<!-- Dashboard Admin TERRASOCIAL -->
+
+<div class="admin-dashboard">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header">
+        <h1>Dashboard Administrateur</h1>
+        <p class="subtitle">Gestion globale de la plateforme</p>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="grid-3">
+        <div class="stat-box">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Utilisateurs Totaux</div>
+            <div class="stat-value" id="totalUsers">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon">🏡</div>
+            <div class="stat-label">Lots Publiés</div>
+            <div class="stat-value" id="totalLots">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Montant Total</div>
+            <div class="stat-value" id="totalAmount">0 XOF</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon">✅</div>
+            <div class="stat-label">Transactions Complétées</div>
+            <div class="stat-value" id="completedTransactions">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-label">En Attente</div>
+            <div class="stat-value" id="pendingTransactions">0</div>
+        </div>
+        <div class="stat-box">
+            <div class="stat-icon">📊</div>
+            <div class="stat-label">Taux de Conversion</div>
+            <div class="stat-value" id="conversionRate">0%</div>
+        </div>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="tabs-container">
+        <button class="tab-button active" data-tab="overview">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 9.5h8V3H3v6.5zm0 7h8v-6.5H3v6.5zm9 0h8V10h-8v6.5zm0-14v6.5h8V3h-8z"/></svg>
+            Aperçu
+        </button>
+        <button class="tab-button" data-tab="users">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            Utilisateurs
+        </button>
+        <button class="tab-button" data-tab="lots">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Lots
+        </button>
+        <button class="tab-button" data-tab="transactions">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+            Transactions
+        </button>
+        <button class="tab-button" data-tab="reports">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2V17zm4 0h-2V7h2V17zm4 0h-2v-4h2V17z"/></svg>
+            Rapports
+        </button>
+    </div>
+
+    <!-- Tab Contents -->
+
+    <!-- Overview Tab -->
+    <div class="tab-content active" data-tab="overview">
+        <h2>Aperçu du Système</h2>
+
+        <div class="overview-grid grid-2">
+            <!-- Recent Users -->
+            <div class="card">
+                <h3>Utilisateurs Récents</h3>
+                <div class="users-list">
+                    <div class="user-item">
+                        <div class="user-avatar">AB</div>
+                        <div class="user-info">
+                            <strong>Abdoulaye Ba</strong>
+                            <span class="text-small text-muted">Inscrit il y a 2h</span>
+                        </div>
+                    </div>
+                    <div class="user-item">
+                        <div class="user-avatar">FB</div>
+                        <div class="user-info">
+                            <strong>Fatou Diallo</strong>
+                            <span class="text-small text-muted">Inscrit il y a 5h</span>
+                        </div>
+                    </div>
+                    <div class="user-item">
+                        <div class="user-avatar">MS</div>
+                        <div class="user-info">
+                            <strong>Mamadou Sow</strong>
+                            <span class="text-small text-muted">Inscrit il y a 1j</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="card">
+                <h3>Santé du Système</h3>
+                <div class="health-status">
+                    <div class="health-item">
+                        <span class="health-indicator online"></span>
+                        <span>API</span>
+                        <span class="status-badge success">En ligne</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-indicator online"></span>
+                        <span>Base de Données</span>
+                        <span class="status-badge success">En ligne</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-indicator online"></span>
+                        <span>Stockage</span>
+                        <span class="status-badge success">En ligne</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-indicator online"></span>
+                        <span>Email</span>
+                        <span class="status-badge success">En ligne</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Transactions -->
+            <div class="card">
+                <h3>Transactions Récentes</h3>
+                <div class="transactions-mini">
+                    <div class="transaction-item completed">
+                        <div class="transaction-info">
+                            <strong>Souscription de Abdoulaye</strong>
+                            <span class="text-small">2 lots • 500,000 XOF</span>
+                        </div>
+                        <span class="badge success">Complétée</span>
+                    </div>
+                    <div class="transaction-item pending">
+                        <div class="transaction-info">
+                            <strong>Paiement de Fatou</strong>
+                            <span class="text-small">250,000 XOF</span>
+                        </div>
+                        <span class="badge warning">En attente</span>
+                    </div>
+                    <div class="transaction-item completed">
+                        <div class="transaction-info">
+                            <strong>Souscription de Mamadou</strong>
+                            <span class="text-small">1 lot • 300,000 XOF</span>
+                        </div>
+                        <span class="badge success">Complétée</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="card">
+                <h3>Statistiques de Croissance</h3>
+                <div class="growth-stats">
+                    <div class="stat-row">
+                        <span>Utilisateurs (+30%)</span>
+                        <div class="growth-bar">
+                            <div class="growth-fill" style="width: 30%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span>Souscriptions (+45%)</span>
+                        <div class="growth-bar">
+                            <div class="growth-fill" style="width: 45%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span>Commissions (+20%)</span>
+                        <div class="growth-bar">
+                            <div class="growth-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <span>Revenus (+55%)</span>
+                        <div class="growth-bar">
+                            <div class="growth-fill" style="width: 55%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Users Tab -->
+    <div class="tab-content" data-tab="users">
+        <h2>Gestion des Utilisateurs</h2>
+
+        <div class="users-actions">
+            <input type="text" placeholder="Rechercher utilisateur..." class="form-control">
+            <select class="form-control">
+                <option value="">Tous les rôles</option>
+                <option value="client">Clients</option>
+                <option value="agent">Agents</option>
+                <option value="admin">Administrateurs</option>
+            </select>
+            <button class="btn btn-primary">Filtrer</button>
+        </div>
+
+        <div class="users-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Email</th>
+                        <th>Rôle</th>
+                        <th>Date d'Inscription</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Abdoulaye Ba</strong></td>
+                        <td>abdoulaye@email.com</td>
+                        <td><span class="badge">Client</span></td>
+                        <td>2024-01-15</td>
+                        <td><span class="status-badge active">Actif</span></td>
+                        <td>
+                            <button class="btn btn-small btn-secondary">Voir</button>
+                            <button class="btn btn-small btn-secondary">Éditer</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fatou Diallo</strong></td>
+                        <td>fatou@email.com</td>
+                        <td><span class="badge agent">Agent</span></td>
+                        <td>2024-01-10</td>
+                        <td><span class="status-badge active">Actif</span></td>
+                        <td>
+                            <button class="btn btn-small btn-secondary">Voir</button>
+                            <button class="btn btn-small btn-secondary">Éditer</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Lots Tab -->
+    <div class="tab-content" data-tab="lots">
+        <h2>Gestion des Lots</h2>
+
+        <div class="lots-actions">
+            <input type="text" placeholder="Rechercher lot..." class="form-control">
+            <select class="form-control">
+                <option value="">Tous les statuts</option>
+                <option value="published">Publiés</option>
+                <option value="draft">Brouillons</option>
+                <option value="sold">Vendus</option>
+            </select>
+            <button class="btn btn-primary">Ajouter un Lot</button>
+        </div>
+
+        <div class="lots-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Localisation</th>
+                        <th>Superficie</th>
+                        <th>Prix</th>
+                        <th>Souscriptions</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Lot A1</strong></td>
+                        <td>Dakar, Plateau</td>
+                        <td>500 m²</td>
+                        <td>250,000 XOF</td>
+                        <td>5</td>
+                        <td><span class="status-badge">Publié</span></td>
+                        <td>
+                            <button class="btn btn-small btn-secondary">Modifier</button>
+                            <button class="btn btn-small btn-secondary">Voir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Transactions Tab -->
+    <div class="tab-content" data-tab="transactions">
+        <h2>Historique des Transactions</h2>
+
+        <div class="transactions-actions">
+            <input type="text" placeholder="Référence..." class="form-control">
+            <select class="form-control">
+                <option value="">Tous les statuts</option>
+                <option value="completed">Complétées</option>
+                <option value="pending">En Attente</option>
+                <option value="failed">Échouées</option>
+            </select>
+            <button class="btn btn-primary">Exporter</button>
+        </div>
+
+        <div class="transactions-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Référence</th>
+                        <th>Utilisateur</th>
+                        <th>Type</th>
+                        <th>Montant</th>
+                        <th>Date</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>#TRX001</td>
+                        <td>Abdoulaye Ba</td>
+                        <td>Souscription</td>
+                        <td>500,000 XOF</td>
+                        <td>2024-01-20</td>
+                        <td><span class="status-badge success">Complétée</span></td>
+                    </tr>
+                    <tr>
+                        <td>#TRX002</td>
+                        <td>Fatou Diallo</td>
+                        <td>Paiement</td>
+                        <td>250,000 XOF</td>
+                        <td>2024-01-21</td>
+                        <td><span class="status-badge warning">En Attente</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Reports Tab -->
+    <div class="tab-content" data-tab="reports">
+        <h2>Rapports</h2>
+
+        <div class="reports-grid grid-2">
+            <div class="report-card">
+                <h3>Rapport Mensuel</h3>
+                <p class="text-muted">Statistiques du mois en cours</p>
+                <ul class="report-list">
+                    <li>Nouveaux utilisateurs: 25</li>
+                    <li>Nouvelles souscriptions: 12</li>
+                    <li>Montant total: 2,500,000 XOF</li>
+                    <li>Commissions générées: 150,000 XOF</li>
+                </ul>
+                <button class="btn btn-primary btn-block mt-2">Télécharger PDF</button>
+            </div>
+
+            <div class="report-card">
+                <h3>Rapport de Conformité</h3>
+                <p class="text-muted">Vérification de conformité légale</p>
+                <ul class="report-list">
+                    <li>Documents vérifiés: 45/50</li>
+                    <li>Conformité: 90%</li>
+                    <li>Alertes: 2</li>
+                    <li>Risques: Faible</li>
+                </ul>
+                <button class="btn btn-primary btn-block mt-2">Voir Détails</button>
+            </div>
+
+            <div class="report-card">
+                <h3>Rapport d'Agents</h3>
+                <p class="text-muted">Performance des agents immobiliers</p>
+                <ul class="report-list">
+                    <li>Agents actifs: 8</li>
+                    <li>Prospects totaux: 125</li>
+                    <li>Taux de conversion: 15%</li>
+                    <li>Commission moyenne: 25,000 XOF</li>
+                </ul>
+                <button class="btn btn-primary btn-block mt-2">Télécharger</button>
+            </div>
+
+            <div class="report-card">
+                <h3>Rapport Financier</h3>
+                <p class="text-muted">Analyse financière détaillée</p>
+                <ul class="report-list">
+                    <li>Revenu total: 5,000,000 XOF</li>
+                    <li>Dépenses: 1,200,000 XOF</li>
+                    <li>Profit net: 3,800,000 XOF</li>
+                    <li>Marge: 76%</li>
+                </ul>
+                <button class="btn btn-primary btn-block mt-2">Télécharger</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .admin-dashboard {
+        padding: 2rem 0;
+    }
+
+    .dashboard-header {
+        margin-bottom: 2rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 2rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-header .subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Stats */
+    .stat-box {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-large);
+        padding: 1.5rem;
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .stat-box:hover {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-medium);
+    }
+
+    .stat-icon {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    /* Lists */
+    .users-list,
+    .transactions-mini {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .user-item {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        flex-shrink: 0;
+    }
+
+    .user-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .user-info strong {
+        color: var(--primary-color);
+    }
+
+    .transaction-item {
+        padding: 1rem;
+        border-left: 4px solid var(--text-secondary);
+        background: var(--bg-secondary);
+        border-radius: var(--radius-medium);
+    }
+
+    .transaction-item.completed {
+        border-left-color: var(--success-color);
+    }
+
+    .transaction-item.pending {
+        border-left-color: var(--warning-color);
+    }
+
+    .transaction-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: rgba(46, 125, 50, 0.2);
+        color: var(--primary-color);
+        width: fit-content;
+    }
+
+    .badge.agent {
+        background: rgba(255, 152, 0, 0.2);
+        color: var(--accent-color);
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-badge.success,
+    .status-badge.active {
+        background: rgba(76, 175, 80, 0.2);
+        color: var(--success-color);
+    }
+
+    .status-badge.warning {
+        background: rgba(255, 152, 0, 0.2);
+        color: var(--warning-color);
+    }
+
+    .health-status {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .health-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .health-indicator {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .health-indicator.online {
+        background: var(--success-color);
+    }
+
+    .health-indicator.offline {
+        background: var(--error-color);
+    }
+
+    .growth-stats {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .stat-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .stat-row span {
+        min-width: 140px;
+        font-size: 0.9rem;
+    }
+
+    .growth-bar {
+        flex: 1;
+        height: 8px;
+        background: var(--bg-secondary);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .growth-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+    }
+
+    /* Tables */
+    .users-table,
+    .lots-table,
+    .transactions-table {
+        overflow-x: auto;
+        margin-top: 1.5rem;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--bg-primary);
+        border-radius: var(--radius-medium);
+        overflow: hidden;
+    }
+
+    th {
+        background: var(--bg-secondary);
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    tbody tr:hover {
+        background: var(--bg-secondary);
+    }
+
+    /* Actions */
+    .users-actions,
+    .lots-actions,
+    .transactions-actions {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .form-control {
+        flex: 1;
+        min-width: 200px;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-medium);
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Reports */
+    .reports-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .report-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-large);
+        padding: 1.5rem;
+    }
+
+    .report-card h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .report-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        margin: 1rem 0;
+    }
+
+    .report-list li {
+        padding-left: 1.5rem;
+        position: relative;
+    }
+
+    .report-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--success-color);
+        font-weight: 700;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .grid-3 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .overview-grid,
+        .grid-2,
+        .reports-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .users-actions,
+        .lots-actions,
+        .transactions-actions {
+            flex-direction: column;
+        }
+
+        .form-control {
+            min-width: auto;
+        }
+
+        table {
+            font-size: 0.9rem;
+        }
+
+        th, td {
+            padding: 0.75rem 0.5rem;
+        }
+
+        @media (max-width: 480px) {
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-icon {
+                font-size: 1.5rem;
+            }
+
+            .stat-value {
+                font-size: 1.4rem;
+            }
+        }
+    }
+</style>
+
+<!-- Tab Management Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+
+                tabButtons.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+
+                button.classList.add('active');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            });
+        });
+    });
+</script>
