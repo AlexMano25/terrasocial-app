@@ -29,6 +29,7 @@ class Router {
     }
 
     registerDynamic(pattern, handler, options = {}) {
+        // Pattern like '/user/:id'
         const regex = this._patternToRegex(pattern);
         this.routes.set(regex, {
             handler,
@@ -78,6 +79,8 @@ class Router {
      */
     _setupHashListener() {
         window.addEventListener('hashchange', () => this._handleNavigation());
+        // NOTE: Ne pas appeler _handleNavigation() ici
+        // Les routes doivent être enregistrées d'abord
     }
 
     /**
@@ -91,10 +94,12 @@ class Router {
         const path = this._getCurrentPath();
 
         try {
+            // Execute before hooks
             for (const hook of this.beforeHooks) {
                 await hook(path);
             }
 
+            // Find matching route
             const route = this._findRoute(path);
 
             if (!route) {
@@ -104,19 +109,24 @@ class Router {
 
             const { handler, requireAuth, title } = route;
 
+            // Check authentication if required
             if (requireAuth && !await this._isAuthenticated()) {
                 this.navigate('/signin');
                 return;
             }
 
+            // Execute middlewares
             for (const middleware of this.middlewares) {
                 await middleware(path, route);
             }
 
+            // Load and render view
             await this._loadView(handler, path);
 
+            // Update page title
             document.title = title + ' - TERRASOCIAL';
 
+            // Execute after hooks
             for (const hook of this.afterHooks) {
                 await hook(path);
             }
@@ -134,10 +144,12 @@ class Router {
     }
 
     _findRoute(path) {
+        // Exact match
         if (this.routes.has(path)) {
             return this.routes.get(path);
         }
 
+        // Dynamic match
         for (const [pattern, route] of this.routes) {
             if (route.isDynamic) {
                 const match = path.match(pattern);
@@ -156,7 +168,7 @@ class Router {
     _patternToRegex(pattern) {
         const escaped = pattern.replace(/\//g, '\\/');
         const withParams = escaped.replace(/:([^/]+)/g, '([^/]+)');
-        return new RegExp('^' + withParams + '$');
+        return new RegExp(`^${withParams}$`);
     }
 
     _extractParams(regex, path) {
@@ -174,6 +186,7 @@ class Router {
     }
 
     async _loadView(handler, path) {
+        // Si c'est une fonction, l'exécuter
         if (typeof handler === 'function') {
             const result = await handler(path);
             if (typeof result === 'string') {
@@ -182,14 +195,15 @@ class Router {
             return;
         }
 
+        // Si c'est un chemin de fichier, le charger
         if (typeof handler === 'string') {
             try {
                 const response = await fetch(handler);
-                if (!response.ok) throw new Error('HTTP ' + response.status);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const html = await response.text();
                 this.container.innerHTML = html;
             } catch (error) {
-                console.error('Failed to load ' + handler + ':', error);
+                console.error(`Failed to load ${handler}:`, error);
                 this._showError(error);
             }
         }
@@ -200,12 +214,26 @@ class Router {
     }
 
     _showNotFound(path) {
-        this.container.innerHTML = '<div class="card" style="margin: 2rem; text-align: center;"><h1>404 - Page non trouvée</h1><p style="margin: 1rem 0;">La page <strong>' + this._escapeHtml(path) + '</strong> n\'existe pas.</p><a href="#/" class="btn btn-primary">Retour à l\'accueil</a></div>';
+        this.container.innerHTML = `
+            <div class="card" style="margin: 2rem; text-align: center;">
+                <h1>404 - Page non trouvée</h1>
+                <p style="margin: 1rem 0;">La page <strong>${this._escapeHtml(path)}</strong> n'existe pas.</p>
+                <a href="#/" class="btn btn-primary">Retour à l'accueil</a>
+            </div>
+        `;
     }
 
     _showError(error) {
         const message = error.message || 'Une erreur est survenue';
-        this.container.innerHTML = '<div class="alert alert-error" style="margin: 2rem;"><div class="alert-icon">⚠️</div><div><strong>Erreur</strong><p>' + this._escapeHtml(message) + '</p></div></div>';
+        this.container.innerHTML = `
+            <div class="alert alert-error" style="margin: 2rem;">
+                <div class="alert-icon">⚠️</div>
+                <div>
+                    <strong>Erreur</strong>
+                    <p>${this._escapeHtml(message)}</p>
+                </div>
+            </div>
+        `;
     }
 
     _escapeHtml(text) {
