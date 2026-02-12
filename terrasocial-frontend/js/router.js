@@ -168,7 +168,7 @@ class Router {
     _patternToRegex(pattern) {
         const escaped = pattern.replace(/\//g, '\\/');
         const withParams = escaped.replace(/:([^/]+)/g, '([^/]+)');
-        return new RegExp(`^${withParams}$`);
+        return new RegExp`^${withParams}$`);
     }
 
     _extractParams(regex, path) {
