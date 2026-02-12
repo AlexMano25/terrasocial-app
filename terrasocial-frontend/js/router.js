@@ -79,7 +79,14 @@ class Router {
      */
     _setupHashListener() {
         window.addEventListener('hashchange', () => this._handleNavigation());
-        // Initial route
+        // NOTE: Ne pas appeler _handleNavigation() ici
+        // Les routes doivent être enregistrées d'abord
+    }
+
+    /**
+     * Démarrer le routeur après l'enregistrement des routes
+     */
+    start() {
         this._handleNavigation();
     }
 

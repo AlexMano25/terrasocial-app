@@ -21,6 +21,9 @@ class TermaSocialApp {
             this._setupGlobalListeners();
             this._setupNavigation();
 
+            // Démarrer le routeur APRÈS l'enregistrement des routes
+            router.start();
+
             this.isInitialized = true;
             console.log('✅ TERRASOCIAL initialisé');
         } catch (error) {
