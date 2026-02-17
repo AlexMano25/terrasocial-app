@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Client - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <a class="brand" href="index.html"><span>TERRA</span>SOCIAL</a>
+      <nav class="nav-links">
+        <a class="btn btn-outline" href="index.html">Site public</a>
+        <button id="logout-btn" class="btn btn-danger" type="button">Déconnexion</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Tableau de bord client</h1>
+    <p class="page-subtitle">Engagements, historique des paiements, parcours restant, score de fiabilité, contrats et PV de jouissance.</p>
+    <div id="flash"></div>
+
+    <section class="grid grid-3">
+      <article class="card"><div class="small">Engagement total</div><div id="m-commitment" class="metric-value">-</div></article>
+      <article class="card"><div class="small">Total payé</div><div id="m-paid" class="metric-value">-</div></article>
+      <article class="card"><div class="small">Reste à payer / Fiabilité</div><div id="m-remaining" class="metric-value">-</div><div id="m-score" class="small"></div></article>
+    </section>
+
+    <section class="grid grid-2" style="margin-top: 16px;">
+      <article class="card">
+        <h2>Nouvelle réservation</h2>
+        <form id="reservation-form">
+          <label for="lot_type">Type de lot</label>
+          <select id="lot_type" required>
+            <option value="standard">Standard</option>
+            <option value="confort">Confort</option>
+            <option value="premium">Premium</option>
+          </select>
+          <label for="lot_price">Prix</label>
+          <select id="lot_price" required>
+            <option value="500000">500000</option>
+            <option value="750000">750000</option>
+            <option value="1000000">1000000</option>
+          </select>
+          <label for="duration_months">Durée (mois)</label>
+          <select id="duration_months" required>
+            <option value="12">12</option>
+            <option value="24">24</option>
+            <option value="36">36</option>
+          </select>
+          <button class="btn btn-secondary" type="submit">Enregistrer réservation</button>
+        </form>
+      </article>
+
+      <article class="card">
+        <h2>Déclarer un paiement</h2>
+        <form id="payment-form">
+          <label for="payment-amount">Montant</label>
+          <input id="payment-amount" type="number" min="1" required>
+          <label for="payment-method">Mode de paiement</label>
+          <select id="payment-method" required>
+            <option value="orange_money">Orange Money</option>
+            <option value="mtn_momo">MTN MoMo</option>
+            <option value="virement">Virement</option>
+            <option value="carte">Carte</option>
+          </select>
+          <label for="payment-due-date">Date échéance</label>
+          <input id="payment-due-date" type="date">
+          <button class="btn btn-primary" type="submit">Ajouter paiement</button>
+        </form>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top: 16px;">
+      <h2>Historique des paiements</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Référence</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Statut</th></tr></thead>
+          <tbody id="payments-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="grid grid-2" style="margin-top: 16px;">
+      <article class="card">
+        <h2>Contrats</h2>
+        <ul id="contracts-list"></ul>
+      </article>
+      <article class="card">
+        <h2>PV de jouissance provisoire</h2>
+        <ul id="pv-list"></ul>
+      </article>
+    </section>
+
+    <section class="card" style="margin-top: 16px;">
+      <h2>Documents</h2>
+      <form id="document-form" class="grid grid-2">
+        <div>
+          <label for="document-type">Type de document</label>
+          <select id="document-type" required>
+            <option value="piece_identite">Pièce d'identité</option>
+            <option value="contrat_signe">Contrat signé</option>
+            <option value="recu_paiement">Reçu paiement</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div>
+          <label for="document-file">Fichier</label>
+          <input id="document-file" type="file" required>
+        </div>
+        <div style="grid-column: 1 / -1;"><button class="btn btn-secondary" type="submit">Envoyer document</button></div>
+      </form>
+      <ul id="documents-list"></ul>
+    </section>
+  </main>
+
+  <script src="js/app-api.js"></script>
+  <script src="js/dashboard-client.js"></script>
+</body>
+</html>

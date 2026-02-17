@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscription Propriétaire - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container">
+      <a class="brand" href="index.html"><span>TERRA</span>SOCIAL</a>
+      <nav class="nav-links">
+        <a class="btn btn-outline" href="login.html">Connexion</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">Inscription Propriétaire</h1>
+    <p class="page-subtitle">Créez un compte propriétaire pour déposer vos documents de propriété, publier vos terrains et suivre vos paiements.</p>
+
+    <section class="card" style="max-width: 760px;">
+      <div id="flash"></div>
+      <form id="register-form" class="grid grid-2">
+        <div>
+          <label for="full_name">Nom complet</label>
+          <input id="full_name" required>
+        </div>
+        <div>
+          <label for="phone">Téléphone</label>
+          <input id="phone" required>
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" type="email" required>
+        </div>
+        <div>
+          <label for="city">Ville</label>
+          <input id="city" required>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <label for="password">Mot de passe</label>
+          <input id="password" type="password" minlength="8" required>
+        </div>
+        <div style="grid-column: 1 / -1;">
+          <button class="btn btn-secondary" type="submit">Créer mon compte propriétaire</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script src="js/app-api.js"></script>
+  <script>
+    function flash(message, type) {
+      document.getElementById('flash').innerHTML = `<div class="flash ${type}">${message}</div>`;
+    }
+
+    document.getElementById('register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const body = {
+        full_name: document.getElementById('full_name').value,
+        phone: document.getElementById('phone').value,
+        email: document.getElementById('email').value,
+        city: document.getElementById('city').value,
+        password: document.getElementById('password').value
+      };
+
+      try {
+        const payload = await TSApi.request('/api/auth/register/owner', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        TSApi.setSession(payload);
+        window.location.href = 'dashboard-owner.html';
+      } catch (error) {
+        flash(error.message, 'err');
+      }
+    });
+  </script>
+</body>
+</html>

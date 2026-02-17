@@ -1,0 +1,28 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    environment:
+      - NODE_ENV=production
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    volumes:
+      - api_data:/app/data
+      - api_uploads:/app/uploads
+    restart: unless-stopped
+
+volumes:
+  api_data:
+  api_uploads:
