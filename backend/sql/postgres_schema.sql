@@ -105,3 +105,32 @@ CREATE TABLE IF NOT EXISTS audit_logs (
     metadata JSONB,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS super_admins (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL UNIQUE REFERENCES users(id),
+    mfa_secret TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS admin_messages (
+    id BIGSERIAL PRIMARY KEY,
+    sender_user_id BIGINT NOT NULL REFERENCES users(id),
+    target_scope TEXT NOT NULL,
+    target_role TEXT,
+    target_user_id BIGINT REFERENCES users(id),
+    content TEXT NOT NULL,
+    channels TEXT NOT NULL,
+    status TEXT DEFAULT 'queued',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS roadmap_status (
+    id BIGSERIAL PRIMARY KEY,
+    version_label TEXT NOT NULL,
+    deployment_status TEXT,
+    notes TEXT,
+    updated_by BIGINT REFERENCES users(id),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);

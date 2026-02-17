@@ -102,6 +102,32 @@ function statementsFor(client) {
                 user_agent TEXT,
                 metadata JSONB,
                 created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS super_admins (
+                id BIGSERIAL PRIMARY KEY,
+                user_id BIGINT NOT NULL UNIQUE REFERENCES users(id),
+                mfa_secret TEXT,
+                is_active BOOLEAN DEFAULT TRUE,
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS admin_messages (
+                id BIGSERIAL PRIMARY KEY,
+                sender_user_id BIGINT NOT NULL REFERENCES users(id),
+                target_scope TEXT NOT NULL,
+                target_role TEXT,
+                target_user_id BIGINT REFERENCES users(id),
+                content TEXT NOT NULL,
+                channels TEXT NOT NULL,
+                status TEXT DEFAULT 'queued',
+                created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS roadmap_status (
+                id BIGSERIAL PRIMARY KEY,
+                version_label TEXT NOT NULL,
+                deployment_status TEXT,
+                notes TEXT,
+                updated_by BIGINT REFERENCES users(id),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
             )`
         ];
     }
@@ -219,6 +245,36 @@ function statementsFor(client) {
             metadata TEXT,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
+        )`,
+        `CREATE TABLE IF NOT EXISTS super_admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            mfa_secret TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )`,
+        `CREATE TABLE IF NOT EXISTS admin_messages (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            sender_user_id INTEGER NOT NULL,
+            target_scope TEXT NOT NULL,
+            target_role TEXT,
+            target_user_id INTEGER,
+            content TEXT NOT NULL,
+            channels TEXT NOT NULL,
+            status TEXT DEFAULT 'queued',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(sender_user_id) REFERENCES users(id),
+            FOREIGN KEY(target_user_id) REFERENCES users(id)
+        )`,
+        `CREATE TABLE IF NOT EXISTS roadmap_status (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            version_label TEXT NOT NULL,
+            deployment_status TEXT,
+            notes TEXT,
+            updated_by INTEGER,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(updated_by) REFERENCES users(id)
         )`
     ];
 }
@@ -247,6 +303,33 @@ async function initializeDatabase() {
         await run(
             'INSERT INTO users(role, full_name, email, password_hash, city, phone) VALUES (?, ?, ?, ?, ?, ?)',
             ['admin', 'Administrateur TERRASOCIAL', 'admin@terrasocial.cm', passwordHash, 'Yaounde', '+237600000000']
+        );
+    }
+
+    // Super admin bootstrap account requested by product spec.
+    let superAdminUser = await get('SELECT id FROM users WHERE email = ?', ['admin@system.com']);
+    if (!superAdminUser) {
+        const passwordHash = await bcrypt.hash('Admin@System#2026', 12);
+        const created = await run(
+            'INSERT INTO users(role, full_name, email, password_hash, city, phone) VALUES (?, ?, ?, ?, ?, ?)',
+            ['admin', 'Super Admin System', 'admin@system.com', passwordHash, 'Yaounde', '+237600000001']
+        );
+        superAdminUser = { id: created.id };
+    }
+
+    const superAdminEntry = await get('SELECT id FROM super_admins WHERE user_id = ?', [superAdminUser.id]);
+    if (!superAdminEntry) {
+        await run(
+            'INSERT INTO super_admins(user_id, mfa_secret, is_active) VALUES (?, ?, ?)',
+            [superAdminUser.id, `mfa_${Date.now()}_${superAdminUser.id}`, 1]
+        );
+    }
+
+    const roadmap = await get('SELECT id FROM roadmap_status ORDER BY id DESC LIMIT 1');
+    if (!roadmap) {
+        await run(
+            'INSERT INTO roadmap_status(version_label, deployment_status, notes, updated_by) VALUES (?, ?, ?, ?)',
+            ['v1.2.0-stable', 'operational', 'Initialisation du module Super Admin Dashboard Pro.', superAdminUser.id]
         );
     }
 }

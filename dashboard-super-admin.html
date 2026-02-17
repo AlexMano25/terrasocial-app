@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Admin Dashboard - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/super-admin.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span>TERRA</span>SOCIAL</div>
+      <p>Super Admin Control Center</p>
+      <nav class="side-nav">
+        <button class="active" data-panel="overview">Overview</button>
+        <button data-panel="users">Utilisateurs</button>
+        <button data-panel="messages">Messagerie</button>
+        <button data-panel="documents">Documents</button>
+        <button data-panel="roadmap">Roadmap & Status</button>
+      </nav>
+      <p style="margin-top:16px;">Raccourci: <strong>Cmd/Ctrl + K</strong></p>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 style="margin:0;">Super Admin Dashboard Pro</h1>
+          <p id="admin-meta" style="margin:4px 0 0;color:var(--muted);">Chargement du profil...</p>
+        </div>
+        <div class="actions">
+          <button class="btn ghost" id="search-open">Recherche (Cmd+K)</button>
+          <button class="btn" id="theme-toggle">Mode sombre</button>
+          <button class="btn" id="logout-btn">Déconnexion</button>
+        </div>
+      </div>
+
+      <div id="flash"></div>
+
+      <section id="panel-overview" class="panel active">
+        <div class="kpis">
+          <article class="card"><h4>Revenus encaissés</h4><p id="kpi-revenue">0 FCFA</p></article>
+          <article class="card"><h4>Paiements</h4><p id="kpi-payments">0</p></article>
+          <article class="card"><h4>Utilisateurs</h4><p id="kpi-users">0</p></article>
+          <article class="card"><h4>Réservations en attente</h4><p id="kpi-pending">0</p></article>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Croissance des utilisateurs</h3>
+            <canvas id="users-chart" height="120"></canvas>
+          </div>
+          <div class="card">
+            <h3>Revenus mensuels</h3>
+            <canvas id="revenue-chart" height="120"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-users" class="panel">
+        <div class="card">
+          <h3>CRM Interne - Utilisateurs</h3>
+          <div class="toolbar">
+            <input id="filter-q" type="text" placeholder="Recherche nom / email / phone">
+            <select id="filter-role"><option value="">Tous rôles</option><option value="client">Client</option><option value="owner">Propriétaire</option><option value="admin">Admin</option></select>
+            <select id="filter-status"><option value="">Tous statuts</option><option value="active">Actif</option><option value="low_activity">Faible activité</option></select>
+            <button class="btn" id="btn-refresh-users">Filtrer</button>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>Nom</th><th>Rôle</th><th>Email</th><th>Fiabilité</th><th>Actions</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="panel-messages" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Broadcast / Ciblage</h3>
+            <div class="toolbar">
+              <select id="msg-scope"><option value="all">Tous</option><option value="role">Par rôle</option><option value="user">Utilisateur précis</option></select>
+              <select id="msg-role"><option value="owner">Propriétaires</option><option value="client">Clients</option><option value="admin">Admins</option></select>
+              <input id="msg-user-id" type="number" placeholder="ID utilisateur (si scope=user)">
+            </div>
+            <div class="toolbar">
+              <label><input type="checkbox" id="msg-ch-inapp" checked> In-app</label>
+              <label><input type="checkbox" id="msg-ch-email" checked> Email</label>
+              <label><input type="checkbox" id="msg-ch-push"> Push</label>
+            </div>
+            <textarea id="msg-content" placeholder="Rédigez votre message global..."></textarea>
+            <button class="btn primary" id="btn-send-msg">Envoyer</button>
+          </div>
+          <div class="card">
+            <h3>Historique Messagerie</h3>
+            <table>
+              <thead><tr><th>Scope</th><th>Canaux</th><th>Statut</th><th>Date</th></tr></thead>
+              <tbody id="messages-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-documents" class="panel">
+        <div class="card">
+          <h3>Gestion Documentaire</h3>
+          <table>
+            <thead><tr><th>ID</th><th>Type</th><th>Nom</th><th>Utilisateur</th><th>Actions</th></tr></thead>
+            <tbody id="docs-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="panel-roadmap" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Roadmap & Status</h3>
+            <label>Version</label>
+            <input id="roadmap-version" type="text" placeholder="v1.2.0 stable">
+            <label>Déploiement</label>
+            <input id="roadmap-deploy" type="text" placeholder="Vercel OK / Docker OK / AWS pending">
+            <label>Perspectives</label>
+            <textarea id="roadmap-notes" placeholder="IA prédictive, APIs tierces, etc."></textarea>
+            <button class="btn primary" id="btn-save-roadmap">Mettre à jour</button>
+          </div>
+          <div class="card">
+            <h3>Export PDF Paiements</h3>
+            <p style="color:var(--muted)">Génère l'historique de paiement client au format PDF professionnel.</p>
+            <input id="pdf-user-id" type="number" placeholder="ID client">
+            <button class="btn" id="btn-export-pdf">Imprimer Historique</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-box">
+      <input id="search-input" type="text" placeholder="Rechercher un utilisateur, document ou section..." style="width:100%;margin-bottom:8px;">
+      <div class="search-results" id="search-results"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/app-api.js"></script>
+  <script src="js/dashboard-super-admin.js"></script>
+</body>
+</html>

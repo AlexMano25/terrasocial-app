@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 const { get } = require('../db/connection');
 
+async function isSuperAdminUser(userId) {
+    const row = await get('SELECT id FROM super_admins WHERE user_id = ? AND (is_active = 1 OR is_active = true)', [userId]);
+    return Boolean(row);
+}
+
 async function requireAuth(req, res, next) {
     try {
         const authHeader = req.headers.authorization || '';
@@ -36,7 +41,25 @@ function requireRole(allowedRoles) {
     };
 }
 
+async function requireSuperAdmin(req, res, next) {
+    try {
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Acces super admin refuse' });
+        }
+
+        const ok = await isSuperAdminUser(req.user.id);
+        if (!ok) {
+            return res.status(403).json({ error: 'Compte super admin requis' });
+        }
+        return next();
+    } catch (error) {
+        return res.status(500).json({ error: 'Verification super admin impossible' });
+    }
+}
+
 module.exports = {
     requireAuth,
-    requireRole
+    requireRole,
+    requireSuperAdmin,
+    isSuperAdminUser
 };

@@ -36,6 +36,7 @@
       </form>
       <p class="small"><a href="password-reset.html">Mot de passe oublié ?</a></p>
       <p class="small">Compte admin initial: <code>admin@terrasocial.cm</code> / <code>Admin@12345</code> (à changer en production).</p>
+      <p class="small">Compte super admin: <code>admin@system.com</code> / <code>Admin@System#2026</code> (à changer en production).</p>
     </section>
   </main>
 
@@ -60,6 +61,11 @@
         });
 
         TSApi.setSession(payload);
+
+        if (payload.user.is_super_admin) {
+          window.location.href = 'dashboard-super-admin.html';
+          return;
+        }
 
         if (payload.user.role === 'owner') {
           window.location.href = 'dashboard-owner.html';

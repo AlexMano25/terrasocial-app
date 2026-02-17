@@ -3,7 +3,7 @@ const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { run, get } = require('../db/connection');
-const { requireAuth } = require('../middleware/auth');
+const { requireAuth, isSuperAdminUser } = require('../middleware/auth');
 const {
     normalizeEmail,
     sanitizeOptionalText,
@@ -93,6 +93,7 @@ router.post('/login', async (req, res) => {
         }
 
         await req.audit?.('auth.login_success', { user_id: user.id, role: user.role });
+        const isSuperAdmin = user.role === 'admin' ? await isSuperAdminUser(user.id) : false;
         return res.json({
             token: tokenForUser(user),
             user: {
@@ -100,7 +101,8 @@ router.post('/login', async (req, res) => {
                 role: user.role,
                 full_name: user.full_name,
                 email: user.email,
-                reliability_score: user.reliability_score
+                reliability_score: user.reliability_score,
+                is_super_admin: isSuperAdmin
             }
         });
     } catch (error) {
@@ -183,7 +185,8 @@ router.post('/reset-password', async (req, res) => {
 });
 
 router.get('/me', requireAuth, async (req, res) => {
-    return res.json({ user: req.user });
+    const isSuperAdmin = req.user.role === 'admin' ? await isSuperAdminUser(req.user.id) : false;
+    return res.json({ user: Object.assign({}, req.user, { is_super_admin: isSuperAdmin }) });
 });
 
 module.exports = router;
