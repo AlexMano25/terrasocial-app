@@ -10,8 +10,9 @@ Le projet racine contient désormais:
 ### Configuration recommandée Vercel
 - Framework preset: `Other`
 - Root directory: `/` (ce dossier)
-- Build command: vide
+- Build command: automatique (`npm run vercel-build`)
 - Output directory: vide
+- Variable d'environnement Vercel: `TERRASOCIAL_API_BASE` (URL publique de l'API)
 
 ### Domaine
 - Branchez `social.manoverde.com` sur ce projet Vercel.
@@ -50,19 +51,12 @@ SUPABASE_STORAGE_BUCKET=documents
 ```
 
 ## 3) Connexion frontend <-> backend
-Par défaut, le frontend appelle `http://localhost:4000`.
+Le frontend lit automatiquement `TERRASOCIAL_API_BASE` injecté au build dans `js/runtime-config.js`.
 
-En production, définir avant chargement JS:
-```html
-<script>
-  window.TERRASOCIAL_API_BASE = 'https://api.social.manoverde.com';
-</script>
-```
-
-Ou stocker dans localStorage:
-```js
-localStorage.setItem('ts_api_base', 'https://api.social.manoverde.com');
-```
+Fallback:
+- local: `http://localhost:4000`
+- production sans variable: `window.location.origin`
+- override manuel possible via `localStorage.ts_api_base`
 
 ## 4) Vérifications post-déploiement
 - `/` charge l'accueil sans 404.

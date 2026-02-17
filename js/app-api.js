@@ -1,5 +1,16 @@
 (function initApiGlobal() {
-  const API_BASE = window.TERRASOCIAL_API_BASE || localStorage.getItem('ts_api_base') || 'http://localhost:4000';
+  function resolveApiBase() {
+    const explicit = window.TERRASOCIAL_API_BASE || localStorage.getItem('ts_api_base');
+    if (explicit) return explicit.replace(/\/+$/, '');
+
+    const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+    if (isLocal) return 'http://localhost:4000';
+
+    // In production, default to same-origin to avoid mixed-content/network errors.
+    return window.location.origin;
+  }
+
+  const API_BASE = resolveApiBase();
 
   function getToken() {
     return localStorage.getItem('ts_token');
@@ -24,7 +35,12 @@
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    const response = await fetch(`${API_BASE}${path}`, Object.assign({}, options, { headers }));
+    let response;
+    try {
+      response = await fetch(`${API_BASE}${path}`, Object.assign({}, options, { headers }));
+    } catch (error) {
+      throw new Error(`Backend injoignable (${API_BASE}). Configure ts_api_base vers ton API publique.`);
+    }
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {

@@ -1226,6 +1226,7 @@
     </footer>
 
     <!-- Load i18n system first -->
+    <script src="js/runtime-config.js"></script>
     <script src="js/site-i18n.js"></script>
 
     <script>
@@ -1254,7 +1255,19 @@
             document.getElementById('monthly').textContent = monthly.toLocaleString(locale) + ' FCFA/mois';
         }
 
-        const apiBase = window.TERRASOCIAL_API_BASE || localStorage.getItem('ts_api_base') || 'http://localhost:4000';
+        function resolveApiBase() {
+            const explicit = window.TERRASOCIAL_API_BASE || localStorage.getItem('ts_api_base');
+            if (explicit) {
+                return explicit.replace(/\/+$/, '');
+            }
+            const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+            if (isLocal) {
+                return 'http://localhost:4000';
+            }
+            return window.location.origin;
+        }
+
+        const apiBase = resolveApiBase();
 
         // Form submission
         document.getElementById('reservation-form').addEventListener('submit', async function(e) {
