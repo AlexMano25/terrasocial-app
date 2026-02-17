@@ -5,3 +5,5 @@ backend/data/
 .env
 backend/.env
 .DS_Store
+.vercel
+.env*.local
