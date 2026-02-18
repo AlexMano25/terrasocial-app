@@ -84,6 +84,21 @@ function statementsFor(client) {
                 public_url TEXT,
                 uploaded_at TIMESTAMPTZ DEFAULT NOW()
             )`,
+            `CREATE TABLE IF NOT EXISTS available_lots (
+                id BIGSERIAL PRIMARY KEY,
+                title TEXT NOT NULL,
+                location TEXT NOT NULL,
+                size_m2 INTEGER NOT NULL,
+                price INTEGER NOT NULL,
+                monthly_amount INTEGER,
+                duration_months INTEGER,
+                icon TEXT DEFAULT '🏡',
+                features TEXT DEFAULT '[]',
+                status TEXT DEFAULT 'available',
+                display_order INTEGER DEFAULT 0,
+                created_at TIMESTAMPTZ DEFAULT NOW(),
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
             `CREATE TABLE IF NOT EXISTS password_reset_tokens (
                 id BIGSERIAL PRIMARY KEY,
                 user_id BIGINT NOT NULL REFERENCES users(id),
@@ -225,6 +240,21 @@ function statementsFor(client) {
             FOREIGN KEY(reservation_id) REFERENCES reservations(id),
             FOREIGN KEY(owner_property_id) REFERENCES owner_properties(id)
         )`,
+        `CREATE TABLE IF NOT EXISTS available_lots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            location TEXT NOT NULL,
+            size_m2 INTEGER NOT NULL,
+            price INTEGER NOT NULL,
+            monthly_amount INTEGER,
+            duration_months INTEGER,
+            icon TEXT DEFAULT '🏡',
+            features TEXT DEFAULT '[]',
+            status TEXT DEFAULT 'available',
+            display_order INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )`,
         `CREATE TABLE IF NOT EXISTS password_reset_tokens (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
@@ -331,6 +361,23 @@ async function initializeDatabase() {
             'INSERT INTO roadmap_status(version_label, deployment_status, notes, updated_by) VALUES (?, ?, ?, ?)',
             ['v1.2.0-stable', 'operational', 'Initialisation du module Super Admin Dashboard Pro.', superAdminUser.id]
         );
+    }
+
+    const lotsCount = await get('SELECT COUNT(*) AS total FROM available_lots');
+    if (Number(lotsCount?.total || 0) === 0) {
+        const defaultLots = [
+            ['Lot Standard - 500m²', 'Soa, Yaoundé', 500, 500000, 21000, 24, '🏡', JSON.stringify(['Titre foncier sécurisé', 'Accès route praticable', 'Électricité à proximité', 'Bornage inclus']), 'available', 1],
+            ['Lot Confort - 750m²', 'Nkolfoulou, Yaoundé', 750, 750000, 25000, 30, '🏠', JSON.stringify(['Titre foncier sécurisé', 'Accès goudronné', 'Eau et électricité', 'Bornage et plan inclus']), 'available', 2],
+            ['Lot Premium - 1000m²', 'Mbankomo, Yaoundé', 1000, 1000000, 28000, 36, '🏘️', JSON.stringify(['Titre foncier garanti', 'Zone viabilisée', 'Tous réseaux disponibles', 'Accompagnement complet']), 'available', 3]
+        ];
+
+        for (const lot of defaultLots) {
+            await run(
+                `INSERT INTO available_lots(title, location, size_m2, price, monthly_amount, duration_months, icon, features, status, display_order)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                lot
+            );
+        }
     }
 }
 

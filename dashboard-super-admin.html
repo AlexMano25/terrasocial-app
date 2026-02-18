@@ -16,6 +16,7 @@
         <button class="active" data-panel="overview">Overview</button>
         <button data-panel="users">Utilisateurs</button>
         <button data-panel="messages">Messagerie</button>
+        <button data-panel="lots">Lots Disponibles</button>
         <button data-panel="documents">Documents</button>
         <button data-panel="roadmap">Roadmap & Status</button>
       </nav>
@@ -94,6 +95,46 @@
             <table>
               <thead><tr><th>Scope</th><th>Canaux</th><th>Statut</th><th>Date</th></tr></thead>
               <tbody id="messages-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="panel-lots" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Charger un lot disponible</h3>
+            <input id="lot-id" type="number" placeholder="ID (laisser vide pour créer)">
+            <input id="lot-title" type="text" placeholder="Titre du lot">
+            <input id="lot-location" type="text" placeholder="Localisation">
+            <div class="toolbar">
+              <input id="lot-size" type="number" placeholder="Surface m²">
+              <input id="lot-price" type="number" placeholder="Prix FCFA">
+            </div>
+            <div class="toolbar">
+              <input id="lot-monthly" type="number" placeholder="Mensualité">
+              <input id="lot-duration" type="number" placeholder="Durée (mois)">
+            </div>
+            <div class="toolbar">
+              <input id="lot-icon" type="text" placeholder="Icône (🏡)">
+              <select id="lot-status">
+                <option value="available">Disponible</option>
+                <option value="reserved">Réservé</option>
+                <option value="archived">Archivé</option>
+              </select>
+              <input id="lot-order" type="number" placeholder="Ordre">
+            </div>
+            <textarea id="lot-features" placeholder="Caractéristiques (une par ligne)"></textarea>
+            <div class="toolbar">
+              <button class="btn primary" id="btn-save-lot">Enregistrer lot</button>
+              <button class="btn" id="btn-clear-lot">Vider</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Nos Lots Disponibles</h3>
+            <table>
+              <thead><tr><th>ID</th><th>Titre</th><th>Prix</th><th>Statut</th><th>Actions</th></tr></thead>
+              <tbody id="lots-tbody"></tbody>
             </table>
           </div>
         </div>

@@ -13,6 +13,7 @@
 
   const state = {
     users: [],
+    lots: [],
     documents: [],
     messages: [],
     charts: { users: null, revenue: null }
@@ -22,6 +23,7 @@
     overview: document.getElementById('panel-overview'),
     users: document.getElementById('panel-users'),
     messages: document.getElementById('panel-messages'),
+    lots: document.getElementById('panel-lots'),
     documents: document.getElementById('panel-documents'),
     roadmap: document.getElementById('panel-roadmap')
   };
@@ -114,6 +116,50 @@
     `).join('') : '<tr><td colspan="5">Aucun document</td></tr>';
   }
 
+  function lotFormReset() {
+    document.getElementById('lot-id').value = '';
+    document.getElementById('lot-title').value = '';
+    document.getElementById('lot-location').value = '';
+    document.getElementById('lot-size').value = '';
+    document.getElementById('lot-price').value = '';
+    document.getElementById('lot-monthly').value = '';
+    document.getElementById('lot-duration').value = '';
+    document.getElementById('lot-icon').value = '';
+    document.getElementById('lot-status').value = 'available';
+    document.getElementById('lot-order').value = '';
+    document.getElementById('lot-features').value = '';
+  }
+
+  function fillLotForm(lot) {
+    document.getElementById('lot-id').value = lot.id;
+    document.getElementById('lot-title').value = lot.title || '';
+    document.getElementById('lot-location').value = lot.location || '';
+    document.getElementById('lot-size').value = lot.size_m2 || '';
+    document.getElementById('lot-price').value = lot.price || '';
+    document.getElementById('lot-monthly').value = lot.monthly_amount || '';
+    document.getElementById('lot-duration').value = lot.duration_months || '';
+    document.getElementById('lot-icon').value = lot.icon || '';
+    document.getElementById('lot-status').value = lot.status || 'available';
+    document.getElementById('lot-order').value = lot.display_order || 0;
+    document.getElementById('lot-features').value = Array.isArray(lot.features) ? lot.features.join('\n') : '';
+  }
+
+  function renderLots() {
+    const tbody = document.getElementById('lots-tbody');
+    tbody.innerHTML = state.lots.length ? state.lots.map((lot) => `
+      <tr>
+        <td>${lot.id}</td>
+        <td>${lot.title}</td>
+        <td>${formatMoney(lot.price)}</td>
+        <td><span class="status-pill">${lot.status}</span></td>
+        <td>
+          <button class="btn" data-action="edit-lot" data-id="${lot.id}">Éditer</button>
+          <button class="btn" data-action="delete-lot" data-id="${lot.id}">Supprimer</button>
+        </td>
+      </tr>
+    `).join('') : '<tr><td colspan="5">Aucun lot</td></tr>';
+  }
+
   async function loadOverview() {
     const data = await TSApi.request('/api/super-admin/overview');
 
@@ -158,9 +204,15 @@
     renderDocs();
   }
 
+  async function loadLots() {
+    const data = await TSApi.request('/api/super-admin/lots');
+    state.lots = data.lots || [];
+    renderLots();
+  }
+
   async function loadAll() {
     try {
-      await Promise.all([loadOverview(), loadUsers(), loadMessages(), loadDocuments()]);
+      await Promise.all([loadOverview(), loadUsers(), loadMessages(), loadLots(), loadDocuments()]);
       document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`; 
     } catch (error) {
       flash(error.message, 'err');
@@ -252,6 +304,70 @@
     }
   });
 
+  document.getElementById('lots-tbody').addEventListener('click', async (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    const lotId = Number(btn.dataset.id);
+    const lot = state.lots.find((item) => Number(item.id) === lotId);
+    if (!lot) return;
+
+    try {
+      if (btn.dataset.action === 'edit-lot') {
+        fillLotForm(lot);
+        switchPanel('lots');
+        return;
+      }
+      if (btn.dataset.action === 'delete-lot') {
+        if (!confirm(`Supprimer le lot #${lotId} ?`)) return;
+        await TSApi.request(`/api/super-admin/lots/${lotId}`, { method: 'DELETE' });
+        await loadLots();
+        flash('Lot supprimé.', 'ok');
+      }
+    } catch (error) {
+      flash(error.message, 'err');
+    }
+  });
+
+  document.getElementById('btn-save-lot').addEventListener('click', async () => {
+    try {
+      const id = document.getElementById('lot-id').value.trim();
+      const features = document.getElementById('lot-features').value
+        .split('\n')
+        .map((line) => line.trim())
+        .filter(Boolean);
+
+      const body = {
+        title: document.getElementById('lot-title').value,
+        location: document.getElementById('lot-location').value,
+        size_m2: Number(document.getElementById('lot-size').value),
+        price: Number(document.getElementById('lot-price').value),
+        monthly_amount: Number(document.getElementById('lot-monthly').value) || null,
+        duration_months: Number(document.getElementById('lot-duration').value) || null,
+        icon: document.getElementById('lot-icon').value || '🏡',
+        status: document.getElementById('lot-status').value,
+        display_order: Number(document.getElementById('lot-order').value) || 0,
+        features
+      };
+
+      if (id) {
+        await TSApi.request(`/api/super-admin/lots/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+        flash('Lot mis à jour.', 'ok');
+      } else {
+        await TSApi.request('/api/super-admin/lots', { method: 'POST', body: JSON.stringify(body) });
+        flash('Lot créé.', 'ok');
+      }
+
+      lotFormReset();
+      await loadLots();
+    } catch (error) {
+      flash(error.message, 'err');
+    }
+  });
+
+  document.getElementById('btn-clear-lot').addEventListener('click', () => {
+    lotFormReset();
+  });
+
   document.getElementById('btn-save-roadmap').addEventListener('click', async () => {
     try {
       await TSApi.request('/api/super-admin/roadmap', {
@@ -329,12 +445,17 @@
       .slice(0, 8)
       .map((d) => ({ type: 'doc', label: `${d.file_name} [${d.document_type}]`, action: () => switchPanel('documents') }));
 
+    const lotMatches = state.lots
+      .filter((l) => `${l.title} ${l.location}`.toLowerCase().includes(q))
+      .slice(0, 8)
+      .map((l) => ({ type: 'lot', label: `${l.title} (${l.location})`, action: () => switchPanel('lots') }));
+
     const staticItems = [
       { type: 'section', label: 'Overview analytics', action: () => switchPanel('overview') },
       { type: 'section', label: 'Roadmap & status', action: () => switchPanel('roadmap') }
     ].filter((x) => x.label.toLowerCase().includes(q));
 
-    const merged = [...userMatches, ...docMatches, ...staticItems];
+    const merged = [...userMatches, ...docMatches, ...lotMatches, ...staticItems];
     results.innerHTML = merged.length ? merged.map((r, idx) =>
       `<div class="search-item" data-idx="${idx}">${r.type.toUpperCase()} - ${r.label}</div>`
     ).join('') : '<div class="search-item">Aucun résultat</div>';

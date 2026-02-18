@@ -855,7 +855,7 @@
                 <h2 data-i18n="lots.title">Nos Lots Disponibles</h2>
                 <p data-i18n="lots.description">Découvrez notre sélection de terrains dans la région du Centre, à proximité de Yaoundé</p>
             </div>
-            <div class="lots-grid">
+            <div class="lots-grid" id="lots-grid">
                 <div class="lot-card">
                     <div class="lot-image">🏡</div>
                     <div class="lot-content">
@@ -1269,6 +1269,47 @@
 
         const apiBase = resolveApiBase();
 
+        async function loadLotsDisponibles() {
+            const grid = document.getElementById('lots-grid');
+            if (!grid) return;
+
+            try {
+                const response = await fetch(`${apiBase}/api/public/lots`);
+                if (!response.ok) return;
+                const data = await response.json();
+                const lots = Array.isArray(data.lots) ? data.lots : [];
+                if (!lots.length) return;
+
+                grid.innerHTML = lots.map((lot) => {
+                    const features = (Array.isArray(lot.features) ? lot.features : [])
+                        .map((item) => `<li>${item}</li>`)
+                        .join('');
+                    const monthly = lot.monthly_amount
+                        ? `soit ~${Number(lot.monthly_amount).toLocaleString('fr-FR')} FCFA/mois${lot.duration_months ? ` sur ${lot.duration_months} mois` : ''}`
+                        : '';
+
+                    return `
+                        <div class="lot-card">
+                            <div class="lot-image">${lot.icon || '🏡'}</div>
+                            <div class="lot-content">
+                                <h3 class="lot-title">${lot.title}</h3>
+                                <div class="lot-specs">
+                                    <span>📍 ${lot.location || ''}</span>
+                                    <span>📐 ${Number(lot.size_m2 || 0).toLocaleString('fr-FR')} m²</span>
+                                </div>
+                                <div class="lot-price">${Number(lot.price || 0).toLocaleString('fr-FR')} FCFA</div>
+                                <div class="lot-monthly">${monthly}</div>
+                                <ul class="lot-features">${features}</ul>
+                                <a href="#souscrire" class="btn btn-primary" style="width: 100%; text-align: center;">Réserver ce lot</a>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                // Keep static cards if API is not reachable.
+            }
+        }
+
         // Form submission
         document.getElementById('reservation-form').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -1337,6 +1378,7 @@
         // Initialize calculator on page load
         document.addEventListener('DOMContentLoaded', function() {
             calculatePayment();
+            loadLotsDisponibles();
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/service-worker.js').catch(function() {});
             }

@@ -1,5 +1,5 @@
 const express = require('express');
-const { run } = require('../db/connection');
+const { run, all } = require('../db/connection');
 const {
     isValidPhone,
     normalizeEmail,
@@ -9,6 +9,32 @@ const {
 } = require('../utils/validation');
 
 const router = express.Router();
+
+router.get('/lots', async (req, res) => {
+    try {
+        const rows = await all(
+            `SELECT id, title, location, size_m2, price, monthly_amount, duration_months, icon, features, status, display_order
+             FROM available_lots
+             WHERE status = ?
+             ORDER BY display_order ASC, id ASC`,
+            ['available']
+        );
+
+        const lots = rows.map((row) => {
+            let features = [];
+            try {
+                features = JSON.parse(row.features || '[]');
+            } catch (error) {
+                features = [];
+            }
+            return Object.assign({}, row, { features });
+        });
+
+        return res.json({ lots });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture lots disponibles' });
+    }
+});
 
 router.post('/reservations', async (req, res) => {
     try {

@@ -2,7 +2,7 @@ const express = require('express');
 const PDFDocument = require('pdfkit');
 const { all, get, run } = require('../db/connection');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
-const { sanitizeOptionalText, sanitizeText, normalizeEmail } = require('../utils/validation');
+const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt } = require('../utils/validation');
 
 const router = express.Router();
 
@@ -14,6 +14,22 @@ function parseDateRange(from, to) {
     if (fromSafe && Number.isNaN(fromSafe.getTime())) return { error: 'Date from invalide' };
     if (toSafe && Number.isNaN(toSafe.getTime())) return { error: 'Date to invalide' };
     return { fromSafe, toSafe };
+}
+
+function safeParseFeatures(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value.map((item) => sanitizeText(String(item), 120)).filter(Boolean);
+    if (typeof value === 'string') {
+        try {
+            const parsed = JSON.parse(value);
+            if (Array.isArray(parsed)) {
+                return parsed.map((item) => sanitizeText(String(item), 120)).filter(Boolean);
+            }
+        } catch (error) {
+            return value.split(',').map((item) => sanitizeText(item, 120)).filter(Boolean);
+        }
+    }
+    return [];
 }
 
 router.get('/overview', async (req, res) => {
@@ -298,6 +314,102 @@ router.delete('/documents/:id', async (req, res) => {
         return res.json({ ok: true });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur suppression document' });
+    }
+});
+
+router.get('/lots', async (req, res) => {
+    try {
+        const rows = await all(
+            `SELECT id, title, location, size_m2, price, monthly_amount, duration_months, icon, features, status, display_order, updated_at
+             FROM available_lots
+             ORDER BY display_order ASC, id ASC`
+        );
+        const lots = rows.map((row) => Object.assign({}, row, { features: safeParseFeatures(row.features) }));
+        return res.json({ lots });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture lots' });
+    }
+});
+
+router.post('/lots', async (req, res) => {
+    try {
+        const title = sanitizeText(req.body.title, 120);
+        const location = sanitizeText(req.body.location, 120);
+        const sizeM2 = parsePositiveInt(req.body.size_m2);
+        const price = parsePositiveInt(req.body.price);
+        const monthlyAmount = parsePositiveInt(req.body.monthly_amount) || null;
+        const durationMonths = parsePositiveInt(req.body.duration_months) || null;
+        const icon = sanitizeOptionalText(req.body.icon, 8) || '🏡';
+        const status = sanitizeOptionalText(req.body.status, 20) || 'available';
+        const displayOrder = Number(req.body.display_order || 0);
+        const features = safeParseFeatures(req.body.features);
+
+        if (!title || !location || !sizeM2 || !price) {
+            return res.status(400).json({ error: 'title, location, size_m2, price requis' });
+        }
+        if (!['available', 'reserved', 'archived'].includes(status)) {
+            return res.status(400).json({ error: 'status invalide' });
+        }
+
+        const result = await run(
+            `INSERT INTO available_lots(title, location, size_m2, price, monthly_amount, duration_months, icon, features, status, display_order, updated_at)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+            [title, location, sizeM2, price, monthlyAmount, durationMonths, icon, JSON.stringify(features), status, Number.isFinite(displayOrder) ? displayOrder : 0]
+        );
+
+        await req.audit?.('super_admin.lot_created', { actor_id: req.user.id, lot_id: result.id });
+        return res.status(201).json({ id: result.id });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur creation lot' });
+    }
+});
+
+router.put('/lots/:id', async (req, res) => {
+    try {
+        const lotId = Number(req.params.id);
+        if (!lotId) return res.status(400).json({ error: 'ID lot invalide' });
+
+        const title = sanitizeText(req.body.title, 120);
+        const location = sanitizeText(req.body.location, 120);
+        const sizeM2 = parsePositiveInt(req.body.size_m2);
+        const price = parsePositiveInt(req.body.price);
+        const monthlyAmount = parsePositiveInt(req.body.monthly_amount) || null;
+        const durationMonths = parsePositiveInt(req.body.duration_months) || null;
+        const icon = sanitizeOptionalText(req.body.icon, 8) || '🏡';
+        const status = sanitizeOptionalText(req.body.status, 20) || 'available';
+        const displayOrder = Number(req.body.display_order || 0);
+        const features = safeParseFeatures(req.body.features);
+
+        if (!title || !location || !sizeM2 || !price) {
+            return res.status(400).json({ error: 'title, location, size_m2, price requis' });
+        }
+        if (!['available', 'reserved', 'archived'].includes(status)) {
+            return res.status(400).json({ error: 'status invalide' });
+        }
+
+        await run(
+            `UPDATE available_lots
+             SET title = ?, location = ?, size_m2 = ?, price = ?, monthly_amount = ?, duration_months = ?, icon = ?, features = ?, status = ?, display_order = ?, updated_at = CURRENT_TIMESTAMP
+             WHERE id = ?`,
+            [title, location, sizeM2, price, monthlyAmount, durationMonths, icon, JSON.stringify(features), status, Number.isFinite(displayOrder) ? displayOrder : 0, lotId]
+        );
+
+        await req.audit?.('super_admin.lot_updated', { actor_id: req.user.id, lot_id: lotId });
+        return res.json({ ok: true });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur mise a jour lot' });
+    }
+});
+
+router.delete('/lots/:id', async (req, res) => {
+    try {
+        const lotId = Number(req.params.id);
+        if (!lotId) return res.status(400).json({ error: 'ID lot invalide' });
+        await run('DELETE FROM available_lots WHERE id = ?', [lotId]);
+        await req.audit?.('super_admin.lot_deleted', { actor_id: req.user.id, lot_id: lotId });
+        return res.json({ ok: true });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur suppression lot' });
     }
 });
 
