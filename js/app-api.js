@@ -1,7 +1,30 @@
 (function initApiGlobal() {
+  const LEGACY_API_HOSTS = ['api.social.manoverde.com', 'api.social.manovende.com'];
+
+  function isLegacyApiBase(value) {
+    if (!value) return false;
+    try {
+      const url = new URL(value, window.location.origin);
+      return LEGACY_API_HOSTS.includes(url.hostname);
+    } catch (error) {
+      return false;
+    }
+  }
+
   function resolveApiBase() {
-    const explicit = window.TERRASOCIAL_API_BASE || localStorage.getItem('ts_api_base');
-    if (explicit) return explicit.replace(/\/+$/, '');
+    const runtimeBase = window.TERRASOCIAL_API_BASE;
+    if (runtimeBase && !isLegacyApiBase(runtimeBase)) {
+      return runtimeBase.replace(/\/+$/, '');
+    }
+
+    const localBase = localStorage.getItem('ts_api_base');
+    if (localBase && !isLegacyApiBase(localBase)) {
+      return localBase.replace(/\/+$/, '');
+    }
+
+    if (localBase && isLegacyApiBase(localBase)) {
+      localStorage.removeItem('ts_api_base');
+    }
 
     const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
     if (isLocal) return 'http://localhost:4000';

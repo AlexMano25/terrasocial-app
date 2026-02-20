@@ -1,4 +1,5 @@
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const multer = require('multer');
 const { all, run } = require('../db/connection');
@@ -7,9 +8,17 @@ const { storeDocument } = require('../services/storage');
 
 const router = express.Router();
 
+const uploadDir = process.env.VERCEL
+    ? '/tmp/terrasocial-uploads'
+    : path.join(__dirname, '..', '..', 'uploads');
+
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination(req, file, cb) {
-        cb(null, path.join(__dirname, '..', '..', 'uploads'));
+        cb(null, uploadDir);
     },
     filename(req, file, cb) {
         const safe = file.originalname.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._-]/g, '');
