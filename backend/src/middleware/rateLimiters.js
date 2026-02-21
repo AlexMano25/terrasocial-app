@@ -1,31 +1,16 @@
 const rateLimit = require('express-rate-limit');
 
-const globalLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 400,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: 'Trop de requêtes, réessayez plus tard.' }
-});
-
 const authLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 15,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: 'Trop de tentatives d’authentification.' }
-});
-
-const uploadLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000,
-    max: 40,
-    standardHeaders: true,
-    legacyHeaders: false,
-    message: { error: 'Trop d’uploads, réessayez plus tard.' }
+  windowMs: 10 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  message: {
+    error: "Trop de tentatives d'authentification. Reessaie dans quelques minutes."
+  }
 });
 
 module.exports = {
-    globalLimiter,
-    authLimiter,
-    uploadLimiter
+  authLimiter
 };
