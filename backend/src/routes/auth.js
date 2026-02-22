@@ -230,7 +230,7 @@ router.get('/me', requireAuth, async (req, res) => {
     return res.json({ user: Object.assign({}, req.user, { is_super_admin: isSuperAdmin, is_manager: isManager }) });
 });
 
-// Google OAuth — infrastructure prête, à activer avec les credentials Google Cloud
+// ─── GOOGLE OAUTH ──────────────────────────────────────────────────────────
 router.get('/google', (req, res) => {
     if (!process.env.GOOGLE_CLIENT_ID) {
         return res.status(501).json({
@@ -238,17 +238,104 @@ router.get('/google', (req, res) => {
             instructions: 'Ajoutez GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET dans les variables Vercel'
         });
     }
+    const appUrl = process.env.APP_URL || `https://${req.headers.host}`;
     const params = new URLSearchParams({
         client_id: process.env.GOOGLE_CLIENT_ID,
-        redirect_uri: `${process.env.APP_URL || ''}/api/auth/google/callback`,
+        redirect_uri: `${appUrl}/api/auth/google/callback`,
         response_type: 'code',
-        scope: 'openid email profile'
+        scope: 'openid email profile',
+        access_type: 'offline',
+        prompt: 'select_account'
     });
     return res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params}`);
 });
 
 router.get('/google/callback', async (req, res) => {
-    return res.status(501).json({ error: 'Google OAuth callback — configurez GOOGLE_CLIENT_ID et GOOGLE_CLIENT_SECRET' });
+    const appUrl = process.env.APP_URL || `https://${req.headers.host}`;
+
+    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+        return res.redirect(`${appUrl}/login.html?error=google_not_configured`);
+    }
+
+    const { code, error } = req.query;
+    if (error || !code) {
+        return res.redirect(`${appUrl}/login.html?error=google_denied`);
+    }
+
+    try {
+        // 1. Échanger le code contre un access_token
+        const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                code,
+                client_id: process.env.GOOGLE_CLIENT_ID,
+                client_secret: process.env.GOOGLE_CLIENT_SECRET,
+                redirect_uri: `${appUrl}/api/auth/google/callback`,
+                grant_type: 'authorization_code'
+            })
+        });
+
+        const tokenData = await tokenRes.json();
+        if (!tokenData.access_token) {
+            return res.redirect(`${appUrl}/login.html?error=google_token_failed`);
+        }
+
+        // 2. Récupérer le profil Google
+        const profileRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+            headers: { Authorization: `Bearer ${tokenData.access_token}` }
+        });
+        const profile = await profileRes.json();
+
+        if (!profile.sub || !profile.email) {
+            return res.redirect(`${appUrl}/login.html?error=google_profile_failed`);
+        }
+
+        // 3. Trouver ou créer l'utilisateur
+        let user = await get('SELECT * FROM users WHERE google_id = ?', [profile.sub]);
+
+        if (!user && profile.email) {
+            // Chercher par email si déjà inscrit
+            user = await get('SELECT * FROM users WHERE email = ?', [profile.email.toLowerCase()]);
+            if (user) {
+                // Lier le google_id au compte existant
+                await run('UPDATE users SET google_id = ? WHERE id = ?', [profile.sub, user.id]);
+            }
+        }
+
+        if (!user) {
+            // Créer un nouveau compte client
+            const result = await run(
+                'INSERT INTO users(role, full_name, email, google_id) VALUES (?, ?, ?, ?)',
+                ['client', profile.name || profile.email, profile.email.toLowerCase(), profile.sub]
+            );
+            user = await get('SELECT * FROM users WHERE id = ?', [result.id]);
+        }
+
+        // 4. Générer le JWT et les flags
+        const isSuperAdmin = user.role === 'admin' ? await isSuperAdminUser(user.id) : false;
+        const isManager = (!isSuperAdmin && user.role === 'admin') ? await isManagerUser(user.id) : false;
+
+        const token = tokenForUser(user);
+        const userPayload = JSON.stringify({
+            id: user.id,
+            role: user.role,
+            full_name: user.full_name,
+            email: user.email,
+            phone: user.phone,
+            reliability_score: user.reliability_score,
+            is_super_admin: isSuperAdmin,
+            is_manager: isManager
+        });
+
+        await req.audit?.('auth.google_login', { user_id: user.id });
+
+        // 5. Rediriger vers le frontend avec le token dans le fragment URL
+        const encoded = Buffer.from(userPayload).toString('base64');
+        return res.redirect(`${appUrl}/login.html#google_token=${token}&google_user=${encoded}`);
+    } catch (err) {
+        return res.redirect(`${appUrl}/login.html?error=google_server_error`);
+    }
 });
 
 module.exports = router;

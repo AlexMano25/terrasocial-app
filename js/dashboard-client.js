@@ -33,6 +33,22 @@
       document.getElementById('m-remaining').textContent = xaf(data.metrics.remaining_total);
       document.getElementById('m-score').textContent = `Score de fiabilité: ${data.metrics.reliability_score}/100`;
 
+      // Paiements journaliers — calcul depuis la mensualité estimée
+      const remaining = Number(data.metrics.remaining_total || 0);
+      const contracts = data.contracts || [];
+      // Estimation mensualité : si contrats disponibles, sinon on divise remaining par 24
+      const estimMonthly = Math.ceil(remaining / Math.max(contracts.length * 12 || 24, 1));
+      const dailyEquiv = estimMonthly > 0 ? Math.ceil(estimMonthly / 30) : 0;
+      const versementsMin = estimMonthly > 0 ? Math.ceil(estimMonthly / 1500) : 0;
+      const dailyEl = document.getElementById('m-daily');
+      const dailyCountEl = document.getElementById('m-daily-count');
+      if (dailyEl) {
+        dailyEl.textContent = dailyEquiv > 0 ? `~${dailyEquiv.toLocaleString('fr-FR')} Fr/jour` : '-';
+      }
+      if (dailyCountEl) {
+        dailyCountEl.textContent = versementsMin > 0 ? `ou ${versementsMin} versements de 1 500 Fr` : '';
+      }
+
       document.getElementById('payments-body').innerHTML = data.payments.length
         ? data.payments.map((p) => `
           <tr>

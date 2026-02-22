@@ -363,6 +363,16 @@
             margin-bottom: 20px;
         }
 
+        .lot-daily {
+            background: linear-gradient(135deg, rgba(255,152,0,0.10), rgba(255,193,7,0.12));
+            border-left: 3px solid var(--orange-primary);
+            border-radius: 6px;
+            padding: 7px 12px;
+            font-size: 13px;
+            color: var(--black-soft);
+            margin-bottom: 12px;
+        }
+
         .lot-features {
             list-style: none;
             margin-bottom: 20px;
@@ -830,6 +840,12 @@
                     <a href="#lots" class="btn btn-primary" data-i18n="hero.cta_primary">Voir les lots disponibles</a>
                     <a href="#souscrire" class="btn btn-secondary" data-i18n="hero.cta_secondary">Réserver maintenant</a>
                 </div>
+                <!-- Badge paiement journalier -->
+                <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,152,0,0.18);border:1.5px solid var(--orange-light);border-radius:30px;padding:10px 22px;margin-bottom:18px;margin-top:10px;">
+                    <span style="font-size:24px;">🗓️</span>
+                    <span style="font-size:17px;font-weight:700;color:#fff;">Devenez propriétaire à partir de <span style="color:var(--orange-light);">1 500 FCFA/jour</span></span>
+                </div>
+
                 <div class="hero-stats">
                     <div class="stat">
                         <div class="stat-number" data-i18n="hero.stats.lots.number">50+</div>
@@ -840,8 +856,8 @@
                         <div class="stat-label" data-i18n="hero.stats.surface.label">Surface minimum</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number" data-i18n="hero.stats.months.number">36</div>
-                        <div class="stat-label" data-i18n="hero.stats.months.label">Mois de paiement</div>
+                        <div class="stat-number" style="color:var(--orange-light);">1 500 Fr</div>
+                        <div class="stat-label">Minimum par jour</div>
                     </div>
                 </div>
             </div>
@@ -866,6 +882,7 @@
                         </div>
                         <div class="lot-price" data-i18n="lots.standard.price">500.000 FCFA</div>
                         <div class="lot-monthly" data-i18n="lots.standard.monthly">soit ~21.000 FCFA/mois sur 24 mois</div>
+                        <div class="lot-daily">🗓️ ou <strong>1 500 FCFA/jour</strong> × 14 versements = 1 mois payé</div>
                         <ul class="lot-features">
                             <li data-i18n="lots.standard.features.0">Titre foncier sécurisé</li>
                             <li data-i18n="lots.standard.features.1">Accès route praticable</li>
@@ -886,6 +903,7 @@
                         </div>
                         <div class="lot-price" data-i18n="lots.comfort.price">750.000 FCFA</div>
                         <div class="lot-monthly" data-i18n="lots.comfort.monthly">soit ~25.000 FCFA/mois sur 30 mois</div>
+                        <div class="lot-daily">🗓️ ou <strong>1 500 FCFA/jour</strong> × 17 versements = 1 mois payé</div>
                         <ul class="lot-features">
                             <li data-i18n="lots.comfort.features.0">Titre foncier sécurisé</li>
                             <li data-i18n="lots.comfort.features.1">Accès goudronné</li>
@@ -906,6 +924,7 @@
                         </div>
                         <div class="lot-price" data-i18n="lots.premium.price">1.000.000 FCFA</div>
                         <div class="lot-monthly" data-i18n="lots.premium.monthly">soit ~28.000 FCFA/mois sur 36 mois</div>
+                        <div class="lot-daily">🗓️ ou <strong>1 500 FCFA/jour</strong> × 19 versements = 1 mois payé</div>
                         <ul class="lot-features">
                             <li data-i18n="lots.premium.features.0">Titre foncier garanti</li>
                             <li data-i18n="lots.premium.features.1">Zone viabilisée</li>
@@ -914,6 +933,72 @@
                         </ul>
                         <a href="#souscrire" class="btn btn-primary" style="width: 100%; text-align: center;" data-i18n="lots.premium.reserve">Réserver ce lot</a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAIEMENT JOURNALIER -->
+    <section id="paiement-journalier" style="background: linear-gradient(135deg, #FFF8E1, #FFF3CD); padding: 60px 0;">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color: var(--orange-primary);">🗓️ Payez à votre rythme, <span style="color:var(--green-primary);">chaque jour</span></h2>
+                <p style="color: var(--gray-text);">Pas besoin d'attendre la fin du mois — versez dès 1 500 FCFA par jour et avancez vers votre propriété</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; margin-bottom: 40px;">
+                <div style="background:#fff; border-radius:12px; padding:28px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align:center; border-top: 4px solid var(--orange-primary);">
+                    <div style="font-size:40px; margin-bottom:12px;">💰</div>
+                    <h3 style="color:var(--green-primary); margin-bottom:8px;">À partir de 1 500 Fr/jour</h3>
+                    <p style="color:var(--gray-text); font-size:14px;">Le versement minimum journalier. L'équivalent d'une recharge téléphonique — mais pour votre terrain !</p>
+                </div>
+                <div style="background:#fff; border-radius:12px; padding:28px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align:center; border-top: 4px solid var(--green-primary);">
+                    <div style="font-size:40px; margin-bottom:12px;">📅</div>
+                    <h3 style="color:var(--green-primary); margin-bottom:8px;">Plusieurs jours à l'avance</h3>
+                    <p style="color:var(--gray-text); font-size:14px;">Payez en avance autant de jours que vous voulez — 3 000 Fr couvre 2 jours, 10 500 Fr couvre 7 jours, etc.</p>
+                </div>
+                <div style="background:#fff; border-radius:12px; padding:28px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); text-align:center; border-top: 4px solid var(--green-light);">
+                    <div style="font-size:40px; margin-bottom:12px;">📲</div>
+                    <h3 style="color:var(--green-primary); margin-bottom:8px;">Via Orange Money ou MTN MoMo</h3>
+                    <p style="color:var(--gray-text); font-size:14px;">Payez directement depuis votre téléphone, à n'importe quelle heure, 7j/7 — sans se déplacer.</p>
+                </div>
+            </div>
+
+            <div style="background:#fff; border-radius:16px; padding:32px; max-width:620px; margin:0 auto; box-shadow:0 4px 20px rgba(0,0,0,0.10);">
+                <h3 style="color:var(--green-primary); text-align:center; margin-bottom:20px;">💡 Exemple concret</h3>
+                <table style="width:100%; border-collapse:collapse; font-size:15px;">
+                    <thead>
+                        <tr style="background:var(--gray-light);">
+                            <th style="padding:10px; text-align:left; border-radius:6px 0 0 6px;">Lot</th>
+                            <th style="padding:10px; text-align:center;">Mensualité</th>
+                            <th style="padding:10px; text-align:center;">Versements/mois</th>
+                            <th style="padding:10px; text-align:right; border-radius:0 6px 6px 0;">à 1 500 Fr/j</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                            <td style="padding:10px; font-weight:600;">Standard 500m²</td>
+                            <td style="padding:10px; text-align:center; color:var(--gray-text);">21 000 FCFA</td>
+                            <td style="padding:10px; text-align:center;">14 jours</td>
+                            <td style="padding:10px; text-align:right; color:var(--orange-primary); font-weight:700;">= ✅ payé</td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                            <td style="padding:10px; font-weight:600;">Confort 750m²</td>
+                            <td style="padding:10px; text-align:center; color:var(--gray-text);">25 000 FCFA</td>
+                            <td style="padding:10px; text-align:center;">17 jours</td>
+                            <td style="padding:10px; text-align:right; color:var(--orange-primary); font-weight:700;">= ✅ payé</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px; font-weight:600;">Premium 1000m²</td>
+                            <td style="padding:10px; text-align:center; color:var(--gray-text);">28 000 FCFA</td>
+                            <td style="padding:10px; text-align:center;">19 jours</td>
+                            <td style="padding:10px; text-align:right; color:var(--orange-primary); font-weight:700;">= ✅ payé</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="text-align:center; margin-top:18px; font-size:13px; color:var(--gray-text);">Vous pouvez aussi payer plusieurs jours en avance en un seul versement — chaque franc versé avance votre compteur.</p>
+                <div style="text-align:center; margin-top:20px;">
+                    <a href="#souscrire" class="btn btn-primary">Commencer avec 1 500 FCFA →</a>
                 </div>
             </div>
         </div>
@@ -944,8 +1029,8 @@
                 </div>
                 <div class="step">
                     <div class="step-number">4</div>
-                    <h3 data-i18n="howItWorks.steps.3.title">Payez mensuellement</h3>
-                    <p data-i18n="howItWorks.steps.3.description">Réglez vos mensualités via Orange Money, MTN MoMo ou virement bancaire.</p>
+                    <h3 data-i18n="howItWorks.steps.3.title">Payez à votre rythme</h3>
+                    <p data-i18n="howItWorks.steps.3.description">Réglez vos mensualités <strong>ou versez dès 1 500 FCFA/jour</strong> via Orange Money, MTN MoMo ou virement. Payez même plusieurs jours en avance !</p>
                 </div>
                 <div class="step">
                     <div class="step-number">5</div>
@@ -1005,6 +1090,9 @@
                         <p><span data-i18n="payment.simulator.deposit">Acompte (10%)</span>: <strong id="deposit">50.000 FCFA</strong></p>
                         <p data-i18n="payment.simulator.monthly">Votre mensualité</p>
                         <div class="monthly-amount" id="monthly">18.750 FCFA/mois</div>
+                        <p style="margin-top:12px; font-size:13px; color:var(--gray-text);">Soit en versements journaliers (min. 1 500 Fr/j) :</p>
+                        <div style="font-size:22px; font-weight:bold; color:var(--green-primary); margin-top:4px;" id="daily-equiv">~625 FCFA/jour</div>
+                        <div style="font-size:12px; color:var(--gray-text); margin-top:2px;" id="daily-count">ou 13 versements de 1 500 Fr/mois</div>
                     </div>
                 </div>
             </div>
@@ -1213,7 +1301,7 @@
                     <h4 data-i18n="footer.sections.contact">Contact</h4>
                     <ul>
                         <li>📍 Yaoundé, Cameroun</li>
-                        <li>📞 +237 651 98 28 78 / +237 696 87 58 95</li>
+                        <li>📞 +237 696 87 58 95</li>
                         <li>📧 direction@manovende.com / infos@manoverde.com</li>
                     </ul>
                 </div>
@@ -1243,6 +1331,11 @@
             const remaining = price - deposit;
             const monthly = Math.ceil(remaining / duration);
 
+            // Paiement journalier
+            const MIN_DAILY = 1500;
+            const dailyEquiv = Math.ceil(monthly / 30);
+            const versementsParMois = Math.ceil(monthly / MIN_DAILY);
+
             const locale = {
                 'fr': 'fr-FR',
                 'en': 'en-GB',
@@ -1253,6 +1346,15 @@
 
             document.getElementById('deposit').textContent = deposit.toLocaleString(locale) + ' FCFA';
             document.getElementById('monthly').textContent = monthly.toLocaleString(locale) + ' FCFA/mois';
+
+            const dailyEl = document.getElementById('daily-equiv');
+            const dailyCountEl = document.getElementById('daily-count');
+            if (dailyEl) {
+                dailyEl.textContent = `~${dailyEquiv.toLocaleString(locale)} FCFA/jour`;
+            }
+            if (dailyCountEl) {
+                dailyCountEl.textContent = `ou ${versementsParMois} versements de ${MIN_DAILY.toLocaleString(locale)} Fr/mois`;
+            }
         }
 
         function resolveApiBase() {
@@ -1284,8 +1386,13 @@
                     const features = (Array.isArray(lot.features) ? lot.features : [])
                         .map((item) => `<li>${item}</li>`)
                         .join('');
-                    const monthly = lot.monthly_amount
-                        ? `soit ~${Number(lot.monthly_amount).toLocaleString('fr-FR')} FCFA/mois${lot.duration_months ? ` sur ${lot.duration_months} mois` : ''}`
+                    const monthlyAmt = lot.monthly_amount ? Number(lot.monthly_amount) : 0;
+                    const monthly = monthlyAmt
+                        ? `soit ~${monthlyAmt.toLocaleString('fr-FR')} FCFA/mois${lot.duration_months ? ` sur ${lot.duration_months} mois` : ''}`
+                        : '';
+                    const dailyVersements = monthlyAmt ? Math.ceil(monthlyAmt / 1500) : 0;
+                    const dailyInfo = monthlyAmt
+                        ? `🗓️ ou <strong>1 500 FCFA/jour</strong> × ${dailyVersements} versements = 1 mois payé`
                         : '';
 
                     return `
@@ -1299,6 +1406,7 @@
                                 </div>
                                 <div class="lot-price">${Number(lot.price || 0).toLocaleString('fr-FR')} FCFA</div>
                                 <div class="lot-monthly">${monthly}</div>
+                                ${dailyInfo ? `<div class="lot-daily">${dailyInfo}</div>` : ''}
                                 <ul class="lot-features">${features}</ul>
                                 <a href="#souscrire" class="btn btn-primary" style="width: 100%; text-align: center;">Réserver ce lot</a>
                             </div>
