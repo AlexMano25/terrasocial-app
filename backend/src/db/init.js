@@ -351,7 +351,7 @@ async function initializeDatabase() {
     if (!superAdminEntry) {
         await run(
             'INSERT INTO super_admins(user_id, mfa_secret, is_active) VALUES (?, ?, ?)',
-            [superAdminUser.id, `mfa_${Date.now()}_${superAdminUser.id}`, 1]
+            [superAdminUser.id, `mfa_${Date.now()}_${superAdminUser.id}`, true]
         );
     }
 

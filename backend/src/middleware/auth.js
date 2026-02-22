@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const { get } = require('../db/connection');
 
 async function isSuperAdminUser(userId) {
-    const row = await get('SELECT id FROM super_admins WHERE user_id = ? AND (is_active = 1 OR is_active = true)', [userId]);
+    const row = await get('SELECT id FROM super_admins WHERE user_id = ? AND is_active = TRUE', [userId]);
     return Boolean(row);
 }
 

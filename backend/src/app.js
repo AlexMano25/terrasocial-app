@@ -38,6 +38,9 @@ function ensureInitialized() {
 function buildApp() {
     const app = express();
 
+    // Important derriere Vercel/proxy pour express-rate-limit
+    app.set('trust proxy', true);
+
     app.use(helmet({ crossOriginResourcePolicy: false }));
     app.use(globalLimiter);
     app.use(cors({
@@ -102,4 +105,3 @@ module.exports = {
     buildApp,
     ensureInitialized
 };
-
