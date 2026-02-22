@@ -1,8 +1,14 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const PDFDocument = require('pdfkit');
 const { all, get, run } = require('../db/connection');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt } = require('../utils/validation');
+
+const uploadsPath = process.env.VERCEL
+    ? '/tmp/terrasocial-uploads'
+    : path.join(__dirname, '..', '..', 'uploads');
 
 const router = express.Router();
 
@@ -287,6 +293,35 @@ router.get('/documents', async (req, res) => {
         return res.json({ documents: docs });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur lecture documents admin' });
+    }
+});
+
+router.get('/documents/:id/download', async (req, res) => {
+    try {
+        const docId = Number(req.params.id);
+        if (!docId) return res.status(400).json({ error: 'ID invalide' });
+
+        const doc = await get('SELECT * FROM documents WHERE id = ?', [docId]);
+        if (!doc) return res.status(404).json({ error: 'Document introuvable' });
+
+        await req.audit?.('super_admin.document_downloaded', { actor_id: req.user.id, document_id: docId });
+
+        // Cas Supabase Storage : rediriger vers l'URL publique ou signée
+        if (doc.storage_mode === 'supabase' && doc.public_url) {
+            return res.redirect(doc.public_url);
+        }
+
+        // Cas stockage local : streamer le fichier
+        const localPath = path.join(uploadsPath, path.basename(doc.file_path || doc.file_name));
+        if (!fs.existsSync(localPath)) {
+            return res.status(404).json({ error: 'Fichier introuvable sur le serveur' });
+        }
+
+        res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(doc.file_name)}"`);
+        res.setHeader('Content-Type', 'application/octet-stream');
+        return fs.createReadStream(localPath).pipe(res);
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur téléchargement document' });
     }
 });
 

@@ -41,6 +41,11 @@ function requireRole(allowedRoles) {
     };
 }
 
+async function isManagerUser(userId) {
+    const row = await get('SELECT id FROM manager_admins WHERE user_id = ? AND is_active = TRUE', [userId]);
+    return Boolean(row);
+}
+
 async function requireSuperAdmin(req, res, next) {
     try {
         if (!req.user || req.user.role !== 'admin') {
@@ -57,9 +62,26 @@ async function requireSuperAdmin(req, res, next) {
     }
 }
 
+async function requireManager(req, res, next) {
+    try {
+        if (!req.user || req.user.role !== 'admin') {
+            return res.status(403).json({ error: 'Acces manager refuse' });
+        }
+        const ok = await isManagerUser(req.user.id);
+        if (!ok) {
+            return res.status(403).json({ error: 'Compte manager requis' });
+        }
+        return next();
+    } catch (error) {
+        return res.status(500).json({ error: 'Verification manager impossible' });
+    }
+}
+
 module.exports = {
     requireAuth,
     requireRole,
     requireSuperAdmin,
-    isSuperAdminUser
+    requireManager,
+    isSuperAdminUser,
+    isManagerUser
 };

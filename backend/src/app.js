@@ -74,6 +74,7 @@ function buildApp() {
     app.use('/api/payments', require('./routes/payments'));
     app.use('/api/documents', uploadLimiter, require('./routes/documents'));
     app.use('/api/admin', require('./routes/admin'));
+    app.use('/api/manager', require('./routes/manager'));
     app.use('/api/super-admin', require('./routes/super-admin'));
 
     app.get('/api/health', (req, res) => {

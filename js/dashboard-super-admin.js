@@ -108,12 +108,14 @@
         <td>${d.document_type}</td>
         <td>${d.file_name}</td>
         <td>${d.user_id}</td>
+        <td><span class="status-pill">${d.storage_mode || 'local'}</span></td>
         <td>
+          <button class="btn" data-action="download-doc" data-id="${d.id}" data-name="${d.file_name}">Télécharger</button>
           <button class="btn" data-action="edit-doc" data-id="${d.id}">Renommer type</button>
           <button class="btn" data-action="delete-doc" data-id="${d.id}">Supprimer</button>
         </td>
       </tr>
-    `).join('') : '<tr><td colspan="5">Aucun document</td></tr>';
+    `).join('') : '<tr><td colspan="6">Aucun document</td></tr>';
   }
 
   function lotFormReset() {
@@ -283,6 +285,30 @@
     const docId = btn.dataset.id;
 
     try {
+      if (btn.dataset.action === 'download-doc') {
+        const fileName = btn.dataset.name || `document-${docId}`;
+        flash(`Téléchargement de "${fileName}"…`, 'ok');
+        const response = await fetch(`${TSApi.API_BASE}/api/super-admin/documents/${docId}/download`, {
+          headers: { Authorization: `Bearer ${TSApi.getToken()}` }
+        });
+        if (!response.ok) {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || `HTTP ${response.status}`);
+        }
+        // Si le serveur redirige vers Supabase, response.redirected sera true
+        if (response.redirected) {
+          window.open(response.url, '_blank');
+          return;
+        }
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+        return;
+      }
       if (btn.dataset.action === 'edit-doc') {
         const nextType = prompt('Nouveau type de document:');
         if (!nextType) return;

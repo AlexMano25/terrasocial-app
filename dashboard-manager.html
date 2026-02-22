@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manager Dashboard - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="stylesheet" href="css/super-admin.css">
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="brand"><span>TERRA</span>SOCIAL</div>
+      <p>Espace Manager</p>
+      <nav class="side-nav">
+        <button class="active" data-panel="overview">Vue d'ensemble</button>
+        <button data-panel="users">Utilisateurs</button>
+        <button data-panel="reservations">Réservations</button>
+        <button data-panel="documents">Documents</button>
+        <button data-panel="messages">Messagerie</button>
+      </nav>
+      <p style="margin-top:16px;font-size:12px;color:var(--muted);">Accès en lecture et écriture.<br>Suppressions réservées au Super Admin.</p>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <h1 style="margin:0;">Manager Dashboard</h1>
+          <p id="admin-meta" style="margin:4px 0 0;color:var(--muted);">Chargement du profil...</p>
+        </div>
+        <div class="actions">
+          <button class="btn" id="theme-toggle">Mode sombre</button>
+          <button class="btn" id="logout-btn">Déconnexion</button>
+        </div>
+      </div>
+
+      <div id="flash"></div>
+
+      <!-- PANEL OVERVIEW -->
+      <section id="panel-overview" class="panel active">
+        <div class="kpis">
+          <article class="card"><h4>Utilisateurs</h4><p id="kpi-users">0</p></article>
+          <article class="card"><h4>Réservations en attente</h4><p id="kpi-pending">0</p></article>
+          <article class="card"><h4>Documents soumis</h4><p id="kpi-docs">0</p></article>
+          <article class="card"><h4>Messages envoyés</h4><p id="kpi-messages">0</p></article>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <h3>Activité récente</h3>
+          <table>
+            <thead><tr><th>Type</th><th>Description</th><th>Date</th></tr></thead>
+            <tbody id="activity-tbody"><tr><td colspan="3" style="color:var(--muted)">Chargement...</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PANEL UTILISATEURS -->
+      <section id="panel-users" class="panel">
+        <div class="card">
+          <h3>Utilisateurs</h3>
+          <p style="color:var(--muted);font-size:13px;">Mode lecture seule — modifications via le formulaire ci-dessous.</p>
+          <div class="toolbar">
+            <input id="filter-q" type="text" placeholder="Recherche nom / email / téléphone">
+            <select id="filter-role">
+              <option value="">Tous rôles</option>
+              <option value="client">Client</option>
+              <option value="owner">Propriétaire</option>
+            </select>
+            <button class="btn" id="btn-filter-users">Filtrer</button>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>Nom</th><th>Rôle</th><th>Email</th><th>Téléphone</th><th>Ville</th><th>Actions</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Formulaire modification utilisateur (lecture + écriture, pas suppression) -->
+        <div class="card" id="user-edit-panel" style="display:none;margin-top:16px;">
+          <h3>Modifier utilisateur</h3>
+          <input type="hidden" id="edit-user-id">
+          <div class="grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label>Nom complet</label>
+              <input id="edit-user-name" type="text" placeholder="Nom complet">
+            </div>
+            <div>
+              <label>Ville</label>
+              <input id="edit-user-city" type="text" placeholder="Ville">
+            </div>
+            <div>
+              <label>Téléphone</label>
+              <input id="edit-user-phone" type="tel" placeholder="+237 6XX XXX XXX">
+            </div>
+            <div>
+              <label>Email</label>
+              <input id="edit-user-email" type="email" placeholder="email@exemple.com">
+            </div>
+          </div>
+          <div class="toolbar" style="margin-top:10px;">
+            <button class="btn primary" id="btn-save-user">Enregistrer modifications</button>
+            <button class="btn" id="btn-cancel-edit">Annuler</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PANEL RÉSERVATIONS -->
+      <section id="panel-reservations" class="panel">
+        <div class="card">
+          <h3>Réservations</h3>
+          <div class="toolbar">
+            <select id="filter-res-status">
+              <option value="">Tous statuts</option>
+              <option value="pending">En attente</option>
+              <option value="active">Active</option>
+              <option value="completed">Terminée</option>
+              <option value="cancelled">Annulée</option>
+            </select>
+            <button class="btn" id="btn-filter-res">Filtrer</button>
+          </div>
+          <table>
+            <thead><tr><th>ID</th><th>Client</th><th>Lot</th><th>Statut</th><th>Mensualité</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="reservations-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PANEL DOCUMENTS -->
+      <section id="panel-documents" class="panel">
+        <div class="card">
+          <h3>Documents soumis</h3>
+          <p style="color:var(--muted);font-size:13px;">Lecture seule — téléchargement disponible.</p>
+          <table>
+            <thead><tr><th>ID</th><th>Type</th><th>Nom du fichier</th><th>Utilisateur</th><th>Date</th><th>Actions</th></tr></thead>
+            <tbody id="docs-tbody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PANEL MESSAGERIE -->
+      <section id="panel-messages" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Envoyer un message</h3>
+            <div class="toolbar">
+              <select id="msg-scope">
+                <option value="all">Tous les utilisateurs</option>
+                <option value="role">Par rôle</option>
+                <option value="user">Utilisateur précis</option>
+              </select>
+              <select id="msg-role">
+                <option value="owner">Propriétaires</option>
+                <option value="client">Clients</option>
+              </select>
+              <input id="msg-user-id" type="number" placeholder="ID utilisateur (si scope=user)">
+            </div>
+            <div class="toolbar">
+              <label><input type="checkbox" id="msg-ch-inapp" checked> In-app</label>
+              <label><input type="checkbox" id="msg-ch-email" checked> Email</label>
+            </div>
+            <textarea id="msg-content" placeholder="Rédigez votre message..."></textarea>
+            <button class="btn primary" id="btn-send-msg">Envoyer</button>
+          </div>
+          <div class="card">
+            <h3>Historique des messages</h3>
+            <table>
+              <thead><tr><th>Scope</th><th>Canaux</th><th>Statut</th><th>Date</th></tr></thead>
+              <tbody id="messages-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/runtime-config.js"></script>
+  <script src="js/app-api.js"></script>
+  <script src="js/dashboard-manager.js"></script>
+</body>
+</html>

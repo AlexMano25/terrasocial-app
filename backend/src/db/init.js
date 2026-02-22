@@ -327,6 +327,40 @@ async function initializeDatabase() {
         // Column likely already exists.
     }
 
+    // v1.3 — Auth téléphone : rendre email nullable pour les utilisateurs sans email.
+    try {
+        if (dbClient === 'postgres') {
+            await run('ALTER TABLE users ALTER COLUMN email DROP NOT NULL');
+        }
+    } catch (error) {
+        // Déjà nullable ou SQLite (pas de NOT NULL strict).
+    }
+
+    // v1.3 — Google OAuth : colonne google_id sur users.
+    try {
+        await run('ALTER TABLE users ADD COLUMN google_id TEXT');
+    } catch (error) {
+        // Colonne déjà présente.
+    }
+
+    // v1.3 — Table manager_admins pour le rôle Administrateur Limité.
+    if (dbClient === 'postgres') {
+        await run(`CREATE TABLE IF NOT EXISTS manager_admins (
+            id BIGSERIAL PRIMARY KEY,
+            user_id BIGINT NOT NULL UNIQUE REFERENCES users(id),
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+    } else {
+        await run(`CREATE TABLE IF NOT EXISTS manager_admins (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )`);
+    }
+
     const admin = await get('SELECT id FROM users WHERE email = ?', ['admin@terrasocial.cm']);
     if (!admin) {
         const passwordHash = await bcrypt.hash('Admin@12345', 10);
@@ -352,6 +386,24 @@ async function initializeDatabase() {
         await run(
             'INSERT INTO super_admins(user_id, mfa_secret, is_active) VALUES (?, ?, ?)',
             [superAdminUser.id, `mfa_${Date.now()}_${superAdminUser.id}`, true]
+        );
+    }
+
+    // v1.3 — Bootstrap compte Manager par défaut.
+    let managerUser = await get('SELECT id FROM users WHERE email = ?', ['manager@terrasocial.cm']);
+    if (!managerUser) {
+        const passwordHash = await bcrypt.hash('Manager@2026!', 12);
+        const created = await run(
+            'INSERT INTO users(role, full_name, email, password_hash, city, phone) VALUES (?, ?, ?, ?, ?, ?)',
+            ['admin', 'Manager TERRASOCIAL', 'manager@terrasocial.cm', passwordHash, 'Yaounde', '+237600000002']
+        );
+        managerUser = { id: created.id };
+    }
+    const managerEntry = await get('SELECT id FROM manager_admins WHERE user_id = ?', [managerUser.id]);
+    if (!managerEntry) {
+        await run(
+            'INSERT INTO manager_admins(user_id, is_active) VALUES (?, ?)',
+            [managerUser.id, true]
         );
     }
 

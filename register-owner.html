@@ -7,6 +7,9 @@
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="css/app.css">
+  <style>
+    .hint { font-size:12px; color:#64748b; margin-top:4px; }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -27,28 +30,38 @@
       <form id="register-form" class="grid grid-2">
         <div>
           <label for="full_name">Nom complet</label>
-          <input id="full_name" required>
-        </div>
-        <div>
-          <label for="phone">Téléphone</label>
-          <input id="phone" required>
-        </div>
-        <div>
-          <label for="email">Email</label>
-          <input id="email" type="email" required>
+          <input id="full_name" required placeholder="Ex: Marie Nguemo">
         </div>
         <div>
           <label for="city">Ville</label>
-          <input id="city" required>
+          <input id="city" placeholder="Ex: Douala">
         </div>
+
+        <!-- Téléphone -->
+        <div>
+          <label for="phone">Numéro de téléphone <span style="color:#0ea5e9">*</span></label>
+          <input id="phone" type="tel" placeholder="Ex: +237 6XX XXX XXX">
+          <p class="hint">MTN, Orange, Nexttel — format international recommandé</p>
+        </div>
+
+        <!-- Email (optionnel) -->
+        <div>
+          <label for="email">Email <span style="color:#94a3b8">(optionnel)</span></label>
+          <input id="email" type="email" placeholder="Ex: marie@exemple.com">
+          <p class="hint">Laissez vide si vous n'avez pas d'email</p>
+        </div>
+
         <div style="grid-column: 1 / -1;">
           <label for="password">Mot de passe</label>
-          <input id="password" type="password" minlength="8" required>
+          <input id="password" type="password" required placeholder="Min. 10 car. — Majuscule, chiffre, spécial">
         </div>
         <div style="grid-column: 1 / -1;">
           <button class="btn btn-secondary" type="submit">Créer mon compte propriétaire</button>
         </div>
       </form>
+      <p class="small" style="margin-top:12px; color:#64748b;">
+        * Au moins un téléphone ou un email est requis pour créer votre compte.
+      </p>
     </section>
   </main>
 
@@ -56,16 +69,26 @@
   <script src="js/app-api.js"></script>
   <script>
     function flash(message, type) {
-      document.getElementById('flash').innerHTML = `<div class="flash ${type}">${message}</div>`;
+      const el = document.getElementById('flash');
+      el.innerHTML = `<div class="flash ${type}">${message}</div>`;
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     document.getElementById('register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!phone && !email) {
+        flash('Veuillez saisir un numéro de téléphone ou une adresse email.', 'err');
+        return;
+      }
+
       const body = {
         full_name: document.getElementById('full_name').value,
-        phone: document.getElementById('phone').value,
-        email: document.getElementById('email').value,
+        phone: phone || undefined,
+        email: email || undefined,
         city: document.getElementById('city').value,
         password: document.getElementById('password').value
       };
