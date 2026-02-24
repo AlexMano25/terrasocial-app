@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Static frontend build helpers for TERRASOCIAL",
   "dependencies": {
+    "docx": "^9.5.1",
     "@supabase/supabase-js": "^2.57.4",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",

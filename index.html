@@ -1031,7 +1031,7 @@
                 <div class="step">
                     <div class="step-number">2</div>
                     <h3 data-i18n="howItWorks.steps.1.title">Réservez en ligne</h3>
-                    <p data-i18n="howItWorks.steps.1.description">Remplissez le formulaire de réservation et versez l'acompte de 10% pour bloquer votre lot.</p>
+                    <p>Remplissez le formulaire de réservation et réglez les <strong>frais d'ouverture de dossier de 10 000 FCFA</strong> pour bloquer votre lot — aucun acompte supplémentaire.</p>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
@@ -1079,31 +1079,69 @@
             </div>
 
             <div class="payment-simulator">
-                <h3 data-i18n="payment.simulator.title">💰 Simulateur de Paiement</h3>
+                <h3>💰 Simulateur de Paiement</h3>
+
+                <!-- Frais de dossier bien en vue -->
+                <div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9); border:1.5px solid var(--green-primary); border-radius:10px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; gap:14px;">
+                    <span style="font-size:32px;">📋</span>
+                    <div>
+                        <strong style="color:var(--green-dark); font-size:16px;">Frais d'ouverture de dossier : 10 000 FCFA</strong><br>
+                        <span style="font-size:13px; color:#555;">Paiement unique à la souscription — aucun acompte supplémentaire</span>
+                    </div>
+                </div>
+
                 <div class="simulator-form">
                     <div class="form-group">
-                        <label data-i18n="payment.simulator.lotPrice">Prix du lot (FCFA)</label>
+                        <label>Lot choisi</label>
                         <select id="lot-price" onchange="calculatePayment()">
-                            <option value="500000" data-i18n="payment.simulator.lots.standard">500.000 FCFA - Lot Standard</option>
-                            <option value="750000" data-i18n="payment.simulator.lots.comfort">750.000 FCFA - Lot Confort</option>
-                            <option value="1000000" data-i18n="payment.simulator.lots.premium">1.000.000 FCFA - Lot Premium</option>
+                            <option value="500000" data-monthly="21000" data-duration="24">500 000 FCFA — Lot Standard 500m²</option>
+                            <option value="750000" data-monthly="25000" data-duration="30">750 000 FCFA — Lot Confort 750m²</option>
+                            <option value="1000000" data-monthly="28000" data-duration="36">1 000 000 FCFA — Lot Premium 1000m²</option>
                         </select>
                     </div>
+
+                    <!-- Mode de versement -->
                     <div class="form-group">
-                        <label data-i18n="payment.simulator.duration">Durée de paiement</label>
+                        <label>Mode de versement</label>
+                        <div style="display:flex; gap:12px; margin-top:6px;">
+                            <label id="mode-mensuel-label" style="flex:1; cursor:pointer; border:2px solid var(--green-primary); background:#f1f8f1; border-radius:10px; padding:14px 12px; text-align:center; font-weight:700; color:var(--green-dark); transition:all .2s;">
+                                <input type="radio" name="payment-mode" id="mode-mensuel" value="mensuel" checked onchange="calculatePayment()" style="display:none;">
+                                📅 Mensuel
+                            </label>
+                            <label id="mode-journalier-label" style="flex:1; cursor:pointer; border:2px solid #ddd; border-radius:10px; padding:14px 12px; text-align:center; font-weight:700; color:#888; transition:all .2s;">
+                                <input type="radio" name="payment-mode" id="mode-journalier" value="journalier" onchange="calculatePayment()" style="display:none;">
+                                🗓️ Journalier
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Durée (visible uniquement en mode mensuel) -->
+                    <div class="form-group" id="duration-group">
+                        <label>Durée de paiement</label>
                         <select id="duration" onchange="calculatePayment()">
-                            <option value="12" data-i18n="payment.simulator.durations.0">12 mois</option>
-                            <option value="24" selected data-i18n="payment.simulator.durations.1">24 mois</option>
-                            <option value="36" data-i18n="payment.simulator.durations.2">36 mois</option>
+                            <option value="12">12 mois</option>
+                            <option value="24" selected>24 mois</option>
+                            <option value="36">36 mois</option>
                         </select>
                     </div>
+
                     <div class="simulator-result">
-                        <p><span data-i18n="payment.simulator.deposit">Acompte (10%)</span>: <strong id="deposit">50.000 FCFA</strong></p>
-                        <p data-i18n="payment.simulator.monthly">Votre mensualité</p>
-                        <div class="monthly-amount" id="monthly">18.750 FCFA/mois</div>
-                        <p style="margin-top:12px; font-size:13px; color:var(--gray-text);">Soit en versements journaliers (min. 1 500 Fr/j) :</p>
-                        <div style="font-size:22px; font-weight:bold; color:var(--green-primary); margin-top:4px;" id="daily-equiv">~625 FCFA/jour</div>
-                        <div style="font-size:12px; color:var(--gray-text); margin-top:2px;" id="daily-count">ou 13 versements de 1 500 Fr/mois</div>
+                        <!-- Mode mensuel -->
+                        <div id="result-mensuel">
+                            <p style="color:var(--gray-text); margin-bottom:4px;">Votre mensualité</p>
+                            <div class="monthly-amount" id="monthly">21 000 FCFA/mois</div>
+                            <div style="margin-top:10px; font-size:13px; color:var(--gray-text);">Équivalent journalier :</div>
+                            <div style="font-size:14px; font-weight:600; color:var(--orange-primary); margin-top:2px;" id="daily-count">🍺🍺 14 versements de 1 500 Fr = 1 mois payé</div>
+                        </div>
+                        <!-- Mode journalier -->
+                        <div id="result-journalier" style="display:none;">
+                            <p style="color:var(--gray-text); margin-bottom:4px;">Versez chaque jour à partir de :</p>
+                            <div class="monthly-amount" id="daily-equiv" style="color:var(--orange-primary);">1 500 FCFA/jour</div>
+                            <div style="margin-top:10px; font-size:14px; color:#555; line-height:1.6;" id="daily-detail">
+                                14 versements de 1 500 Fr = 1 mois payé<br>
+                                <span style="font-size:13px; color:var(--gray-text);">Payez autant de jours en avance que vous voulez !</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1154,45 +1192,70 @@
                 <p data-i18n="subscription.description">Remplissez ce formulaire pour démarrer votre parcours vers la propriété</p>
             </div>
             <div class="subscription-form">
-                <h3 data-i18n="subscription.formTitle">Formulaire de Réservation</h3>
+                <h3>Formulaire de Réservation</h3>
+
+                <!-- Frais de dossier mis en avant -->
+                <div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9); border:2px solid var(--green-primary); border-radius:12px; padding:16px 22px; margin-bottom:24px; display:flex; align-items:center; gap:16px;">
+                    <span style="font-size:36px;">📋</span>
+                    <div>
+                        <strong style="font-size:17px; color:var(--green-dark);">Frais d'ouverture de dossier : 10 000 FCFA</strong><br>
+                        <span style="font-size:14px; color:#444;">Paiement unique à la souscription · <em>Aucun acompte supplémentaire</em></span>
+                    </div>
+                </div>
+
                 <form action="#" method="POST" id="reservation-form">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="nom"><span data-i18n="subscription.form.fullName">Nom complet</span> *</label>
-                            <input id="nom" type="text" name="nom" required data-i18n-placeholder="subscription.form.fullNamePlaceholder" placeholder="Ex: NKOMO Jean Paul">
+                            <label for="nom">Nom complet *</label>
+                            <input id="nom" type="text" name="nom" required placeholder="Ex: NKOMO Jean Paul">
                         </div>
                         <div class="form-group">
-                            <label for="telephone"><span data-i18n="subscription.form.phone">Numéro de téléphone</span> *</label>
-                            <input id="telephone" type="tel" name="telephone" required data-i18n-placeholder="subscription.form.phonePlaceholder" placeholder="Ex: 6XX XX XX XX">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="email" data-i18n="subscription.form.email">Adresse email</label>
-                            <input id="email" type="email" name="email" data-i18n-placeholder="subscription.form.emailPlaceholder" placeholder="Ex: nom@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label for="ville"><span data-i18n="subscription.form.city">Ville de résidence</span> *</label>
-                            <input id="ville" type="text" name="ville" required data-i18n-placeholder="subscription.form.cityPlaceholder" placeholder="Ex: Yaoundé">
+                            <label for="telephone">Numéro de téléphone *</label>
+                            <input id="telephone" type="tel" name="telephone" required placeholder="Ex: 6XX XX XX XX">
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="lot"><span data-i18n="subscription.form.lot">Lot souhaité</span> *</label>
+                            <label for="email">Adresse email</label>
+                            <input id="email" type="email" name="email" placeholder="Ex: nom@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="ville">Ville de résidence *</label>
+                            <input id="ville" type="text" name="ville" required placeholder="Ex: Yaoundé">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="lot">Lot souhaité *</label>
                             <select id="lot" name="lot" required>
-                                <option value="" data-i18n="subscription.form.lotSelect">-- Sélectionnez un lot --</option>
-                                <option value="standard" data-i18n="payment.simulator.lots.standard">Lot Standard - 500m² - 500.000 FCFA</option>
-                                <option value="confort" data-i18n="payment.simulator.lots.comfort">Lot Confort - 750m² - 750.000 FCFA</option>
-                                <option value="premium" data-i18n="payment.simulator.lots.premium">Lot Premium - 1000m² - 1.000.000 FCFA</option>
+                                <option value="">-- Sélectionnez un lot --</option>
+                                <option value="standard">Lot Standard - 500m² - 500 000 FCFA</option>
+                                <option value="confort">Lot Confort - 750m² - 750 000 FCFA</option>
+                                <option value="premium">Lot Premium - 1000m² - 1 000 000 FCFA</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="duree"><span data-i18n="subscription.form.duration">Durée de paiement souhaitée</span> *</label>
+                            <label for="duree">Durée de paiement souhaitée *</label>
                             <select id="duree" name="duree" required>
-                                <option value="12" data-i18n="payment.simulator.durations.0">12 mois</option>
-                                <option value="24" selected data-i18n="payment.simulator.durations.1">24 mois</option>
-                                <option value="36" data-i18n="payment.simulator.durations.2">36 mois</option>
+                                <option value="12">12 mois</option>
+                                <option value="24" selected>24 mois</option>
+                                <option value="36">36 mois</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <!-- Mode de versement dans la souscription -->
+                    <div class="form-group">
+                        <label>Mode de versement préféré *</label>
+                        <div style="display:flex; gap:12px; margin-top:6px;">
+                            <label style="flex:1; cursor:pointer; border:2px solid #ddd; border-radius:10px; padding:14px; text-align:center; font-weight:600; color:#555;" id="sub-mode-mensuel-label">
+                                <input type="radio" name="mode_versement" id="sub-mode-mensuel" value="mensuel" required style="display:none;" onclick="subModeChange(this)">
+                                📅 Mensuel
+                            </label>
+                            <label style="flex:1; cursor:pointer; border:2px solid #ddd; border-radius:10px; padding:14px; text-align:center; font-weight:600; color:#555;" id="sub-mode-journalier-label">
+                                <input type="radio" name="mode_versement" id="sub-mode-journalier" value="journalier" style="display:none;" onclick="subModeChange(this)">
+                                🗓️ Journalier (dès 1 500 Fr/j)
+                            </label>
                         </div>
                     </div>
                     <div class="form-group">
@@ -1334,44 +1397,81 @@
             document.getElementById('nav-menu').classList.toggle('active');
         }
 
-        // Payment simulator — synchronisé avec l'API lots
+        // Payment simulator — synchronisé avec API lots, modes mensuel & journalier
         function calculatePayment() {
             const select = document.getElementById('lot-price');
+            if (!select) return;
             const price = parseInt(select.value) || 500000;
             const selectedOpt = select.options[select.selectedIndex];
-            // Si l'option vient de l'API, data-monthly contient la mensualité réelle
-            const apiMonthly = selectedOpt ? parseInt(selectedOpt.dataset.monthly || '0') : 0;
+            // data-monthly = mensualité réelle depuis l'API ; data-duration = durée contractuelle
+            const apiMonthly  = selectedOpt ? parseInt(selectedOpt.dataset.monthly  || '0') : 0;
             const apiDuration = selectedOpt ? parseInt(selectedOpt.dataset.duration || '0') : 0;
 
-            const duration = parseInt(document.getElementById('duration').value) || apiDuration || 24;
-            const deposit = price * 0.10;
-            const remaining = price - deposit;
-            // Priorité : mensualité réelle de l'API, sinon calcul
-            const monthly = apiMonthly || Math.ceil(remaining / duration);
+            // Synchroniser le select durée avec la durée contractuelle du lot sélectionné
+            const durationSel = document.getElementById('duration');
+            if (durationSel && apiDuration > 0) {
+                // Chercher la valeur exacte ou la plus proche dans les options disponibles
+                const opts = Array.from(durationSel.options).map(o => parseInt(o.value));
+                if (opts.includes(apiDuration)) {
+                    durationSel.value = String(apiDuration);
+                }
+            }
+            const duration = (durationSel ? parseInt(durationSel.value) : 0) || apiDuration || 24;
 
-            // Paiement journalier
+            // ── Nouveau modèle : pas d'acompte %, frais de dossier 10 000 FCFA fixes ──
             const MIN_DAILY = 1500;
-            const dailyEquiv = Math.ceil(monthly / 30);
+            const monthly = apiMonthly || Math.ceil(price / duration);
             const versementsParMois = Math.ceil(monthly / MIN_DAILY);
+            const joursMois = versementsParMois; // alias lisible
 
             const locale = {
-                'fr': 'fr-FR',
-                'en': 'en-GB',
-                'es': 'es-ES',
-                'zh': 'zh-CN',
-                'de': 'de-DE'
+                'fr': 'fr-FR', 'en': 'en-GB', 'es': 'es-ES', 'zh': 'zh-CN', 'de': 'de-DE'
             }[window.i18n && window.i18n.currentLanguage] || 'fr-FR';
 
-            document.getElementById('deposit').textContent = deposit.toLocaleString(locale) + ' FCFA';
-            document.getElementById('monthly').textContent = monthly.toLocaleString(locale) + ' FCFA/mois';
+            const mode = (document.querySelector('input[name="payment-mode"]:checked') || {}).value || 'mensuel';
 
-            const dailyEl = document.getElementById('daily-equiv');
+            // ── Résultat mensuel ──
+            const monthlyEl = document.getElementById('monthly');
+            if (monthlyEl) monthlyEl.textContent = monthly.toLocaleString(locale) + ' FCFA/mois';
+
             const dailyCountEl = document.getElementById('daily-count');
-            if (dailyEl) {
-                dailyEl.textContent = `~${dailyEquiv.toLocaleString(locale)} FCFA/jour`;
-            }
             if (dailyCountEl) {
-                dailyCountEl.textContent = `🍺🍺 ${versementsParMois} versements de ${MIN_DAILY.toLocaleString(locale)} Fr = 1 mois payé`;
+                dailyCountEl.textContent = `🍺🍺 ${joursMois} versements de 1 500 Fr = 1 mois payé`;
+            }
+
+            // ── Résultat journalier ──
+            const dailyEquivEl = document.getElementById('daily-equiv');
+            if (dailyEquivEl) {
+                dailyEquivEl.textContent = '1 500 FCFA/jour';
+            }
+            const dailyDetailEl = document.getElementById('daily-detail');
+            if (dailyDetailEl) {
+                dailyDetailEl.innerHTML =
+                    `<strong>${joursMois} versements de 1 500 Fr</strong> couvrent la mensualité de ${monthly.toLocaleString(locale)} FCFA<br>` +
+                    `<span style="font-size:13px; color:var(--gray-text);">Payez autant de jours en avance que vous voulez — chaque franc compte !</span>`;
+            }
+
+            // ── Affichage des blocs selon le mode ──
+            const resMensuel     = document.getElementById('result-mensuel');
+            const resJournalier  = document.getElementById('result-journalier');
+            const durationGroup  = document.getElementById('duration-group');
+
+            if (resMensuel)    resMensuel.style.display    = mode === 'mensuel'    ? '' : 'none';
+            if (resJournalier) resJournalier.style.display = mode === 'journalier' ? '' : 'none';
+            if (durationGroup) durationGroup.style.display = mode === 'mensuel'    ? '' : 'none';
+
+            // ── Style des boutons de mode ──
+            const lblMen = document.getElementById('mode-mensuel-label');
+            const lblJou = document.getElementById('mode-journalier-label');
+            if (lblMen) {
+                lblMen.style.borderColor = mode === 'mensuel' ? 'var(--green-primary)' : '#ddd';
+                lblMen.style.background  = mode === 'mensuel' ? '#f1f8f1' : '#fff';
+                lblMen.style.color       = mode === 'mensuel' ? 'var(--green-dark)' : '#888';
+            }
+            if (lblJou) {
+                lblJou.style.borderColor = mode === 'journalier' ? 'var(--orange-primary)' : '#ddd';
+                lblJou.style.background  = mode === 'journalier' ? '#fff8f1' : '#fff';
+                lblJou.style.color       = mode === 'journalier' ? 'var(--orange-primary)' : '#888';
             }
         }
 
@@ -1432,21 +1532,77 @@
                     `;
                 }).join('');
 
-                // ── Synchroniser le simulateur avec les lots de l'API ──────────────
+                // ── Synchroniser SIMULATEUR & FORMULAIRE avec les lots de l'API ──
                 const simSelect = document.getElementById('lot-price');
-                if (simSelect) {
+                if (simSelect && lots.length > 0) {
                     simSelect.innerHTML = lots.map((lot) => {
-                        const price = Number(lot.price || 0);
+                        const price   = Number(lot.price || 0);
                         const monthly = Number(lot.monthly_amount || 0);
-                        const dur = Number(lot.duration_months || 24);
-                        const label = `${price.toLocaleString('fr-FR')} FCFA — ${lot.title}`;
+                        const dur     = Number(lot.duration_months || 24);
+                        const label   = `${price.toLocaleString('fr-FR')} FCFA — ${lot.title}`;
                         return `<option value="${price}" data-monthly="${monthly}" data-duration="${dur}">${label}</option>`;
                     }).join('');
-                    // Recalculer avec les nouvelles données
+
+                    // Ajouter les durées manquantes dans le select durée
+                    const durationSel = document.getElementById('duration');
+                    if (durationSel) {
+                        lots.forEach(lot => {
+                            const dur = Number(lot.duration_months || 0);
+                            if (dur > 0) {
+                                const exists = Array.from(durationSel.options).some(o => parseInt(o.value) === dur);
+                                if (!exists) {
+                                    const opt = document.createElement('option');
+                                    opt.value = dur;
+                                    opt.textContent = `${dur} mois`;
+                                    durationSel.appendChild(opt);
+                                }
+                            }
+                        });
+                        // Trier les options par valeur numérique
+                        const sorted = Array.from(durationSel.options)
+                            .sort((a, b) => parseInt(a.value) - parseInt(b.value));
+                        durationSel.innerHTML = '';
+                        sorted.forEach(o => durationSel.appendChild(o));
+                    }
+
                     calculatePayment();
+                }
+
+                // Mettre à jour le select du formulaire de souscription
+                const formLotSelect = document.getElementById('lot');
+                if (formLotSelect) {
+                    const current = formLotSelect.value;
+                    formLotSelect.innerHTML = '<option value="">-- Sélectionnez un lot --</option>' +
+                        lots.map((lot) => {
+                            const price = Number(lot.price || 0);
+                            const monthly = Number(lot.monthly_amount || 0);
+                            const dur = Number(lot.duration_months || 24);
+                            // Garder la clé slug (id ou title normalisé) pour le backend
+                            const slug = (lot.slug || lot.title || '').toLowerCase()
+                                .replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+                            return `<option value="${slug}" data-price="${price}" data-monthly="${monthly}" data-duration="${dur}">${lot.title} — ${price.toLocaleString('fr-FR')} FCFA</option>`;
+                        }).join('');
+                    if (current) formLotSelect.value = current;
                 }
             } catch (error) {
                 // Keep static cards if API is not reachable.
+            }
+        }
+
+        // Boutons de mode dans le formulaire de souscription
+        function subModeChange(radio) {
+            const isMen = radio.value === 'mensuel';
+            const lblM = document.getElementById('sub-mode-mensuel-label');
+            const lblJ = document.getElementById('sub-mode-journalier-label');
+            if (lblM) {
+                lblM.style.borderColor = isMen ? 'var(--green-primary)' : '#ddd';
+                lblM.style.background  = isMen ? '#f1f8f1' : '#fff';
+                lblM.style.color       = isMen ? 'var(--green-dark)' : '#555';
+            }
+            if (lblJ) {
+                lblJ.style.borderColor = !isMen ? 'var(--orange-primary)' : '#ddd';
+                lblJ.style.background  = !isMen ? '#fff8f1' : '#fff';
+                lblJ.style.color       = !isMen ? 'var(--orange-primary)' : '#555';
             }
         }
 
@@ -1454,24 +1610,23 @@
         document.getElementById('reservation-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = e.target;
-            const lotMap = {
-                standard: 500000,
-                confort: 750000,
-                premium: 1000000
-            };
+            const lotMap = { standard: 500000, confort: 750000, premium: 1000000 };
 
-            const lotType = form.querySelector('select[name="lot"]').value;
+            const lotType  = form.querySelector('select[name="lot"]').value;
             const lotPrice = lotMap[lotType] || 0;
+            const modeVers = (form.querySelector('input[name="mode_versement"]:checked') || {}).value || 'mensuel';
 
             const payload = {
-                full_name: form.querySelector('input[name="nom"]').value,
-                phone: form.querySelector('input[name="telephone"]').value,
-                email: form.querySelector('input[name="email"]').value,
-                city: form.querySelector('input[name="ville"]').value,
-                lot_type: lotType,
-                lot_price: lotPrice,
+                full_name:      form.querySelector('input[name="nom"]').value,
+                phone:          form.querySelector('input[name="telephone"]').value,
+                email:          form.querySelector('input[name="email"]').value,
+                city:           form.querySelector('input[name="ville"]').value,
+                lot_type:       lotType,
+                lot_price:      lotPrice,
                 duration_months: Number(form.querySelector('select[name="duree"]').value),
-                source: form.querySelector('select[name="source"]').value || 'site-web'
+                mode_versement: modeVers,   // mensuel | journalier
+                dossier_fee:    10000,       // frais d'ouverture de dossier fixes
+                source:         form.querySelector('select[name="source"]').value || 'site-web'
             };
 
             try {
@@ -1481,17 +1636,16 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) {
-                    throw new Error('Erreur enregistrement demande');
-                }
+                if (!response.ok) throw new Error('Erreur enregistrement demande');
 
-                const successMessage = window.i18n.t('messages.success', 'Merci pour votre demande de réservation ! Notre équipe vous contactera dans les 24h pour finaliser votre dossier.');
-                alert(successMessage);
+                const msg = (window.i18n && window.i18n.t)
+                    ? window.i18n.t('messages.success', '')
+                    : '';
+                alert(msg || 'Merci pour votre demande ! Notre équipe vous contactera dans les 24h.\n\nFrais d\'ouverture de dossier : 10 000 FCFA à régler à la signature.');
                 form.reset();
                 calculatePayment();
             } catch (error) {
-                const errorMessage = window.i18n.t('messages.error', 'Une erreur est survenue. Veuillez réessayer.');
-                alert(errorMessage);
+                alert('Une erreur est survenue. Veuillez réessayer ou nous contacter directement.');
             }
         });
 

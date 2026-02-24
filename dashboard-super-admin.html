@@ -180,7 +180,10 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <!-- Chart.js : fichier local prioritaire (télécharger avec download-assets.sh), CDN en fallback -->
+  <script src="js/chart.umd.min.js"
+          onerror="document.write('<scr'+'ipt src=\'https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js\'><\/scr'+'ipt>')">
+  </script>
   <script src="js/runtime-config.js"></script>
   <script src="js/app-api.js"></script>
   <script src="js/dashboard-super-admin.js"></script>
