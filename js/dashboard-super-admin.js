@@ -152,7 +152,7 @@
       <tr>
         <td>${lot.id}</td>
         <td>${lot.title}</td>
-        <td>${formatMoney(lot.price)}</td>
+        <td>${formatMoney(lot.price)}/m²</td>
         <td><span class="status-pill">${lot.status}</span></td>
         <td>
           <button class="btn" data-action="edit-lot" data-id="${lot.id}">Éditer</button>
