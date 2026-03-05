@@ -1,1 +1,0 @@
-# terrasocial-app
