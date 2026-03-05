@@ -1,0 +1,803 @@
+<!-- Affichage des Offres TERRASOCIAL -->
+
+<div class="offres-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Les Offres Disponibles</h1>
+        <p>Découvrez nos terrains et trouvez celui qui correspond à vos objectifs</p>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="filters-section">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Rechercher par nom ou localisation..." class="search-input">
+            <button class="btn-search">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="filters-grid">
+            <div class="filter-group">
+                <label>Localisation</label>
+                <select id="filterLocation" class="filter-select">
+                    <option value="">Toutes les régions</option>
+                    <option value="dakar">Dakar</option>
+                    <option value="thiès">Thiès</option>
+                    <option value="kaolack">Kaolack</option>
+                    <option value="tambacounda">Tambacounda</option>
+                    <option value="saint-louis">Saint-Louis</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Prix Min</label>
+                <input type="number" id="filterPriceMin" placeholder="0" class="filter-input" min="0">
+            </div>
+
+            <div class="filter-group">
+                <label>Prix Max</label>
+                <input type="number" id="filterPriceMax" placeholder="5000000" class="filter-input" min="0">
+            </div>
+
+            <div class="filter-group">
+                <label>Superficie Min (m²)</label>
+                <input type="number" id="filterAreaMin" placeholder="0" class="filter-input" min="0">
+            </div>
+
+            <div class="filter-group">
+                <label>Tri</label>
+                <select id="filterSort" class="filter-select">
+                    <option value="recent">Plus Récent</option>
+                    <option value="price-asc">Prix Croissant</option>
+                    <option value="price-desc">Prix Décroissant</option>
+                    <option value="area-asc">Superficie Croissante</option>
+                    <option value="area-desc">Superficie Décroissante</option>
+                </select>
+            </div>
+
+            <div class="filter-actions">
+                <button class="btn btn-secondary" onclick="resetFilters()">Réinitialiser</button>
+                <button class="btn btn-primary" onclick="applyFilters()">Appliquer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Counter -->
+    <div class="results-header">
+        <p class="results-count">Affichage de <span id="resultsCount">0</span> offres</p>
+        <div class="view-options">
+            <button class="view-btn active" id="gridViewBtn" onclick="switchView('grid')" title="Vue Grille">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h8v8H4V4zm10 0h8v8h-8V4zM4 14h8v8H4v-8zm10 0h8v8h-8v-8z"/></svg>
+            </button>
+            <button class="view-btn" id="listViewBtn" onclick="switchView('list')" title="Vue Liste">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Offers Grid -->
+    <div id="offresGrid" class="offres-grid grid-view">
+        <div class="loading-placeholder">
+            <div class="spinner"></div>
+            <p>Chargement des offres...</p>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" style="display: none;">
+        <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <h3>Aucune Offre Trouvée</h3>
+            <p>Essayez de modifier vos critères de recherche ou de filtrage.</p>
+            <button class="btn btn-primary" onclick="resetFilters()">Réinitialiser les Filtres</button>
+        </div>
+    </div>
+
+    <!-- Disclaimer -->
+    <section class="disclaimer-section">
+        <div class="disclaimer-box">
+            <strong>⚠️ Disclaimer Important</strong>
+            <p>Ce programme n'est ni une banque, ni une microfinance, ni une coopérative d'épargne et de crédit. Tous les terrains présentés sont sujets à vérification légale. Consultez notre disclaimer complet <a href="#/legal/disclaimer">ici</a>.</p>
+        </div>
+    </section>
+</div>
+
+<!-- Offer Detail Modal Template -->
+<template id="offerDetailTemplate">
+    <div class="modal-overlay"></div>
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="offerTitle"></h2>
+            <button class="modal-close">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="offer-details">
+                <div class="offer-image">
+                    <img id="offerImage" src="" alt="Offer Image" style="width: 100%; height: 300px; object-fit: cover; border-radius: 8px;">
+                </div>
+
+                <div class="offer-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="label">Localisation</span>
+                            <span class="value" id="offerLocation"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Superficie</span>
+                            <span class="value" id="offerArea"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Prix</span>
+                            <span class="value price" id="offerPrice"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Prix/m²</span>
+                            <span class="value" id="offerPricePerM2"></span>
+                        </div>
+                    </div>
+
+                    <div class="offer-description">
+                        <h3>Description</h3>
+                        <p id="offerDescription"></p>
+                    </div>
+
+                    <div class="offer-characteristics">
+                        <h3>Caractéristiques</h3>
+                        <ul id="offerCharacteristics"></ul>
+                    </div>
+
+                    <div class="offer-contact">
+                        <h3>Contact</h3>
+                        <div id="offerContactInfo"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeOfferModal()">Fermer</button>
+            <button class="btn btn-primary" id="subscribeBtn" onclick="openSubscribeModalFromOffer()">Souscrire</button>
+        </div>
+    </div>
+</template>
+
+<style>
+    .offres-container {
+        padding: 2rem 0;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Filters */
+    .filters-section {
+        background: var(--bg-primary);
+        border-radius: var(--radius-large);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-small);
+    }
+
+    .search-box {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-medium);
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+    }
+
+    .btn-search {
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius-medium);
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .btn-search:hover {
+        background: var(--primary-dark);
+    }
+
+    .btn-search svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .filter-group label {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.9rem;
+    }
+
+    .filter-select,
+    .filter-input {
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-medium);
+        font-family: 'Poppins', sans-serif;
+        font-size: 0.9rem;
+    }
+
+    .filter-actions {
+        display: flex;
+        gap: 1rem;
+        grid-column: 1 / -1;
+    }
+
+    .filter-actions .btn {
+        flex: 1;
+    }
+
+    /* Results */
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .results-count {
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+    }
+
+    .view-options {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .view-btn {
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--border-color);
+        background: var(--bg-primary);
+        border-radius: var(--radius-medium);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-secondary);
+        transition: var(--transition);
+    }
+
+    .view-btn:hover,
+    .view-btn.active {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .view-btn svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Grid View */
+    .offres-grid {
+        display: grid;
+        gap: 1.5rem;
+    }
+
+    .offres-grid.grid-view {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+
+    .offres-grid.list-view {
+        grid-template-columns: 1fr;
+    }
+
+    /* Offer Card */
+    .offer-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-large);
+        overflow: hidden;
+        transition: var(--transition);
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .offres-grid.list-view .offer-card {
+        flex-direction: row;
+    }
+
+    .offer-card:hover {
+        box-shadow: var(--shadow-large);
+        transform: translateY(-4px);
+        border-color: var(--primary-color);
+    }
+
+    .offer-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: var(--bg-secondary);
+        position: relative;
+    }
+
+    .offres-grid.list-view .offer-image {
+        width: 250px;
+        height: 150px;
+        flex-shrink: 0;
+    }
+
+    .offer-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .offer-badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-medium);
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .offer-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .offer-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .offer-location {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .offer-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .stat {
+        text-align: center;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .offer-price {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: var(--accent-color);
+        margin-bottom: 1rem;
+    }
+
+    .offer-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: auto;
+    }
+
+    .offer-actions .btn {
+        flex: 1;
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+
+    /* Loading */
+    .loading-placeholder {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 3rem;
+    }
+
+    .loading-placeholder .spinner {
+        margin: 0 auto 1rem;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        background: var(--bg-secondary);
+        border-radius: var(--radius-large);
+        grid-column: 1 / -1;
+    }
+
+    .empty-state svg {
+        width: 64px;
+        height: 64px;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state h3 {
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    /* Modal */
+    .offer-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .info-item .label {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+    }
+
+    .info-item .value {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .info-item .price {
+        color: var(--accent-color);
+        font-size: 1.3rem;
+    }
+
+    .offer-description,
+    .offer-characteristics,
+    .offer-contact {
+        margin-bottom: 1.5rem;
+    }
+
+    .offer-description h3,
+    .offer-characteristics h3,
+    .offer-contact h3 {
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+    }
+
+    .offer-characteristics ul {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .offer-characteristics li::before {
+        content: "✓ ";
+        color: var(--success-color);
+        font-weight: 700;
+    }
+
+    /* Disclaimer */
+    .disclaimer-section {
+        margin-top: 3rem;
+    }
+
+    .disclaimer-box {
+        background: rgba(255, 152, 0, 0.1);
+        border-left: 4px solid var(--accent-color);
+        border-radius: var(--radius-medium);
+        padding: 1.5rem;
+        text-align: center;
+    }
+
+    .disclaimer-box strong {
+        display: block;
+        color: var(--accent-dark);
+        margin-bottom: 0.5rem;
+    }
+
+    .disclaimer-box a {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .disclaimer-box a:hover {
+        text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .filters-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .offer-card {
+            flex-direction: column !important;
+        }
+
+        .offer-image {
+            width: 100% !important;
+            height: 200px;
+        }
+
+        .offres-grid.grid-view {
+            grid-template-columns: 1fr;
+        }
+
+        .results-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .offer-details {
+            grid-template-columns: 1fr;
+        }
+
+        .offer-stats {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+    }
+</style>
+
+<!-- Offer Management Script -->
+<script>
+    let allOffers = [];
+    let filteredOffers = [];
+
+    // Load offers on page load
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            showLoading(true);
+            allOffers = await supabase.getLots();
+            filteredOffers = [...allOffers];
+            renderOffers();
+        } catch (error) {
+            console.error('Error loading offers:', error);
+            showToast('Erreur lors du chargement des offres', 'error');
+        } finally {
+            showLoading(false);
+        }
+    });
+
+    function renderOffers() {
+        const grid = document.getElementById('offresGrid');
+        const empty = document.getElementById('emptyState');
+        const count = document.getElementById('resultsCount');
+
+        if (filteredOffers.length === 0) {
+            grid.style.display = 'none';
+            empty.style.display = 'block';
+            return;
+        }
+
+        grid.style.display = 'grid';
+        empty.style.display = 'none';
+        count.textContent = filteredOffers.length;
+
+        grid.innerHTML = filteredOffers.map(offer => `
+            <div class="offer-card" onclick="showOfferDetail(${offer.id})">
+                <img src="assets/placeholder-lot.jpg" alt="${offer.nom}" class="offer-image">
+                <div class="offer-content">
+                    <h3 class="offer-title">${offer.nom}</h3>
+                    <p class="offer-location">📍 ${offer.localisation}</p>
+                    <div class="offer-stats">
+                        <div class="stat">
+                            <div class="stat-label">Superficie</div>
+                            <div class="stat-value">${offer.superficie} m²</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-label">Prix/m²</div>
+                            <div class="stat-value">${Math.round(offer.prix / offer.superficie).toLocaleString('fr-FR')} XOF</div>
+                        </div>
+                    </div>
+                    <div class="offer-price">${offer.prix.toLocaleString('fr-FR')} XOF</div>
+                    <div class="offer-actions">
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); showOfferDetail(${offer.id})">Détails</button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); subscribeToOffer(${offer.id})">Souscrire</button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function applyFilters() {
+        const location = document.getElementById('filterLocation').value;
+        const priceMin = parseFloat(document.getElementById('filterPriceMin').value) || 0;
+        const priceMax = parseFloat(document.getElementById('filterPriceMax').value) || Infinity;
+        const areaMin = parseFloat(document.getElementById('filterAreaMin').value) || 0;
+
+        filteredOffers = allOffers.filter(offer =>
+            (!location || offer.localisation.toLowerCase().includes(location.toLowerCase())) &&
+            offer.prix >= priceMin &&
+            offer.prix <= priceMax &&
+            offer.superficie >= areaMin
+        );
+
+        // Apply sorting
+        const sort = document.getElementById('filterSort').value;
+        if (sort === 'price-asc') {
+            filteredOffers.sort((a, b) => a.prix - b.prix);
+        } else if (sort === 'price-desc') {
+            filteredOffers.sort((a, b) => b.prix - a.prix);
+        } else if (sort === 'area-asc') {
+            filteredOffers.sort((a, b) => a.superficie - b.superficie);
+        } else if (sort === 'area-desc') {
+            filteredOffers.sort((a, b) => b.superficie - a.superficie);
+        }
+
+        renderOffers();
+    }
+
+    function resetFilters() {
+        document.getElementById('filterLocation').value = '';
+        document.getElementById('filterPriceMin').value = '';
+        document.getElementById('filterPriceMax').value = '';
+        document.getElementById('filterAreaMin').value = '';
+        document.getElementById('filterSort').value = 'recent';
+
+        filteredOffers = [...allOffers];
+        renderOffers();
+    }
+
+    function switchView(view) {
+        const grid = document.getElementById('offresGrid');
+        const gridBtn = document.getElementById('gridViewBtn');
+        const listBtn = document.getElementById('listViewBtn');
+
+        if (view === 'grid') {
+            grid.classList.remove('list-view');
+            grid.classList.add('grid-view');
+            gridBtn.classList.add('active');
+            listBtn.classList.remove('active');
+        } else {
+            grid.classList.remove('grid-view');
+            grid.classList.add('list-view');
+            listBtn.classList.add('active');
+            gridBtn.classList.remove('active');
+        }
+    }
+
+    let selectedOfferId = null;
+
+    function showOfferDetail(offerId) {
+        selectedOfferId = offerId;
+        const offer = allOffers.find(o => o.id === offerId);
+        if (!offer) return;
+
+        const template = document.getElementById('offerDetailTemplate');
+        const modal = document.createElement('div');
+        modal.className = 'modal-container active';
+        modal.appendChild(template.content.cloneNode(true));
+
+        // Fill modal content
+        document.getElementById('offerTitle').textContent = offer.nom;
+        document.getElementById('offerLocation').textContent = offer.localisation;
+        document.getElementById('offerArea').textContent = offer.superficie + ' m²';
+        document.getElementById('offerPrice').textContent = offer.prix.toLocaleString('fr-FR') + ' XOF';
+        document.getElementById('offerPricePerM2').textContent = Math.round(offer.prix / offer.superficie).toLocaleString('fr-FR') + ' XOF/m²';
+        document.getElementById('offerDescription').textContent = offer.description;
+
+        const charList = document.getElementById('offerCharacteristics');
+        charList.innerHTML = `
+            <li>Situation légale vérifiée</li>
+            <li>Accès direct aux routes</li>
+            <li>Viabilisation partielle</li>
+            <li>Proximité des services</li>
+        `;
+
+        const contactDiv = document.getElementById('offerContactInfo');
+        contactDiv.innerHTML = `
+            <p><strong>Email:</strong> contact@terrasocial.com</p>
+            <p><strong>Téléphone:</strong> +221 77 XXX XXXX</p>
+        `;
+
+        document.getElementById('modalContainer').appendChild(modal);
+
+        const closeBtn = modal.querySelector('.modal-close');
+        const overlay = modal.querySelector('.modal-overlay');
+
+        closeBtn?.addEventListener('click', closeOfferModal);
+        overlay?.addEventListener('click', closeOfferModal);
+    }
+
+    function closeOfferModal() {
+        const modal = document.querySelector('.modal-container');
+        modal?.remove();
+    }
+
+    function openSubscribeModalFromOffer() {
+        closeOfferModal();
+        openSubscribeModal(selectedOfferId);
+    }
+
+    function subscribeToOffer(offerId) {
+        if (auth.isAuthenticated) {
+            openSubscribeModal(offerId);
+        } else {
+            showToast('Veuillez vous connecter d\'abord', 'warning');
+            router.navigate('/signin');
+        }
+    }
+
+    // Setup filter listeners
+    document.getElementById('searchInput')?.addEventListener('input', applyFilters);
+    document.getElementById('filterLocation')?.addEventListener('change', applyFilters);
+    document.getElementById('filterPriceMin')?.addEventListener('change', applyFilters);
+    document.getElementById('filterPriceMax')?.addEventListener('change', applyFilters);
+    document.getElementById('filterAreaMin')?.addEventListener('change', applyFilters);
+    document.getElementById('filterSort')?.addEventListener('change', applyFilters);
+</script>

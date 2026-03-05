@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "title": "TERRASOCIAL - Ihr Land, Ihre Zukunft | MANO VERDE INC SA",
+    "description": "TERRASOCIAL - Werden Sie Landowner in Kamerun mit Ratenzahlungen. Sozialprojekt für Landbesitz von MANO VERDE INC SA."
+  },
+  "header": {
+    "logo": "TERRASOCIAL",
+    "nav": {
+      "lots": "Unsere Grundstücke",
+      "howItWorks": "So funktioniert's",
+      "payment": "Zahlung",
+      "transparency": "Transparenz",
+      "contact": "Kontakt",
+      "subscribe": "Abonnieren"
+    }
+  },
+  "alert": {
+    "warning": "⚠️ WICHTIGER HINWEIS: TERRASOCIAL ist weder eine Bank noch ein Mikrofinanzinstitut. Wir bieten nur Landverkäufe mit Ratenzahlungsoptionen an."
+  },
+  "hero": {
+    "title": "Werden Sie Eigentümer Ihres Landes in Kamerun",
+    "tagline": "Eigentümer",
+    "description": "Erwerben Sie Grundeigentum durch unser Ratenzahlungssystem über 24 bis 36 Monate. Qualitätsgrundstücke in Jaoundé und Umgebung.",
+    "cta_primary": "Verfügbare Grundstücke ansehen",
+    "cta_secondary": "Jetzt buchen",
+    "stats": {
+      "lots": {
+        "number": "50+",
+        "label": "Verfügbare Grundstücke"
+      },
+      "surface": {
+        "number": "500m²",
+        "label": "Mindestfläche"
+      },
+      "months": {
+        "number": "36",
+        "label": "Zahlungsmonate"
+      }
+    }
+  },
+  "lots": {
+    "title": "Unsere verfügbaren Grundstücke",
+    "description": "Entdecken Sie unsere Auswahl an Grundstücken in der Zentralregion in der Nähe von Jaoundé",
+    "standard": {
+      "title": "Standard Grundstück - 500m²",
+      "location": "Soa, Jaoundé",
+      "size": "500 m²",
+      "price": "500.000 FCFA",
+      "monthly": "etwa 21.000 FCFA/Monat über 24 Monate",
+      "features": [
+        "Gesichertes Grundeigentum",
+        "Zugängliche Straße",
+        "Strom in der Nähe",
+        "Grenzmarkierungen enthalten"
+      ],
+      "reserve": "Dieses Grundstück reservieren"
+    },
+    "comfort": {
+      "title": "Komfort Grundstück - 750m²",
+      "location": "Nkolfoulou, Jaoundé",
+      "size": "750 m²",
+      "price": "750.000 FCFA",
+      "monthly": "etwa 25.000 FCFA/Monat über 30 Monate",
+      "features": [
+        "Gesichertes Grundeigentum",
+        "Asphaltstraße",
+        "Wasser und Strom",
+        "Grenzmarkierungen und Plan enthalten"
+      ],
+      "reserve": "Dieses Grundstück reservieren"
+    },
+    "premium": {
+      "title": "Premium Grundstück - 1000m²",
+      "location": "Mbankomo, Jaoundé",
+      "size": "1000 m²",
+      "price": "1.000.000 FCFA",
+      "monthly": "etwa 28.000 FCFA/Monat über 36 Monate",
+      "features": [
+        "Garantiertes Grundeigentum",
+        "Erschlossene Zone",
+        "Alle Versorgungseinrichtungen vorhanden",
+        "Vollständige Unterstützung"
+      ],
+      "reserve": "Dieses Grundstück reservieren"
+    }
+  },
+  "howItWorks": {
+    "title": "So funktioniert's?",
+    "description": "Ein einfacher und transparenter Prozess in 5 Schritten, um Eigentümer zu werden",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Wählen Sie Ihr Grundstück",
+        "description": "Durchsuchen Sie unseren Katalog und wählen Sie das Land aus, das Ihren Anforderungen und Ihrem Budget entspricht."
+      },
+      {
+        "number": "2",
+        "title": "Online reservieren",
+        "description": "Füllen Sie das Reservierungsformular aus und zahlen Sie eine Anzahlung von 10%, um Ihr Grundstück zu sichern."
+      },
+      {
+        "number": "3",
+        "title": "Vertrag unterzeichnen",
+        "description": "Bestätigen Sie Ihren Reservierungsvertrag mit einem personalisierten Zahlungsplan."
+      },
+      {
+        "number": "4",
+        "title": "Monatlich zahlen",
+        "description": "Zahlen Sie Ihre Raten über Orange Money, MTN MoMo oder Banküberweisung."
+      },
+      {
+        "number": "5",
+        "title": "Erhalten Sie Ihren Titel",
+        "description": "Nach vollständiger Zahlung erhalten Sie Ihre Eigentumsschrift und vollständige Grundakten."
+      }
+    ]
+  },
+  "payment": {
+    "title": "Zahlungsmethoden",
+    "description": "Mehrere flexible Optionen für Ihre monatlichen Raten",
+    "methods": [
+      "Orange Money",
+      "MTN MoMo",
+      "Kreditkarte",
+      "Überweisung"
+    ],
+    "simulator": {
+      "title": "💰 Zahlungsrechner",
+      "lotPrice": "Grundstückspreis (FCFA)",
+      "duration": "Zahlungsdauer",
+      "deposit": "Anzahlung (10%)",
+      "monthly": "Ihre monatliche Zahlung",
+      "lots": {
+        "standard": "500.000 FCFA - Standard Grundstück",
+        "comfort": "750.000 FCFA - Komfort Grundstück",
+        "premium": "1.000.000 FCFA - Premium Grundstück"
+      },
+      "durations": [
+        "12 Monate",
+        "24 Monate",
+        "36 Monate"
+      ]
+    }
+  },
+  "transparency": {
+    "title": "Unser Engagement für Transparenz",
+    "description": "Wir verpflichten uns zu vollständiger Transparenz bei unseren Aktivitäten und Ihren Rechten",
+    "cards": [
+      {
+        "icon": "📜",
+        "title": "Rechtlicher Rahmen",
+        "description": "Unsere Aktivität ist ein ratenzahlter Landverkauf, der den kamerunischen Grundstücksgesetzen (Verordnung Nr. 74/1 vom 6. Juli 1974) und dem OHADA-Einheitsgesetz entspricht."
+      },
+      {
+        "icon": "🏛️",
+        "title": "Grundeigentum",
+        "description": "Alle unsere Grundstücke sind mit Grundstückstiteln gesichert, die beim Grundbuchamt von Kamerun eingetragen sind."
+      },
+      {
+        "icon": "📋",
+        "title": "Klare Verträge",
+        "description": "Unsere Verträge sind in klarer Sprache verfasst und enthalten alle Bedingungen, Rechte und Pflichten. Keine versteckten Gebühren."
+      },
+      {
+        "icon": "⚖️",
+        "title": "Ihre Rechte",
+        "description": "Besuchsrecht des Grundstücks, vorgezogenes Nutzungsrecht nach 50% Zahlung, notariell beglaubigte Eigentumsschrift nach vollständiger Zahlung."
+      },
+      {
+        "icon": "🔒",
+        "title": "Sicherheit",
+        "description": "Ihre Zahlungen werden nachverfolgt und gesichert. Quittungen für jede Zahlung ausgestellt. Schutz Ihrer persönlichen Daten garantiert."
+      },
+      {
+        "icon": "⚠️",
+        "title": "Was wir NICHT sind",
+        "description": "TERRASOCIAL ist weder eine Bank, noch ein Mikrofinanzinstitut oder eine Spargenossenschaft. Wir sammeln keine Ersparnisse und vergeben keine Kredite."
+      }
+    ]
+  },
+  "subscription": {
+    "title": "Buchen Sie Jetzt Ihr Grundstück",
+    "description": "Füllen Sie dieses Formular aus, um Ihre Reise zum Grundstückseigentum zu starten",
+    "formTitle": "Reservierungsformular",
+    "form": {
+      "fullName": "Vollständiger Name",
+      "fullNamePlaceholder": "z.B.: NKOMO Jean Paul",
+      "phone": "Telefonnummer",
+      "phonePlaceholder": "z.B.: 6XX XX XX XX",
+      "email": "Email-Adresse",
+      "emailPlaceholder": "z.B.: name@email.com",
+      "city": "Wohnort",
+      "cityPlaceholder": "z.B.: Jaoundé",
+      "lot": "Gewünschtes Grundstück",
+      "lotSelect": "-- Grundstück auswählen --",
+      "duration": "Gewünschte Zahlungsdauer",
+      "source": "Wie haben Sie von TERRASOCIAL erfahren?",
+      "sourceSelect": "-- Auswählen --",
+      "sources": {
+        "facebook": "Facebook",
+        "whatsapp": "WhatsApp",
+        "radio": "Radio",
+        "friend": "Ein Freund / Mundpropaganda",
+        "other": "Sonstiges"
+      },
+      "cgv": "Ich habe die Allgemeinen Verkaufsbedingungen und die Ratenzahlungsrichtlinie gelesen und akzeptiert. Ich verstehe, dass TERRASOCIAL weder eine Bank noch ein Mikrofinanzinstitut ist.",
+      "newsletter": "Ich stimme zu, Nachrichten und Angebote von TERRASOCIAL per SMS/WhatsApp zu erhalten",
+      "submit": "Meine Reservierungsanfrage senden",
+      "required": "* Erforderliches Feld"
+    }
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "description": "Unser Team ist für alle Ihre Fragen verfügbar",
+    "coordinates": "Unsere Kontaktdaten",
+    "address": {
+      "title": "Adresse",
+      "value": "Jaoundé, Kamerun"
+    },
+    "phone": {
+      "title": "Telefon"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "hours": {
+      "title": "Öffnungszeiten",
+      "weekday": "Montag - Freitag: 8:00 - 17:00 Uhr",
+      "saturday": "Samstag: 9:00 - 13:00 Uhr"
+    },
+    "map": {
+      "placeholder": "📍 Google Karte"
+    }
+  },
+  "footer": {
+    "disclaimer": "⚠️ LEGAL HINWEIS: TERRASOCIAL ist ein Landverkaufsdienst mit Ratenzahlungen. Es ist weder eine Bank, noch ein Mikrofinanzinstitut, Spargenossenschaft oder Kreditinstitut. Wir sammeln keine öffentlichen Ersparnisse. Projekt verwaltet von MANO VERDE INC SA.",
+    "tagline": "Ihr Land, Ihre Zukunft",
+    "company": "Ein Projekt von MANO VERDE INC SA - Kamerunisches öffentliches Unternehmen",
+    "sections": {
+      "navigation": "Navigation",
+      "legal": "Rechtliches",
+      "contact": "Kontakt"
+    },
+    "links": {
+      "cgv": "Allgemeine Verkaufsbedingungen",
+      "cgu": "Nutzungsbedingungen",
+      "mentions": "Rechtliche Hinweise",
+      "payment": "Zahlungsrichtlinie",
+      "privacy": "Datenschutz"
+    },
+    "copyright": "© 2026 TERRASOCIAL - MANO VERDE INC SA. Alle Rechte vorbehalten.",
+    "registration": "Registrierung: [Auszufüllen] | Steuernummer: [Auszufüllen]"
+  },
+  "legalNotice": {
+    "full": "Dieses Programm ist weder eine Bank, noch ein Mikrofinanzinstitut oder eine Spargenossenschaft. Es handelt sich um einen Landverkauf mit Ratenzahlung (Verkäuferdarlehen), der dem kamerunischen Zivilgesetzbuch entspricht."
+  },
+  "messages": {
+    "success": "Vielen Dank für Ihre Reservierungsanfrage! Unser Team wird sich innerhalb von 24 Stunden mit Ihnen in Verbindung setzen, um Ihre Datei abzuschließen.",
+    "error": "Ein Fehler ist aufgetreten. Bitte versuchen Sie es erneut.",
+    "loading": "Wird geladen..."
+  }
+}

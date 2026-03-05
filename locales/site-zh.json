@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "title": "TERRASOCIAL - 您的土地，您的未来 | MANO VERDE INC SA",
+    "description": "TERRASOCIAL - 在喀麦隆以分期付款方式成为土地所有者。由MANO VERDE INC SA提供的社会土地项目。"
+  },
+  "header": {
+    "logo": "TERRASOCIAL",
+    "nav": {
+      "lots": "我们的地块",
+      "howItWorks": "工作原理",
+      "payment": "付款",
+      "transparency": "透明度",
+      "contact": "联系我们",
+      "subscribe": "订阅"
+    }
+  },
+  "alert": {
+    "warning": "⚠️ 重要警告：TERRASOCIAL不是银行或小额信贷机构。我们仅提供分期付款的土地销售。"
+  },
+  "hero": {
+    "title": "成为喀麦隆土地的所有者",
+    "tagline": "所有者",
+    "description": "通过我们的分期付款系统获得土地所有权，期限为24至36个月。位于雅温得及周边地区的优质地块。",
+    "cta_primary": "查看可用地块",
+    "cta_secondary": "立即预订",
+    "stats": {
+      "lots": {
+        "number": "50+",
+        "label": "可用地块"
+      },
+      "surface": {
+        "number": "500m²",
+        "label": "最小面积"
+      },
+      "months": {
+        "number": "36",
+        "label": "付款月数"
+      }
+    }
+  },
+  "lots": {
+    "title": "我们的可用地块",
+    "description": "探索我们在中部地区、雅温得附近的地块精选",
+    "standard": {
+      "title": "标准地块 - 500m²",
+      "location": "雅温得Soa",
+      "size": "500 m²",
+      "price": "500,000 FCFA",
+      "monthly": "约21,000 FCFA/月，共24个月",
+      "features": [
+        "安全的地契",
+        "可通行道路进入",
+        "附近有电力",
+        "包括边界标记"
+      ],
+      "reserve": "预订此地块"
+    },
+    "comfort": {
+      "title": "舒适地块 - 750m²",
+      "location": "雅温得Nkolfoulou",
+      "size": "750 m²",
+      "price": "750,000 FCFA",
+      "monthly": "约25,000 FCFA/月，共30个月",
+      "features": [
+        "安全的地契",
+        "柏油路进入",
+        "水电供应",
+        "包括边界标记和平面图"
+      ],
+      "reserve": "预订此地块"
+    },
+    "premium": {
+      "title": "高级地块 - 1000m²",
+      "location": "雅温得Mbankomo",
+      "size": "1000 m²",
+      "price": "1,000,000 FCFA",
+      "monthly": "约28,000 FCFA/月，共36个月",
+      "features": [
+        "有保证的地契",
+        "已开发区域",
+        "所有公用事业可用",
+        "完整的支持"
+      ],
+      "reserve": "预订此地块"
+    }
+  },
+  "howItWorks": {
+    "title": "工作原理?",
+    "description": "五个步骤的简单透明流程，成为地主",
+    "steps": [
+      {
+        "number": "1",
+        "title": "选择您的地块",
+        "description": "浏览我们的目录，选择符合您需求和预算的土地。"
+      },
+      {
+        "number": "2",
+        "title": "在线预订",
+        "description": "填写预订表格并支付10%的定金以保留您的地块。"
+      },
+      {
+        "number": "3",
+        "title": "签署合同",
+        "description": "验证您的预订合同并获得个性化的付款计划。"
+      },
+      {
+        "number": "4",
+        "title": "每月付款",
+        "description": "通过Orange Money、MTN MoMo或银行转账支付每月分期。"
+      },
+      {
+        "number": "5",
+        "title": "获得您的地契",
+        "description": "全额付款后，获得您的转让书和完整的土地文件。"
+      }
+    ]
+  },
+  "payment": {
+    "title": "付款方式",
+    "description": "月供的多种灵活选择",
+    "methods": [
+      "Orange Money",
+      "MTN MoMo",
+      "银行卡",
+      "转账"
+    ],
+    "simulator": {
+      "title": "💰 付款计算器",
+      "lotPrice": "土地价格 (FCFA)",
+      "duration": "付款期限",
+      "deposit": "定金 (10%)",
+      "monthly": "您的月付款",
+      "lots": {
+        "standard": "500,000 FCFA - 标准地块",
+        "comfort": "750,000 FCFA - 舒适地块",
+        "premium": "1,000,000 FCFA - 高级地块"
+      },
+      "durations": [
+        "12个月",
+        "24个月",
+        "36个月"
+      ]
+    }
+  },
+  "transparency": {
+    "title": "我们的透明度承诺",
+    "description": "我们承诺对我们的活动和您的权利完全透明",
+    "cards": [
+      {
+        "icon": "📜",
+        "title": "法律框架",
+        "description": "我们的活动是分期土地销售，符合喀麦隆地产法（1974年7月6日第74/1号条例）和OHADA统一法。"
+      },
+      {
+        "icon": "🏛️",
+        "title": "地契",
+        "description": "我们所有的地块都有在喀麦隆地产登记处登记的安全地契。"
+      },
+      {
+        "icon": "📋",
+        "title": "清晰的合同",
+        "description": "我们的合同用清晰的语言撰写，详细说明了所有条款、权利和义务。没有隐藏费用。"
+      },
+      {
+        "icon": "⚖️",
+        "title": "您的权利",
+        "description": "参观土地的权利，支付50%后享有预期权利，全额付款后获得公证转让书。"
+      },
+      {
+        "icon": "🔒",
+        "title": "安全",
+        "description": "您的付款被跟踪和保护。为每笔付款签发收据。您的个人数据保护有保证。"
+      },
+      {
+        "icon": "⚠️",
+        "title": "我们不是什么",
+        "description": "TERRASOCIAL不是银行、小额信贷机构或储蓄合作社。我们不收集存款也不提供信用。"
+      }
+    ]
+  },
+  "subscription": {
+    "title": "现在预订您的地块",
+    "description": "填写此表格，开始您的购地之旅",
+    "formTitle": "预订表格",
+    "form": {
+      "fullName": "全名",
+      "fullNamePlaceholder": "例如：NKOMO Jean Paul",
+      "phone": "电话号码",
+      "phonePlaceholder": "例如：6XX XX XX XX",
+      "email": "电子邮件地址",
+      "emailPlaceholder": "例如：name@email.com",
+      "city": "居住城市",
+      "cityPlaceholder": "例如：雅温得",
+      "lot": "所需地块",
+      "lotSelect": "-- 选择地块 --",
+      "duration": "所需付款期限",
+      "source": "您如何了解TERRASOCIAL?",
+      "sourceSelect": "-- 选择 --",
+      "sources": {
+        "facebook": "Facebook",
+        "whatsapp": "WhatsApp",
+        "radio": "广播",
+        "friend": "朋友/口碑宣传",
+        "other": "其他"
+      },
+      "cgv": "我已阅读并接受《销售条款》和《分期付款政策》。我理解TERRASOCIAL既不是银行也不是小额信贷机构。",
+      "newsletter": "我同意通过短信/WhatsApp接收TERRASOCIAL的新闻和优惠",
+      "submit": "提交我的预订申请",
+      "required": "* 必填字段"
+    }
+  },
+  "contact": {
+    "title": "联系我们",
+    "description": "我们的团队随时为您解答所有问题",
+    "coordinates": "我们的联系方式",
+    "address": {
+      "title": "地址",
+      "value": "喀麦隆雅温得"
+    },
+    "phone": {
+      "title": "电话"
+    },
+    "email": {
+      "title": "电子邮件"
+    },
+    "hours": {
+      "title": "营业时间",
+      "weekday": "周一至周五：8:00 - 17:00",
+      "saturday": "周六：9:00 - 13:00"
+    },
+    "map": {
+      "placeholder": "📍 谷歌地图"
+    }
+  },
+  "footer": {
+    "disclaimer": "⚠️ 法律声明：TERRASOCIAL是分期付款的土地销售服务。它不是银行、小额信贷机构、储蓄合作社或信贷机构。我们不收集公众存款。项目由MANO VERDE INC SA管理。",
+    "tagline": "您的土地，您的未来",
+    "company": "MANO VERDE INC SA - 喀麦隆公共公司的项目",
+    "sections": {
+      "navigation": "导航",
+      "legal": "法律",
+      "contact": "联系"
+    },
+    "links": {
+      "cgv": "销售条款和条件",
+      "cgu": "使用条款",
+      "mentions": "法律声明",
+      "payment": "付款政策",
+      "privacy": "隐私"
+    },
+    "copyright": "© 2026 TERRASOCIAL - MANO VERDE INC SA. 版权所有。",
+    "registration": "注册号：[待补充] | 税号：[待补充]"
+  },
+  "legalNotice": {
+    "full": "本项目既不是银行、小额信贷机构，也不是储蓄和信用合作社。这是分期付款土地销售（卖方信用），符合喀麦隆民法。"
+  },
+  "messages": {
+    "success": "感谢您的预订申请！我们的团队将在24小时内与您联系，以完成您的文件。",
+    "error": "发生错误。请重试。",
+    "loading": "加载中..."
+  }
+}

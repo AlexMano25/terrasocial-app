@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2E7D32">
+    <meta name="description" content="TERRASOCIAL - Accès à la terre, dignité pour tous. Plateforme de accès foncier participatif.">
+    <title>TERRASOCIAL - Accès à la terre, dignité pour tous</title>
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/logo-192.png">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/main.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Header Navigation -->
+        <header class="app-header">
+            <div class="header-container">
+                <div class="logo-section">
+                    <a href="#/" class="logo">
+                        <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="8" fill="#2E7D32"/>
+                            <path d="M20 8C14 8 9 13 9 19C9 26 20 35 20 35S31 26 31 19C31 13 26 8 20 8Z" fill="#FF9800"/>
+                            <circle cx="20" cy="19" r="2.5" fill="#2E7D32"/>
+                        </svg>
+                        <span class="logo-text">TERRASOCIAL</span>
+                    </a>
+                </div>
+
+                <nav class="nav-menu" id="navMenu">
+                    <a href="#/" class="nav-link" data-route="public">Accueil</a>
+                    <a href="#/offres" class="nav-link" data-route="offres">Offres</a>
+                    <a href="#/client" class="nav-link hidden-mobile" data-route="client">Espace Client</a>
+                    <a href="#/agent" class="nav-link hidden-mobile" data-route="agent">Espace Agent</a>
+                    <a href="#/admin" class="nav-link hidden-mobile" data-route="admin">Admin</a>
+                </nav>
+
+                <div class="auth-section">
+                    <!-- Language Selector -->
+                    <div class="language-selector" id="langSelector">
+                        <button class="btn-lang" onclick="document.getElementById('langDropdown').classList.toggle('show')">
+                            <span id="currentLangFlag">🇫🇷</span>
+                            <span id="currentLangCode">FR</span>
+                        </button>
+                        <div class="lang-dropdown" id="langDropdown">
+                            <button onclick="I18N.setLanguage('fr');updateLangUI()">🇫🇷 Français</button>
+                            <button onclick="I18N.setLanguage('en');updateLangUI()">🇬🇧 English</button>
+                            <button onclick="I18N.setLanguage('es');updateLangUI()">🇪🇸 Español</button>
+                            <button onclick="I18N.setLanguage('zh');updateLangUI()">🇨🇳 中文</button>
+                            <button onclick="I18N.setLanguage('de');updateLangUI()">🇩🇪 Deutsch</button>
+                        </div>
+                    </div>
+
+                    <button class="btn-icon" id="notificationBtn" title="Notifications">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <span class="notification-badge" id="notificationBadge">0</span>
+                    </button>
+
+                    <div class="user-menu-wrapper">
+                        <button class="btn-user" id="userMenuBtn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </button>
+
+                        <div class="user-menu dropdown-menu" id="userMenu">
+                            <div class="user-info" id="userInfo" style="display:none;">
+                                <p class="user-email" id="userEmail"></p>
+                                <hr>
+                            </div>
+                            <a href="#/profile" class="dropdown-item" id="profileLink" style="display:none;">Mon Profil</a>
+                            <a href="#/parametres" class="dropdown-item" id="settingsLink" style="display:none;">Paramètres</a>
+                            <button class="dropdown-item" id="logoutBtn" style="display:none;">Déconnexion</button>
+                            <hr id="dividerAuth">
+                            <a href="#/signin" class="dropdown-item" id="signinLink">Connexion</a>
+                            <a href="#/signup" class="dropdown-item" id="signupLink">Inscription</a>
+                        </div>
+                    </div>
+
+                    <button class="btn-hamburger" id="hamburgerBtn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content" id="mainContent">
+            <!-- Content dynamique loaded here -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <div class="footer-container">
+                <div class="footer-section">
+                    <h4>À Propos</h4>
+                    <ul>
+                        <li><a href="#/about">Qui sommes-nous</a></li>
+                        <li><a href="#/mission">Notre Mission</a></li>
+                        <li><a href="#/contact">Nous Contacter</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Ressources</h4>
+                    <ul>
+                        <li><a href="#/blog">Blog</a></li>
+                        <li><a href="#/faq">FAQ</a></li>
+                        <li><a href="#/guides">Guides</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Légal</h4>
+                    <ul>
+                        <li><a href="#/legal/cgv">Conditions Générales</a></li>
+                        <li><a href="#/legal/privacy">Politique de Confidentialité</a></li>
+                        <li><a href="#/legal/disclaimer">Disclaimer</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-disclaimer">
+                <p class="disclaimer-text">
+                    ⚠️ Ce programme n'est ni une banque, ni une microfinance, ni une coopérative d'épargne et de crédit.
+                </p>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 TERRASOCIAL. Tous droits réservés.</p>
+                <div class="footer-links">
+                    <a href="#" id="offlineIndicator" class="offline-indicator" style="display:none;">Mode Hors Ligne</a>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Modal Containers -->
+        <div id="modalContainer" class="modal-container"></div>
+
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-indicator">
+            <div class="spinner"></div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="toast-container"></div>
+    </div>
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered:', reg))
+                    .catch(err => console.log('SW registration failed:', err));
+            });
+        }
+    </script>
+
+    <!-- Application Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/offline-manager.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/help-system.js"></script>
+    <script src="js/app.js"></script>
+
+    <!-- Initialize Help Button & Language Selector -->
+    <script>
+        function updateLangUI() {
+            const lang = I18N.currentLang;
+            document.getElementById('currentLangFlag').textContent = I18N.getFlag(lang);
+            document.getElementById('currentLangCode').textContent = lang.toUpperCase();
+            document.getElementById('langDropdown').classList.remove('show');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize language UI
+            if (typeof I18N !== 'undefined') {
+                updateLangUI();
+            }
+
+            // Add help button based on user role
+            const role = localStorage.getItem('terrasocial_role') || 'public';
+            if (typeof HelpSystem !== 'undefined') {
+                HelpSystem.addHelpButton(role);
+            }
+
+            // Close language dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.language-selector')) {
+                    const dropdown = document.getElementById('langDropdown');
+                    if (dropdown) dropdown.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "name": "TERRASOCIAL",
+  "short_name": "TERRASOCIAL",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#f4f8f4",
+  "theme_color": "#2E7D32",
+  "icons": [
+    {
+      "src": "/assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

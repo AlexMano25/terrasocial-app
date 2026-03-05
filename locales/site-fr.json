@@ -1,0 +1,262 @@
+{
+  "meta": {
+    "title": "TERRASOCIAL - Votre terrain, votre avenir | MANO VERDE INC SA",
+    "description": "TERRASOCIAL - Devenez propriétaire de votre terrain au Cameroun avec un paiement échelonné. Projet foncier social par MANO VERDE INC SA."
+  },
+  "header": {
+    "logo": "TERRASOCIAL",
+    "nav": {
+      "lots": "Nos Lots",
+      "howItWorks": "Comment ça marche",
+      "payment": "Paiement",
+      "transparency": "Transparence",
+      "contact": "Contact",
+      "subscribe": "Souscrire"
+    }
+  },
+  "alert": {
+    "warning": "⚠️ AVERTISSEMENT IMPORTANT : TERRASOCIAL n'est NI une banque NI une microfinance. Nous proposons uniquement la vente de terrains avec facilité de paiement échelonné."
+  },
+  "hero": {
+    "title": "Devenez propriétaire de votre terrain au Cameroun",
+    "tagline": "propriétaire",
+    "description": "Accédez à la propriété foncière grâce à notre système de paiement échelonné sur 24 à 36 mois. Des lots de qualité à Yaoundé et environs.",
+    "cta_primary": "Voir les lots disponibles",
+    "cta_secondary": "Réserver maintenant",
+    "stats": {
+      "lots": {
+        "number": "50+",
+        "label": "Lots disponibles"
+      },
+      "surface": {
+        "number": "500m²",
+        "label": "Surface minimum"
+      },
+      "months": {
+        "number": "36",
+        "label": "Mois de paiement"
+      }
+    }
+  },
+  "lots": {
+    "title": "Nos Lots Disponibles",
+    "description": "Découvrez notre sélection de terrains dans la région du Centre, à proximité de Yaoundé",
+    "standard": {
+      "title": "Lot Standard - 500m²",
+      "location": "Soa, Yaoundé",
+      "size": "500 m²",
+      "price": "500.000 FCFA",
+      "monthly": "soit ~21.000 FCFA/mois sur 24 mois",
+      "features": [
+        "Titre foncier sécurisé",
+        "Accès route praticable",
+        "Électricité à proximité",
+        "Bornage inclus"
+      ],
+      "reserve": "Réserver ce lot"
+    },
+    "comfort": {
+      "title": "Lot Confort - 750m²",
+      "location": "Nkolfoulou, Yaoundé",
+      "size": "750 m²",
+      "price": "750.000 FCFA",
+      "monthly": "soit ~25.000 FCFA/mois sur 30 mois",
+      "features": [
+        "Titre foncier sécurisé",
+        "Accès goudronné",
+        "Eau et électricité",
+        "Bornage et plan inclus"
+      ],
+      "reserve": "Réserver ce lot"
+    },
+    "premium": {
+      "title": "Lot Premium - 1000m²",
+      "location": "Mbankomo, Yaoundé",
+      "size": "1000 m²",
+      "price": "1.000.000 FCFA",
+      "monthly": "soit ~28.000 FCFA/mois sur 36 mois",
+      "features": [
+        "Titre foncier garanti",
+        "Zone viabilisée",
+        "Tous réseaux disponibles",
+        "Accompagnement complet"
+      ],
+      "reserve": "Réserver ce lot"
+    }
+  },
+  "howItWorks": {
+    "title": "Comment ça marche ?",
+    "description": "Un processus simple et transparent en 5 étapes pour devenir propriétaire",
+    "steps": [
+      {
+        "number": "1",
+        "title": "Choisissez votre lot",
+        "description": "Parcourez notre catalogue et sélectionnez le terrain qui correspond à vos besoins et budget."
+      },
+      {
+        "number": "2",
+        "title": "Réservez en ligne",
+        "description": "Remplissez le formulaire de réservation et versez l'acompte de 10% pour bloquer votre lot."
+      },
+      {
+        "number": "3",
+        "title": "Signez le contrat",
+        "description": "Validez votre contrat de réservation avec échéancier de paiement personnalisé."
+      },
+      {
+        "number": "4",
+        "title": "Payez mensuellement",
+        "description": "Réglez vos mensualités via Orange Money, MTN MoMo ou virement bancaire."
+      },
+      {
+        "number": "5",
+        "title": "Recevez votre titre",
+        "description": "Après paiement intégral, recevez votre acte de cession et dossier foncier complet."
+      }
+    ]
+  },
+  "payment": {
+    "title": "Moyens de Paiement",
+    "description": "Plusieurs options flexibles pour vos versements mensuels",
+    "methods": [
+      "Orange Money",
+      "MTN MoMo",
+      "Carte Bancaire",
+      "Virement"
+    ],
+    "simulator": {
+      "title": "💰 Simulateur de Paiement",
+      "lotPrice": "Prix du lot (FCFA)",
+      "duration": "Durée de paiement",
+      "deposit": "Acompte (10%)",
+      "monthly": "Votre mensualité",
+      "lots": {
+        "standard": "500.000 FCFA - Lot Standard",
+        "comfort": "750.000 FCFA - Lot Confort",
+        "premium": "1.000.000 FCFA - Lot Premium"
+      },
+      "durations": [
+        "12 mois",
+        "24 mois",
+        "36 mois"
+      ]
+    }
+  },
+  "transparency": {
+    "title": "Notre Engagement de Transparence",
+    "description": "Nous nous engageons à une totale transparence sur notre activité et vos droits",
+    "cards": [
+      {
+        "icon": "📜",
+        "title": "Cadre Légal",
+        "description": "Notre activité est une vente immobilière à paiement échelonné, conforme au droit foncier camerounais (Ordonnance n°74/1 du 6 juillet 1974) et à l'Acte Uniforme OHADA."
+      },
+      {
+        "icon": "🏛️",
+        "title": "Titres Fonciers",
+        "description": "Tous nos terrains sont sécurisés avec des titres fonciers enregistrés auprès de la Conservation Foncière du Cameroun."
+      },
+      {
+        "icon": "📋",
+        "title": "Contrats Clairs",
+        "description": "Nos contrats sont rédigés en langage clair avec toutes les conditions, droits et obligations détaillés. Aucun frais caché."
+      },
+      {
+        "icon": "⚖️",
+        "title": "Vos Droits",
+        "description": "Droit de visite du terrain, jouissance anticipée après 50% du paiement, acte de cession notarié après paiement intégral."
+      },
+      {
+        "icon": "🔒",
+        "title": "Sécurité",
+        "description": "Vos paiements sont tracés et sécurisés. Reçus délivrés pour chaque versement. Protection de vos données personnelles garantie."
+      },
+      {
+        "icon": "⚠️",
+        "title": "Ce que nous ne sommes PAS",
+        "description": "TERRASOCIAL n'est NI une banque, NI une microfinance, NI une tontine. Nous ne collectons pas d'épargne et ne faisons pas de crédit."
+      }
+    ]
+  },
+  "subscription": {
+    "title": "Réservez Votre Lot Maintenant",
+    "description": "Remplissez ce formulaire pour démarrer votre parcours vers la propriété",
+    "formTitle": "Formulaire de Réservation",
+    "form": {
+      "fullName": "Nom complet",
+      "fullNamePlaceholder": "Ex: NKOMO Jean Paul",
+      "phone": "Numéro de téléphone",
+      "phonePlaceholder": "Ex: 6XX XX XX XX",
+      "email": "Adresse email",
+      "emailPlaceholder": "Ex: nom@email.com",
+      "city": "Ville de résidence",
+      "cityPlaceholder": "Ex: Yaoundé",
+      "lot": "Lot souhaité",
+      "lotSelect": "-- Sélectionnez un lot --",
+      "duration": "Durée de paiement souhaitée",
+      "source": "Comment avez-vous connu TERRASOCIAL ?",
+      "sourceSelect": "-- Sélectionnez --",
+      "sources": {
+        "facebook": "Facebook",
+        "whatsapp": "WhatsApp",
+        "radio": "Radio",
+        "friend": "Un ami / Bouche à oreille",
+        "other": "Autre"
+      },
+      "cgv": "J'ai lu et j'accepte les Conditions Générales de Vente et la Politique de Paiement Échelonné. Je comprends que TERRASOCIAL n'est ni une banque ni une microfinance.",
+      "newsletter": "J'accepte de recevoir les actualités et offres de TERRASOCIAL par SMS/WhatsApp",
+      "submit": "Envoyer ma demande de réservation",
+      "required": "* Champ obligatoire"
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "description": "Notre équipe est disponible pour répondre à toutes vos questions",
+    "coordinates": "Nos Coordonnées",
+    "address": {
+      "title": "Adresse",
+      "value": "Yaoundé, Cameroun"
+    },
+    "phone": {
+      "title": "Téléphone"
+    },
+    "email": {
+      "title": "Email"
+    },
+    "hours": {
+      "title": "Horaires",
+      "weekday": "Lundi - Vendredi: 8h - 17h",
+      "saturday": "Samedi: 9h - 13h"
+    },
+    "map": {
+      "placeholder": "📍 Carte Google Maps"
+    }
+  },
+  "footer": {
+    "disclaimer": "⚠️ AVERTISSEMENT LÉGAL : TERRASOCIAL est un service de vente de terrains à paiement échelonné. Ce n'est NI une banque, NI une microfinance, NI une tontine, NI un établissement de crédit. Nous ne collectons pas d'épargne publique. Projet géré par MANO VERDE INC SA.",
+    "tagline": "Votre terrain, votre avenir",
+    "company": "Un projet de MANO VERDE INC SA - Société Anonyme Camerounaise",
+    "sections": {
+      "navigation": "Navigation",
+      "legal": "Légal",
+      "contact": "Contact"
+    },
+    "links": {
+      "cgv": "Conditions Générales de Vente",
+      "cgu": "Conditions d'Utilisation",
+      "mentions": "Mentions Légales",
+      "payment": "Politique de Paiement",
+      "privacy": "Confidentialité"
+    },
+    "copyright": "© 2026 TERRASOCIAL - MANO VERDE INC SA. Tous droits réservés.",
+    "registration": "RCCM: [À compléter] | N° Contribuable: [À compléter]"
+  },
+  "legalNotice": {
+    "full": "Ce programme n'est ni une banque, ni une microfinance, ni une coopérative d'épargne et de crédit. Il s'agit d'une vente immobilière à paiement échelonné (crédit-vendeur), conforme au Code Civil camerounais."
+  },
+  "messages": {
+    "success": "Merci pour votre demande de réservation ! Notre équipe vous contactera dans les 24h pour finaliser votre dossier.",
+    "error": "Une erreur est survenue. Veuillez réessayer.",
+    "loading": "Chargement..."
+  }
+}
