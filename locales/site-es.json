@@ -15,7 +15,7 @@
     }
   },
   "alert": {
-    "warning": "⚠️ ADVERTENCIA IMPORTANTE: TERRASOCIAL NO es un banco ni una institución de microfinanzas. Solo ofrecemos venta de tierras con opciones de pago a plazos."
+    "warning": "TERRASOCIAL: venta de terrenos con pago a plazos por MANO VERDE INC SA. No somos ni un banco ni una microfinanciera."
   },
   "hero": {
     "title": "Conviértase en propietario de su tierra en Camerún",
@@ -29,7 +29,7 @@
         "label": "Lotes disponibles"
       },
       "surface": {
-        "number": "500m²",
+        "number": "500m\u00b2",
         "label": "Área mínima"
       },
       "months": {
@@ -39,85 +39,85 @@
     }
   },
   "lots": {
-    "title": "Nuestros Lotes Disponibles",
-    "description": "Descubra nuestra selección de terrenos en la región central, cerca de Yaoundé",
+    "title": "Nuestros Terrenos Disponibles",
+    "description": "Terrenos en zonas de desarrollo, legalmente asegurados y verificados por nuestros topógrafos y notarios asociados",
     "standard": {
-      "title": "Lote Estándar - 500m²",
+      "title": "Lote Estándar - 200m\u00b2",
       "location": "Soa, Yaoundé",
-      "size": "500 m²",
-      "price": "500.000 FCFA",
-      "monthly": "aproximadamente 21.000 FCFA/mes durante 24 meses",
+      "size": "200 m\u00b2",
+      "price": "6.500 FCFA/m\u00b2",
+      "monthly": "es decir, 45.000 FCFA/mes durante 24 meses",
       "features": [
         "Título de propiedad seguro",
         "Acceso por carretera practicable",
         "Electricidad cercana",
-        "Marcadores de límites incluidos"
+        "Deslinde incluido"
       ],
       "reserve": "Reservar este lote"
     },
     "comfort": {
-      "title": "Lote Confort - 750m²",
+      "title": "Lote Confort - 400m\u00b2",
       "location": "Nkolfoulou, Yaoundé",
-      "size": "750 m²",
-      "price": "750.000 FCFA",
-      "monthly": "aproximadamente 25.000 FCFA/mes durante 30 meses",
+      "size": "400 m\u00b2",
+      "price": "8.500 FCFA/m\u00b2",
+      "monthly": "es decir, 90.000 FCFA/mes durante 30 meses",
       "features": [
         "Título de propiedad seguro",
         "Acceso asfaltado",
         "Agua y electricidad",
-        "Marcadores de límites e plan incluidos"
+        "Deslinde y plano incluidos"
       ],
       "reserve": "Reservar este lote"
     },
     "premium": {
-      "title": "Lote Premium - 1000m²",
+      "title": "Lote Premium - 500m\u00b2",
       "location": "Mbankomo, Yaoundé",
-      "size": "1000 m²",
-      "price": "1.000.000 FCFA",
-      "monthly": "aproximadamente 28.000 FCFA/mes durante 36 meses",
+      "size": "500 m\u00b2",
+      "price": "10.000 FCFA/m\u00b2",
+      "monthly": "es decir, 112.500 FCFA/mes durante 36 meses",
       "features": [
         "Título de propiedad garantizado",
-        "Zona desarrollada",
+        "Zona urbanizada",
         "Todos los servicios disponibles",
-        "Soporte completo"
+        "Acompañamiento completo"
       ],
       "reserve": "Reservar este lote"
     }
   },
   "howItWorks": {
-    "title": "¿Cómo Funciona?",
-    "description": "Un proceso simple y transparente en 5 pasos para convertirse en propietario",
+    "title": "5 Pasos hacia Su Terreno",
+    "description": "Un proceso simple, rápido y accesible para todos",
     "steps": [
       {
         "number": "1",
         "title": "Elija su lote",
-        "description": "Explore nuestro catálogo y seleccione la tierra que se ajuste a sus necesidades y presupuesto."
+        "description": "Seleccione la superficie y la ubicación que le convengan."
       },
       {
         "number": "2",
-        "title": "Reservar en línea",
-        "description": "Complete el formulario de reserva y pague un depósito del 10% para asegurar su lote."
+        "title": "Simule su pago",
+        "description": "Calcule sus mensualidades según su presupuesto. Gastos de expediente: 10.000 FCFA."
       },
       {
         "number": "3",
-        "title": "Firmar el contrato",
-        "description": "Valide su contrato de reserva con un cronograma de pagos personalizado."
+        "title": "Reserve y firme",
+        "description": "Preparamos su contrato. Usted recibe sus primeros documentos."
       },
       {
         "number": "4",
-        "title": "Pagar mensualmente",
-        "description": "Pague sus cuotas a través de Orange Money, MTN MoMo o transferencia bancaria."
+        "title": "Pague a su ritmo",
+        "description": "Desde 1.500 FCFA/día vía Orange Money o MTN MoMo. Seguro opcional +350 FCFA/día."
       },
       {
         "number": "5",
         "title": "Reciba su título",
-        "description": "Después del pago completo, reciba su escritura de transferencia y archivo de tierra completo."
+        "description": "Documentos entregados progresivamente hasta el título de propiedad final."
       }
     ]
   },
   "payment": {
     "title": "Métodos de Pago",
-    "description": "Múltiples opciones flexibles para sus cuotas mensuales",
+    "description": "Múltiples opciones flexibles para sus pagos",
     "methods": [
       "Orange Money",
       "MTN MoMo",
@@ -125,15 +125,15 @@
       "Transferencia"
     ],
     "simulator": {
-      "title": "💰 Simulador de Pago",
-      "lotPrice": "Precio de la tierra (FCFA)",
-      "duration": "Duración del pago",
-      "deposit": "Depósito (10%)",
-      "monthly": "Su pago mensual",
+      "title": "Simulador de Pago",
+      "lotPrice": "Precio del lote (FCFA)",
+      "duration": "Duración de pago",
+      "deposit": "Gastos de expediente",
+      "monthly": "Su mensualidad",
       "lots": {
-        "standard": "500.000 FCFA - Lote Estándar",
-        "comfort": "750.000 FCFA - Lote Confort",
-        "premium": "1.000.000 FCFA - Lote Premium"
+        "standard": "1.080.000 FCFA - Lote Estándar 200m\u00b2",
+        "comfort": "2.700.000 FCFA - Lote Confort 400m\u00b2",
+        "premium": "4.050.000 FCFA - Lote Premium 500m\u00b2"
       },
       "durations": [
         "12 meses",
@@ -143,44 +143,54 @@
     }
   },
   "transparency": {
-    "title": "Nuestro Compromiso con la Transparencia",
-    "description": "Nos comprometemos con la transparencia total sobre nuestras actividades y sus derechos",
+    "title": "Claridad y Confianza",
+    "description": "En TERRASOCIAL, usted compra un terreno y paga a plazos. Un modelo claro, directo, sin sorpresas.",
+    "keyMessage": "Nuestro compromiso: sin tasas de interés, sin penalidades ocultas, un contrato claro y firmado, un seguimiento transparente hasta la obtención del título de propiedad. El acceso a la propiedad, simplificado.",
+    "legalNote": "TERRASOCIAL es una plataforma de venta de terrenos. No otorgamos créditos ni préstamos. Cada transacción se basa en un contrato de venta firmado entre el comprador y MANO VERDE INC SA.",
     "cards": [
       {
-        "icon": "📜",
+        "icon": "\ud83d\udcdc",
         "title": "Marco Legal",
-        "description": "Nuestra actividad es una venta de tierras a plazos, conforme a la ley de tierras camerunesa (Ordenanza No. 74/1 del 6 de julio de 1974) y el Acto Uniforme OHADA."
+        "description": "Venta inmobiliaria conforme al derecho fundiario camerunés y al Acto Uniforme OHADA."
       },
       {
-        "icon": "🏛️",
-        "title": "Títulos de Propiedad",
-        "description": "Todos nuestros lotes están asegurados con títulos de propiedad registrados en el Registro de Tierras de Camerún."
+        "icon": "\ud83c\udfdb\ufe0f",
+        "title": "Terrenos Asegurados",
+        "description": "Títulos de propiedad registrados en la Conservación de la Propiedad. Verificación por topógrafos y notarios."
       },
       {
-        "icon": "📋",
-        "title": "Contratos Claros",
-        "description": "Nuestros contratos están redactados en lenguaje claro con todos los términos, derechos y obligaciones detallados. Sin cargos ocultos."
+        "icon": "\ud83d\udccb",
+        "title": "Cero Gastos Ocultos",
+        "description": "Contrato en lenguaje claro, precio fijo y transparente, recibo por cada pago."
       },
       {
-        "icon": "⚖️",
-        "title": "Sus Derechos",
-        "description": "Derecho a visitar la tierra, disfrute anticipado después del 50% del pago, escritura notariada después del pago completo."
+        "icon": "\ud83d\udd12",
+        "title": "Pagos Seguros",
+        "description": "Vía Orange Money, MTN MoMo o transferencia. Cada transacción es rastreada y asegurada."
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "Confían en Nosotros",
+    "description": "Propietarios satisfechos en todo Camerún",
+    "items": [
+      {
+        "quote": "Con solo 1.500 FCFA al día, pude adquirir un terreno de 200m\u00b2 en Soa. El proceso fue simple y transparente. ¡Gracias TERRASOCIAL!",
+        "author": "Jean-Pierre N. \u2014 Yaoundé"
       },
       {
-        "icon": "🔒",
-        "title": "Seguridad",
-        "description": "Sus pagos se rastrean y se aseguran. Recibos emitidos para cada pago. Protección de sus datos personales garantizada."
+        "quote": "El seguro a 350 FCFA/día me tranquilizó. En caso de problema, mi familia está protegida y mi inversión asegurada.",
+        "author": "Marie-Claire T. \u2014 Douala"
       },
       {
-        "icon": "⚠️",
-        "title": "Qué NO Somos",
-        "description": "TERRASOCIAL NO es un banco, institución de microfinanzas o cooperativa de ahorros. No recopilamos ahorros y no proporcionamos crédito."
+        "quote": "Vivo en el extranjero y pude seguir todo el proceso en línea. Los documentos son claros y el equipo muy reactivo.",
+        "author": "Patrick M. \u2014 París, Francia"
       }
     ]
   },
   "subscription": {
-    "title": "Reservar Su Lote Ahora",
-    "description": "Complete este formulario para comenzar su camino hacia la propiedad",
+    "title": "Reserve Su Lote Ahora",
+    "description": "Complete este formulario para iniciar su camino hacia la propiedad",
     "formTitle": "Formulario de Reserva",
     "form": {
       "fullName": "Nombre completo",
@@ -203,7 +213,7 @@
         "friend": "Un amigo / Boca a boca",
         "other": "Otro"
       },
-      "cgv": "He leído y acepto los Términos y Condiciones de Venta y la Política de Pago a Plazos. Entiendo que TERRASOCIAL no es un banco ni una institución de microfinanzas.",
+      "cgv": "He leído y acepto las Condiciones Generales de Venta y la Política de Pago a Plazos.",
       "newsletter": "Acepto recibir noticias y ofertas de TERRASOCIAL por SMS/WhatsApp",
       "submit": "Enviar mi solicitud de reserva",
       "required": "* Campo requerido"
@@ -229,33 +239,32 @@
       "saturday": "Sábado: 9h - 13h"
     },
     "map": {
-      "placeholder": "📍 Mapa de Google"
+      "placeholder": "Mapa de Google"
     }
   },
   "footer": {
-    "disclaimer": "⚠️ AVISO LEGAL: TERRASOCIAL es un servicio de venta de tierras con pagos a plazos. NO es un banco, institución de microfinanzas, cooperativa de ahorros, ni establecimiento de crédito. No recopilamos ahorros públicos. Proyecto gestionado por MANO VERDE INC SA.",
+    "disclaimer": "TERRASOCIAL es un servicio de venta de terrenos con pago a plazos gestionado por MANO VERDE INC SA. No es una entidad financiera.",
     "tagline": "Su tierra, su futuro",
-    "company": "Un proyecto de MANO VERDE INC SA - Empresa Pública Camerunesa",
+    "company": "Un proyecto de MANO VERDE INC SA - Sociedad Anónima Camerunesa",
     "sections": {
       "navigation": "Navegación",
       "legal": "Legal",
       "contact": "Contacto"
     },
     "links": {
-      "cgv": "Términos y Condiciones de Venta",
-      "cgu": "Términos de Uso",
+      "cgv": "Condiciones Generales de Venta",
+      "cgu": "Condiciones de Uso",
       "mentions": "Avisos Legales",
       "payment": "Política de Pago",
       "privacy": "Privacidad"
     },
-    "copyright": "© 2026 TERRASOCIAL - MANO VERDE INC SA. Todos los derechos reservados.",
-    "registration": "Registro: [A completar] | Identificación Fiscal: [A completar]"
+    "copyright": "\u00a9 2026 TERRASOCIAL - MANO VERDE INC SA. Todos los derechos reservados."
   },
   "legalNotice": {
-    "full": "Este programa no es un banco, ni una institución de microfinanzas, ni una cooperativa de ahorros y crédito. Es una venta de tierras a plazos (crédito del vendedor), de conformidad con el Código Civil camerunés."
+    "full": "TERRASOCIAL es una plataforma de venta de terrenos con pago a plazos, conforme al Código Civil camerunés."
   },
   "messages": {
-    "success": "¡Gracias por su solicitud de reserva! Nuestro equipo se comunicará con usted dentro de 24 horas para finalizar su archivo.",
+    "success": "¡Gracias por su solicitud! Nuestro equipo le contactará en 24h.",
     "error": "Ocurrió un error. Por favor, inténtelo de nuevo.",
     "loading": "Cargando..."
   }

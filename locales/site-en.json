@@ -15,7 +15,7 @@
     }
   },
   "alert": {
-    "warning": "⚠️ IMPORTANT WARNING: TERRASOCIAL is NOT a bank or microfinance institution. We offer only land sales with installment payment options."
+    "warning": "TERRASOCIAL: land sales with installment payments by MANO VERDE INC SA. We are neither a bank nor a microfinance institution."
   },
   "hero": {
     "title": "Become an owner of your land in Cameroon",
@@ -29,7 +29,7 @@
         "label": "Available plots"
       },
       "surface": {
-        "number": "500m²",
+        "number": "500m\u00b2",
         "label": "Minimum area"
       },
       "months": {
@@ -39,14 +39,14 @@
     }
   },
   "lots": {
-    "title": "Our Available Lots",
-    "description": "Discover our selection of plots in the Central region, near Yaoundé",
+    "title": "Our Available Plots",
+    "description": "Plots in development areas, legally secured and verified by our partner surveyors and notaries",
     "standard": {
-      "title": "Standard Lot - 500m²",
+      "title": "Standard Lot - 200m\u00b2",
       "location": "Soa, Yaoundé",
-      "size": "500 m²",
-      "price": "500,000 FCFA",
-      "monthly": "approximately 21,000 FCFA/month over 24 months",
+      "size": "200 m\u00b2",
+      "price": "6,500 FCFA/m\u00b2",
+      "monthly": "i.e. 45,000 FCFA/month over 24 months",
       "features": [
         "Secured land title",
         "Accessible road access",
@@ -56,11 +56,11 @@
       "reserve": "Reserve this lot"
     },
     "comfort": {
-      "title": "Comfort Lot - 750m²",
+      "title": "Comfort Lot - 400m\u00b2",
       "location": "Nkolfoulou, Yaoundé",
-      "size": "750 m²",
-      "price": "750,000 FCFA",
-      "monthly": "approximately 25,000 FCFA/month over 30 months",
+      "size": "400 m\u00b2",
+      "price": "8,500 FCFA/m\u00b2",
+      "monthly": "i.e. 90,000 FCFA/month over 30 months",
       "features": [
         "Secured land title",
         "Paved access",
@@ -70,11 +70,11 @@
       "reserve": "Reserve this lot"
     },
     "premium": {
-      "title": "Premium Lot - 1000m²",
+      "title": "Premium Lot - 500m\u00b2",
       "location": "Mbankomo, Yaoundé",
-      "size": "1000 m²",
-      "price": "1,000,000 FCFA",
-      "monthly": "approximately 28,000 FCFA/month over 36 months",
+      "size": "500 m\u00b2",
+      "price": "10,000 FCFA/m\u00b2",
+      "monthly": "i.e. 112,500 FCFA/month over 36 months",
       "features": [
         "Guaranteed land title",
         "Developed zone",
@@ -85,39 +85,39 @@
     }
   },
   "howItWorks": {
-    "title": "How It Works?",
-    "description": "A simple and transparent process in 5 steps to become an owner",
+    "title": "5 Steps to Your Land",
+    "description": "A simple, fast and accessible process for everyone",
     "steps": [
       {
         "number": "1",
         "title": "Choose your lot",
-        "description": "Browse our catalog and select the land that matches your needs and budget."
+        "description": "Select the area and location that suits you."
       },
       {
         "number": "2",
-        "title": "Reserve online",
-        "description": "Fill out the reservation form and pay a 10% deposit to secure your plot."
+        "title": "Simulate your payment",
+        "description": "Calculate your monthly payments according to your budget. Application fee: 10,000 FCFA."
       },
       {
         "number": "3",
-        "title": "Sign the contract",
-        "description": "Validate your reservation contract with a personalized payment schedule."
+        "title": "Reserve and sign",
+        "description": "We prepare your contract. You receive your first documents."
       },
       {
         "number": "4",
-        "title": "Pay monthly",
-        "description": "Pay your installments via Orange Money, MTN MoMo, or bank transfer."
+        "title": "Pay at your own pace",
+        "description": "From 1,500 FCFA/day via Orange Money or MTN MoMo. Optional insurance +350 FCFA/day."
       },
       {
         "number": "5",
         "title": "Receive your title",
-        "description": "After full payment, receive your deed of transfer and complete land file."
+        "description": "Land documents delivered progressively until the final land title."
       }
     ]
   },
   "payment": {
     "title": "Payment Methods",
-    "description": "Multiple flexible options for your monthly installments",
+    "description": "Multiple flexible options for your installments",
     "methods": [
       "Orange Money",
       "MTN MoMo",
@@ -125,15 +125,15 @@
       "Transfer"
     ],
     "simulator": {
-      "title": "💰 Payment Simulator",
+      "title": "Payment Simulator",
       "lotPrice": "Land price (FCFA)",
       "duration": "Payment duration",
-      "deposit": "Deposit (10%)",
+      "deposit": "Application fee",
       "monthly": "Your monthly payment",
       "lots": {
-        "standard": "500,000 FCFA - Standard Lot",
-        "comfort": "750,000 FCFA - Comfort Lot",
-        "premium": "1,000,000 FCFA - Premium Lot"
+        "standard": "1,080,000 FCFA - Standard Lot 200m\u00b2",
+        "comfort": "2,700,000 FCFA - Comfort Lot 400m\u00b2",
+        "premium": "4,050,000 FCFA - Premium Lot 500m\u00b2"
       },
       "durations": [
         "12 months",
@@ -143,38 +143,48 @@
     }
   },
   "transparency": {
-    "title": "Our Commitment to Transparency",
-    "description": "We are committed to complete transparency regarding our activities and your rights",
+    "title": "Clarity and Trust",
+    "description": "At TERRASOCIAL, you buy land and pay in installments. A clear, direct model with no surprises.",
+    "keyMessage": "Our commitment: no interest rates, no hidden penalties, a clear signed contract, transparent monitoring until the land title is obtained. Access to ownership, simplified.",
+    "legalNote": "TERRASOCIAL is a land sales platform. We do not provide credit or loans. Each transaction is based on a sales contract signed between the buyer and MANO VERDE INC SA.",
     "cards": [
       {
-        "icon": "📜",
+        "icon": "\ud83d\udcdc",
         "title": "Legal Framework",
-        "description": "Our activity is an installment land sale, compliant with Cameroonian land law (Ordinance No. 74/1 of July 6, 1974) and the OHADA Uniform Act."
+        "description": "Real estate sale compliant with Cameroonian land law and the OHADA Uniform Act."
       },
       {
-        "icon": "🏛️",
-        "title": "Land Titles",
-        "description": "All our plots are secured with land titles registered with the Land Registry of Cameroon."
+        "icon": "\ud83c\udfdb\ufe0f",
+        "title": "Secured Land",
+        "description": "Land titles registered with the Land Registry. Verification by surveyors and notaries."
       },
       {
-        "icon": "📋",
-        "title": "Clear Contracts",
-        "description": "Our contracts are written in clear language with all terms, rights, and obligations detailed. No hidden fees."
+        "icon": "\ud83d\udccb",
+        "title": "Zero Hidden Fees",
+        "description": "Contract in clear language, fixed and transparent price, receipt for each payment."
       },
       {
-        "icon": "⚖️",
-        "title": "Your Rights",
-        "description": "Right to visit the land, anticipatory enjoyment after 50% payment, notarized deed of transfer after full payment."
+        "icon": "\ud83d\udd12",
+        "title": "Secure Payments",
+        "description": "Via Orange Money, MTN MoMo or transfer. Each transaction is tracked and secured."
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "They Trust Us",
+    "description": "Satisfied landowners across Cameroon",
+    "items": [
+      {
+        "quote": "With just 1,500 FCFA per day, I was able to buy a 200m\u00b2 plot in Soa. The process was simple and transparent. Thank you TERRASOCIAL!",
+        "author": "Jean-Pierre N. \u2014 Yaoundé"
       },
       {
-        "icon": "🔒",
-        "title": "Security",
-        "description": "Your payments are tracked and secure. Receipts issued for each payment. Protection of your personal data guaranteed."
+        "quote": "The insurance at 350 FCFA/day reassured me. In case of a problem, my family is protected and my investment is secured.",
+        "author": "Marie-Claire T. \u2014 Douala"
       },
       {
-        "icon": "⚠️",
-        "title": "What We Are NOT",
-        "description": "TERRASOCIAL is NOT a bank, microfinance institution, or savings cooperative. We do not collect savings and do not provide credit."
+        "quote": "I live abroad and was able to follow the entire process online. The documents are clear and the team is very responsive.",
+        "author": "Patrick M. \u2014 Paris, France"
       }
     ]
   },
@@ -203,7 +213,7 @@
         "friend": "A friend / Word of mouth",
         "other": "Other"
       },
-      "cgv": "I have read and accept the Terms and Conditions of Sale and the Installment Payment Policy. I understand that TERRASOCIAL is neither a bank nor a microfinance institution.",
+      "cgv": "I have read and accept the Terms and Conditions of Sale and the Installment Payment Policy.",
       "newsletter": "I agree to receive TERRASOCIAL news and offers via SMS/WhatsApp",
       "submit": "Send my reservation request",
       "required": "* Required field"
@@ -229,11 +239,11 @@
       "saturday": "Saturday: 9am - 1pm"
     },
     "map": {
-      "placeholder": "📍 Google Maps"
+      "placeholder": "Google Maps"
     }
   },
   "footer": {
-    "disclaimer": "⚠️ LEGAL WARNING: TERRASOCIAL is a land sales service with installment payments. It is NOT a bank, microfinance institution, savings cooperative, or credit establishment. We do not collect public savings. Project managed by MANO VERDE INC SA.",
+    "disclaimer": "TERRASOCIAL is a land sales service with installment payments managed by MANO VERDE INC SA. It is not a financial institution.",
     "tagline": "Your land, your future",
     "company": "A project of MANO VERDE INC SA - Cameroonian Public Company",
     "sections": {
@@ -248,14 +258,13 @@
       "payment": "Payment Policy",
       "privacy": "Privacy"
     },
-    "copyright": "© 2026 TERRASOCIAL - MANO VERDE INC SA. All rights reserved.",
-    "registration": "Registration: [To complete] | Tax ID: [To complete]"
+    "copyright": "\u00a9 2026 TERRASOCIAL - MANO VERDE INC SA. All rights reserved."
   },
   "legalNotice": {
-    "full": "This program is neither a bank, nor a microfinance institution, nor a savings and credit cooperative. It is an installment land sale (seller credit), compliant with Cameroonian Civil Code."
+    "full": "TERRASOCIAL is a platform for land sales with installment payments, compliant with the Cameroonian Civil Code."
   },
   "messages": {
-    "success": "Thank you for your reservation request! Our team will contact you within 24 hours to finalize your file.",
+    "success": "Thank you for your request! Our team will contact you within 24 hours.",
     "error": "An error occurred. Please try again.",
     "loading": "Loading..."
   }

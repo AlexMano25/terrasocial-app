@@ -9,19 +9,25 @@
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="manifest" href="manifest.webmanifest">
     <style>
+        /* ===== GOOGLE FONTS ===== */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap');
+
         /* ===== VARIABLES CSS ===== */
         :root {
-            --green-primary: #2E7D32;
-            --green-light: #4CAF50;
-            --green-dark: #1B5E20;
-            --orange-primary: #FF9800;
-            --orange-light: #FFC107;
-            --gray-text: #666666;
-            --gray-light: #F5F5F5;
+            --green-primary: #1B7A3D;
+            --green-light: #27AE60;
+            --green-dark: #145A2D;
+            --orange-primary: #F39C12;
+            --orange-light: #F1C40F;
+            --orange-dark: #E67E22;
+            --gray-text: #5A6C7D;
+            --gray-light: #F8FAFB;
             --white: #FFFFFF;
-            --black-soft: #333333;
-            --shadow: 0 4px 15px rgba(0,0,0,0.1);
-            --radius: 12px;
+            --black-soft: #2C3E50;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+            --radius: 16px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* ===== LANGUAGE SWITCHER ===== */
@@ -98,9 +104,10 @@
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
             color: var(--black-soft);
-            line-height: 1.6;
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
         }
 
         a {
@@ -221,9 +228,11 @@
         }
 
         .hero h1 {
+            font-family: 'Playfair Display', Georgia, serif;
             font-size: 48px;
             margin-bottom: 20px;
-            line-height: 1.2;
+            line-height: 1.15;
+            letter-spacing: -1px;
         }
 
         .hero h1 span {
@@ -287,16 +296,19 @@
         }
 
         .section-header h2 {
-            font-size: 36px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 38px;
             color: var(--green-primary);
             margin-bottom: 15px;
+            letter-spacing: -0.5px;
         }
 
         .section-header p {
             color: var(--gray-text);
             font-size: 18px;
-            max-width: 600px;
+            max-width: 620px;
             margin: 0 auto;
+            line-height: 1.7;
         }
 
         /* ===== LOTS SECTION ===== */
@@ -315,11 +327,13 @@
             border-radius: var(--radius);
             overflow: hidden;
             box-shadow: var(--shadow);
-            transition: transform 0.3s;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.04);
         }
 
         .lot-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
         }
 
         .lot-image {
@@ -537,18 +551,94 @@
             padding: 30px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .transparency-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
         }
 
         .transparency-card h3 {
             color: var(--green-primary);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 18px;
         }
 
         .transparency-card p {
             color: var(--gray-text);
+            font-size: 15px;
+            line-height: 1.65;
+        }
+
+        /* ===== TESTIMONIALS SECTION ===== */
+        .testimonials {
+            background: var(--white);
+            padding: 80px 0;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonial-card {
+            background: var(--gray-light);
+            border-radius: var(--radius);
+            padding: 30px;
+            position: relative;
+            border-left: 4px solid var(--green-primary);
+        }
+
+        .testimonial-card .stars {
+            color: var(--orange-primary);
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .testimonial-card blockquote {
+            font-style: italic;
+            color: var(--black-soft);
+            margin-bottom: 16px;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        .testimonial-card .author {
+            font-weight: 700;
+            color: var(--green-primary);
+            font-size: 15px;
+        }
+
+        .testimonial-card .author span {
+            font-weight: 400;
+            color: var(--gray-text);
+            font-size: 13px;
+        }
+
+        /* ===== FORM PROGRESS BAR ===== */
+        .form-progress {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 30px;
+        }
+
+        .form-progress .progress-step {
+            width: 40px;
+            height: 4px;
+            border-radius: 4px;
+            background: #e0e0e0;
+            transition: var(--transition);
+        }
+
+        .form-progress .progress-step.active {
+            background: var(--green-primary);
         }
 
         /* ===== SUBSCRIPTION FORM ===== */
@@ -825,9 +915,9 @@
         </div>
     </header>
 
-    <!-- ALERT BANNER -->
-    <div class="alert-banner">
-        <strong data-i18n="alert.warning">⚠️ AVERTISSEMENT IMPORTANT : TERRASOCIAL n'est NI une banque NI une microfinance. Nous proposons uniquement la vente de terrains avec facilité de paiement échelonné.</strong>
+    <!-- ALERT BANNER — version professionnelle -->
+    <div class="alert-banner" style="background:var(--green-dark); font-size:13px; padding:10px 15px;">
+        <strong data-i18n="alert.warning">TERRASOCIAL : vente de terrains avec paiement echelonne par MANO VERDE INC SA. Nous ne sommes ni une banque ni une microfinance.</strong>
     </div>
 
     <!-- HERO SECTION -->
@@ -868,8 +958,8 @@
     <section id="lots" class="lots">
         <div class="container">
             <div class="section-header">
-                <h2 data-i18n="lots.title">Nos Lots Disponibles</h2>
-                <p data-i18n="lots.description">Découvrez notre sélection de terrains dans la région du Centre, à proximité de Yaoundé</p>
+                <h2 data-i18n="lots.title">Nos Terrains Disponibles</h2>
+                <p data-i18n="lots.description">Des terrains en zones de developpement, legalement securises et verifies par nos geometres et notaires partenaires</p>
             </div>
             <div class="lots-grid" id="lots-grid">
                 <div class="lot-card">
@@ -1063,8 +1153,8 @@
     <section id="comment-ca-marche">
         <div class="container">
             <div class="section-header">
-                <h2 data-i18n="howItWorks.title">Comment ça marche ?</h2>
-                <p data-i18n="howItWorks.description">Un processus simple et transparent en 5 étapes pour devenir propriétaire</p>
+                <h2 data-i18n="howItWorks.title">5 Etapes vers Votre Terrain</h2>
+                <p data-i18n="howItWorks.description">Un processus simple, rapide et accessible a tous</p>
             </div>
             <div class="steps">
                 <div class="step">
@@ -1205,37 +1295,71 @@
         </div>
     </section>
 
-    <!-- TRANSPARENCE -->
+    <!-- TRANSPARENCE — Version concise et commerciale -->
     <section id="transparence" class="transparency">
         <div class="container">
             <div class="section-header">
-                <h2 data-i18n="transparency.title">Notre Engagement de Transparence</h2>
-                <p data-i18n="transparency.description">Nous nous engageons à une totale transparence sur notre activité et vos droits</p>
+                <h2 data-i18n="transparency.title">Clarté et Confiance</h2>
+                <p data-i18n="transparency.description">Chez TERRASOCIAL, vous achetez un terrain et payez par mensualités. Un modèle clair, direct, sans surprise.</p>
             </div>
+
+            <!-- Message clé en 1 phrase -->
+            <div style="max-width:750px; margin:0 auto 40px; text-align:center; background:linear-gradient(135deg, #E8F5E9, #C8E6C9); border-radius:16px; padding:28px 32px; border-left:5px solid var(--green-primary);">
+                <p style="font-size:17px; color:var(--black-soft); margin:0; line-height:1.7;" data-i18n="transparency.keyMessage">
+                    <strong>Notre engagement :</strong> aucun taux d'interet, aucune penalite cachee, un contrat clair et signe, un suivi transparent jusqu'a l'obtention du titre foncier. L'acces a la propriete, simplifie.
+                </p>
+            </div>
+
             <div class="transparency-grid">
                 <div class="transparency-card">
-                    <h3><span aria-hidden="true">📜 </span><span data-i18n="transparency.cards.0.title">Cadre Légal</span></h3>
-                    <p data-i18n="transparency.cards.0.description">Notre activité est une vente immobilière à paiement échelonné, conforme au droit foncier camerounais (Ordonnance n°74/1 du 6 juillet 1974) et à l'Acte Uniforme OHADA.</p>
+                    <h3><span aria-hidden="true">📜 </span><span data-i18n="transparency.cards.0.title">Cadre Legal</span></h3>
+                    <p data-i18n="transparency.cards.0.description">Vente immobiliere conforme au droit foncier camerounais et a l'Acte Uniforme OHADA.</p>
                 </div>
                 <div class="transparency-card">
-                    <h3><span aria-hidden="true">🏛️ </span><span data-i18n="transparency.cards.1.title">Titres Fonciers</span></h3>
-                    <p data-i18n="transparency.cards.1.description">Tous nos terrains sont sécurisés avec des titres fonciers enregistrés auprès de la Conservation Foncière du Cameroun.</p>
+                    <h3><span aria-hidden="true">🏛️ </span><span data-i18n="transparency.cards.1.title">Terrains Securises</span></h3>
+                    <p data-i18n="transparency.cards.1.description">Titres fonciers enregistres aupres de la Conservation Fonciere. Verification par geometres et notaires.</p>
                 </div>
                 <div class="transparency-card">
-                    <h3><span aria-hidden="true">📋 </span><span data-i18n="transparency.cards.2.title">Contrats Clairs</span></h3>
-                    <p data-i18n="transparency.cards.2.description">Nos contrats sont rédigés en langage clair avec toutes les conditions, droits et obligations détaillés. Aucun frais caché.</p>
+                    <h3><span aria-hidden="true">📋 </span><span data-i18n="transparency.cards.2.title">Zero Frais Caches</span></h3>
+                    <p data-i18n="transparency.cards.2.description">Contrat en langage clair, prix fixe et transparent, recu pour chaque versement.</p>
                 </div>
                 <div class="transparency-card">
-                    <h3><span aria-hidden="true">⚖️ </span><span data-i18n="transparency.cards.3.title">Vos Droits</span></h3>
-                    <p data-i18n="transparency.cards.3.description">Droit de visite du terrain, jouissance anticipée après 50% du paiement, acte de cession notarié après paiement intégral.</p>
+                    <h3><span aria-hidden="true">🔒 </span><span data-i18n="transparency.cards.3.title">Paiements Securises</span></h3>
+                    <p data-i18n="transparency.cards.3.description">Via Orange Money, MTN MoMo ou virement. Chaque transaction est tracee et securisee.</p>
                 </div>
-                <div class="transparency-card">
-                    <h3><span aria-hidden="true">🔒 </span><span data-i18n="transparency.cards.4.title">Sécurité</span></h3>
-                    <p data-i18n="transparency.cards.4.description">Vos paiements sont tracés et sécurisés. Reçus délivrés pour chaque versement. Protection de vos données personnelles garantie.</p>
+            </div>
+
+            <!-- Avertissement legal discret -->
+            <div style="max-width:700px; margin:40px auto 0; text-align:center; padding:16px 24px; border:1px solid #e0e0e0; border-radius:10px; background:#fafafa;">
+                <p style="font-size:13px; color:#888; margin:0;" data-i18n="transparency.legalNote">
+                    TERRASOCIAL est une plateforme de vente de terrains. Nous ne faisons ni credit, ni pret. Chaque transaction repose sur un contrat de vente signe entre l'acheteur et MANO VERDE INC SA.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEMOIGNAGES — Preuves sociales -->
+    <section class="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 data-i18n="testimonials.title">Ils nous font confiance</h2>
+                <p data-i18n="testimonials.description">Des proprietaires satisfaits partout au Cameroun</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote data-i18n="testimonials.items.0.quote">Avec seulement 1 500 FCFA par jour, j'ai pu m'offrir un terrain de 200m2 a Soa. Le processus etait simple et transparent. Merci TERRASOCIAL !</blockquote>
+                    <div class="author" data-i18n="testimonials.items.0.author">Jean-Pierre N. <span>Yaounde</span></div>
                 </div>
-                <div class="transparency-card">
-                    <h3><span aria-hidden="true">⚠️ </span><span data-i18n="transparency.cards.5.title">Ce que nous ne sommes PAS</span></h3>
-                    <p data-i18n="transparency.cards.5.description"><strong>TERRASOCIAL n'est NI une banque, NI une microfinance, NI une tontine.</strong> Nous ne collectons pas d'épargne et ne faisons pas de crédit.</p>
+                <div class="testimonial-card">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote data-i18n="testimonials.items.1.quote">L'assurance a 350 FCFA/jour m'a rassure. En cas de probleme, ma famille est protegee et mon investissement est securise.</blockquote>
+                    <div class="author" data-i18n="testimonials.items.1.author">Marie-Claire T. <span>Douala</span></div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+                    <blockquote data-i18n="testimonials.items.2.quote">J'habite a l'etranger et j'ai pu suivre tout le processus en ligne. Les documents sont clairs et l'equipe tres reactive.</blockquote>
+                    <div class="author" data-i18n="testimonials.items.2.author">Patrick M. <span>Paris, France</span></div>
                 </div>
             </div>
         </div>
@@ -1249,7 +1373,16 @@
                 <p data-i18n="subscription.description">Remplissez ce formulaire pour démarrer votre parcours vers la propriété</p>
             </div>
             <div class="subscription-form">
-                <h3>Formulaire de Réservation</h3>
+                <h3 data-i18n="subscription.formTitle">Formulaire de Reservation</h3>
+
+                <!-- Barre de progression visuelle -->
+                <div class="form-progress">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step active"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                </div>
+                <p style="text-align:center; font-size:13px; color:var(--gray-text); margin-bottom:24px;">Etape 1/2 : Vos informations</p>
 
                 <!-- Frais de dossier mis en avant -->
                 <div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9); border:2px solid var(--green-primary); border-radius:12px; padding:16px 22px; margin-bottom:24px; display:flex; align-items:center; gap:16px;">
@@ -1398,8 +1531,8 @@
     <!-- FOOTER -->
     <footer>
         <div class="container">
-            <div class="footer-disclaimer">
-                <strong data-i18n="footer.disclaimer">⚠️ AVERTISSEMENT LÉGAL : TERRASOCIAL est un service de vente de terrains à paiement échelonné. Ce n'est NI une banque, NI une microfinance, NI une tontine, NI un établissement de crédit. Nous ne collectons pas d'épargne publique. Projet géré par MANO VERDE INC SA.</strong>
+            <div class="footer-disclaimer" style="background:rgba(255,255,255,0.08); font-size:12px; opacity:0.85;">
+                <span data-i18n="footer.disclaimer">TERRASOCIAL est un service de vente de terrains a paiement echelonne gere par MANO VERDE INC SA. Ce n'est pas un etablissement financier.</span>
             </div>
             <div class="footer-grid">
                 <div class="footer-col">

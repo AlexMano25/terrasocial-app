@@ -7,7 +7,7 @@
     "logo": "TERRASOCIAL",
     "nav": {
       "lots": "我们的地块",
-      "howItWorks": "工作原理",
+      "howItWorks": "运作方式",
       "payment": "付款",
       "transparency": "透明度",
       "contact": "联系我们",
@@ -15,7 +15,7 @@
     }
   },
   "alert": {
-    "warning": "⚠️ 重要警告：TERRASOCIAL不是银行或小额信贷机构。我们仅提供分期付款的土地销售。"
+    "warning": "TERRASOCIAL：由MANO VERDE INC SA提供的分期付款土地销售。我们既不是银行也不是小额信贷机构。"
   },
   "hero": {
     "title": "成为喀麦隆土地的所有者",
@@ -29,7 +29,7 @@
         "label": "可用地块"
       },
       "surface": {
-        "number": "500m²",
+        "number": "500m\u00b2",
         "label": "最小面积"
       },
       "months": {
@@ -40,84 +40,84 @@
   },
   "lots": {
     "title": "我们的可用地块",
-    "description": "探索我们在中部地区、雅温得附近的地块精选",
+    "description": "开发区域的地块，经过法律认证并由我们的合作测量师和公证人验证",
     "standard": {
-      "title": "标准地块 - 500m²",
+      "title": "标准地块 - 200m\u00b2",
       "location": "雅温得Soa",
-      "size": "500 m²",
-      "price": "500,000 FCFA",
-      "monthly": "约21,000 FCFA/月，共24个月",
+      "size": "200 m\u00b2",
+      "price": "6,500 FCFA/m\u00b2",
+      "monthly": "即24个月每月45,000 FCFA",
       "features": [
         "安全的地契",
-        "可通行道路进入",
+        "可通行道路",
         "附近有电力",
-        "包括边界标记"
+        "包含测量定界"
       ],
       "reserve": "预订此地块"
     },
     "comfort": {
-      "title": "舒适地块 - 750m²",
+      "title": "舒适地块 - 400m\u00b2",
       "location": "雅温得Nkolfoulou",
-      "size": "750 m²",
-      "price": "750,000 FCFA",
-      "monthly": "约25,000 FCFA/月，共30个月",
+      "size": "400 m\u00b2",
+      "price": "8,500 FCFA/m\u00b2",
+      "monthly": "即30个月每月90,000 FCFA",
       "features": [
         "安全的地契",
         "柏油路进入",
         "水电供应",
-        "包括边界标记和平面图"
+        "包含测量和平面图"
       ],
       "reserve": "预订此地块"
     },
     "premium": {
-      "title": "高级地块 - 1000m²",
+      "title": "高级地块 - 500m\u00b2",
       "location": "雅温得Mbankomo",
-      "size": "1000 m²",
-      "price": "1,000,000 FCFA",
-      "monthly": "约28,000 FCFA/月，共36个月",
+      "size": "500 m\u00b2",
+      "price": "10,000 FCFA/m\u00b2",
+      "monthly": "即36个月每月112,500 FCFA",
       "features": [
         "有保证的地契",
         "已开发区域",
-        "所有公用事业可用",
-        "完整的支持"
+        "所有公用设施齐全",
+        "全程陪同服务"
       ],
       "reserve": "预订此地块"
     }
   },
   "howItWorks": {
-    "title": "工作原理?",
-    "description": "五个步骤的简单透明流程，成为地主",
+    "title": "5步获得您的土地",
+    "description": "简单、快速、人人可及的流程",
     "steps": [
       {
         "number": "1",
         "title": "选择您的地块",
-        "description": "浏览我们的目录，选择符合您需求和预算的土地。"
+        "description": "选择适合您的面积和位置。"
       },
       {
         "number": "2",
-        "title": "在线预订",
-        "description": "填写预订表格并支付10%的定金以保留您的地块。"
+        "title": "模拟您的付款",
+        "description": "根据您的预算计算月供。手续费：10,000 FCFA。"
       },
       {
         "number": "3",
-        "title": "签署合同",
-        "description": "验证您的预订合同并获得个性化的付款计划。"
+        "title": "预订并签约",
+        "description": "我们为您准备合同。您将收到第一批文件。"
       },
       {
         "number": "4",
-        "title": "每月付款",
-        "description": "通过Orange Money、MTN MoMo或银行转账支付每月分期。"
+        "title": "按自己的节奏付款",
+        "description": "每天最低1,500 FCFA，通过Orange Money或MTN MoMo。可选保险+350 FCFA/天。"
       },
       {
         "number": "5",
         "title": "获得您的地契",
-        "description": "全额付款后，获得您的转让书和完整的土地文件。"
+        "description": "土地文件逐步交付，直至最终地契。"
       }
     ]
   },
   "payment": {
     "title": "付款方式",
-    "description": "月供的多种灵活选择",
+    "description": "多种灵活的付款选择",
     "methods": [
       "Orange Money",
       "MTN MoMo",
@@ -125,15 +125,15 @@
       "转账"
     ],
     "simulator": {
-      "title": "💰 付款计算器",
-      "lotPrice": "土地价格 (FCFA)",
+      "title": "付款计算器",
+      "lotPrice": "地块价格 (FCFA)",
       "duration": "付款期限",
-      "deposit": "定金 (10%)",
-      "monthly": "您的月付款",
+      "deposit": "手续费",
+      "monthly": "您的月供",
       "lots": {
-        "standard": "500,000 FCFA - 标准地块",
-        "comfort": "750,000 FCFA - 舒适地块",
-        "premium": "1,000,000 FCFA - 高级地块"
+        "standard": "1,080,000 FCFA - 标准地块 200m\u00b2",
+        "comfort": "2,700,000 FCFA - 舒适地块 400m\u00b2",
+        "premium": "4,050,000 FCFA - 高级地块 500m\u00b2"
       },
       "durations": [
         "12个月",
@@ -143,43 +143,53 @@
     }
   },
   "transparency": {
-    "title": "我们的透明度承诺",
-    "description": "我们承诺对我们的活动和您的权利完全透明",
+    "title": "清晰与信任",
+    "description": "在TERRASOCIAL，您购买土地并分期付款。清晰、直接、没有意外的模式。",
+    "keyMessage": "我们的承诺：无利率、无隐藏罚款、签署清晰的合同、透明跟踪直至获得地契。获得产权，简化流程。",
+    "legalNote": "TERRASOCIAL是一个土地销售平台。我们不提供信贷或贷款。每笔交易基于买方与MANO VERDE INC SA之间签订的销售合同。",
     "cards": [
       {
-        "icon": "📜",
+        "icon": "\ud83d\udcdc",
         "title": "法律框架",
-        "description": "我们的活动是分期土地销售，符合喀麦隆地产法（1974年7月6日第74/1号条例）和OHADA统一法。"
+        "description": "房地产销售符合喀麦隆土地法和OHADA统一法。"
       },
       {
-        "icon": "🏛️",
-        "title": "地契",
-        "description": "我们所有的地块都有在喀麦隆地产登记处登记的安全地契。"
+        "icon": "\ud83c\udfdb\ufe0f",
+        "title": "安全的土地",
+        "description": "地契已在土地登记处登记。由测量师和公证人验证。"
       },
       {
-        "icon": "📋",
-        "title": "清晰的合同",
-        "description": "我们的合同用清晰的语言撰写，详细说明了所有条款、权利和义务。没有隐藏费用。"
+        "icon": "\ud83d\udccb",
+        "title": "零隐藏费用",
+        "description": "合同语言清晰，价格固定透明，每次付款均有收据。"
       },
       {
-        "icon": "⚖️",
-        "title": "您的权利",
-        "description": "参观土地的权利，支付50%后享有预期权利，全额付款后获得公证转让书。"
+        "icon": "\ud83d\udd12",
+        "title": "安全支付",
+        "description": "通过Orange Money、MTN MoMo或转账。每笔交易都被追踪和保护。"
+      }
+    ]
+  },
+  "testimonials": {
+    "title": "他们信任我们",
+    "description": "遍布喀麦隆的满意地主",
+    "items": [
+      {
+        "quote": "每天只需1,500 FCFA，我就在Soa购买了一块200m\u00b2的地块。过程简单透明。感谢TERRASOCIAL！",
+        "author": "Jean-Pierre N. \u2014 雅温得"
       },
       {
-        "icon": "🔒",
-        "title": "安全",
-        "description": "您的付款被跟踪和保护。为每笔付款签发收据。您的个人数据保护有保证。"
+        "quote": "每天350 FCFA的保险让我安心。出问题时，我的家人受到保护，投资也有保障。",
+        "author": "Marie-Claire T. \u2014 杜阿拉"
       },
       {
-        "icon": "⚠️",
-        "title": "我们不是什么",
-        "description": "TERRASOCIAL不是银行、小额信贷机构或储蓄合作社。我们不收集存款也不提供信用。"
+        "quote": "我住在国外，整个过程都可以在线跟进。文件清晰，团队反应迅速。",
+        "author": "Patrick M. \u2014 法国巴黎"
       }
     ]
   },
   "subscription": {
-    "title": "现在预订您的地块",
+    "title": "立即预订您的地块",
     "description": "填写此表格，开始您的购地之旅",
     "formTitle": "预订表格",
     "form": {
@@ -194,16 +204,16 @@
       "lot": "所需地块",
       "lotSelect": "-- 选择地块 --",
       "duration": "所需付款期限",
-      "source": "您如何了解TERRASOCIAL?",
+      "source": "您如何了解TERRASOCIAL？",
       "sourceSelect": "-- 选择 --",
       "sources": {
         "facebook": "Facebook",
         "whatsapp": "WhatsApp",
         "radio": "广播",
-        "friend": "朋友/口碑宣传",
+        "friend": "朋友/口碑",
         "other": "其他"
       },
-      "cgv": "我已阅读并接受《销售条款》和《分期付款政策》。我理解TERRASOCIAL既不是银行也不是小额信贷机构。",
+      "cgv": "我已阅读并接受《销售条款》和《分期付款政策》。",
       "newsletter": "我同意通过短信/WhatsApp接收TERRASOCIAL的新闻和优惠",
       "submit": "提交我的预订申请",
       "required": "* 必填字段"
@@ -229,13 +239,13 @@
       "saturday": "周六：9:00 - 13:00"
     },
     "map": {
-      "placeholder": "📍 谷歌地图"
+      "placeholder": "谷歌地图"
     }
   },
   "footer": {
-    "disclaimer": "⚠️ 法律声明：TERRASOCIAL是分期付款的土地销售服务。它不是银行、小额信贷机构、储蓄合作社或信贷机构。我们不收集公众存款。项目由MANO VERDE INC SA管理。",
+    "disclaimer": "TERRASOCIAL是由MANO VERDE INC SA管理的分期付款土地销售服务。它不是金融机构。",
     "tagline": "您的土地，您的未来",
-    "company": "MANO VERDE INC SA - 喀麦隆公共公司的项目",
+    "company": "MANO VERDE INC SA - 喀麦隆股份有限公司项目",
     "sections": {
       "navigation": "导航",
       "legal": "法律",
@@ -248,14 +258,13 @@
       "payment": "付款政策",
       "privacy": "隐私"
     },
-    "copyright": "© 2026 TERRASOCIAL - MANO VERDE INC SA. 版权所有。",
-    "registration": "注册号：[待补充] | 税号：[待补充]"
+    "copyright": "\u00a9 2026 TERRASOCIAL - MANO VERDE INC SA. 版权所有。"
   },
   "legalNotice": {
-    "full": "本项目既不是银行、小额信贷机构，也不是储蓄和信用合作社。这是分期付款土地销售（卖方信用），符合喀麦隆民法。"
+    "full": "TERRASOCIAL是一个分期付款土地销售平台，符合喀麦隆民法。"
   },
   "messages": {
-    "success": "感谢您的预订申请！我们的团队将在24小时内与您联系，以完成您的文件。",
+    "success": "感谢您的申请！我们的团队将在24小时内与您联系。",
     "error": "发生错误。请重试。",
     "loading": "加载中..."
   }
