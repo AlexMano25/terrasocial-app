@@ -117,7 +117,10 @@
   },
   "payment": {
     "title": "Zahlungsmethoden",
-    "description": "Mehrere flexible Optionen für Ihre Ratenzahlungen",
+    "description": "Zahlen Sie einfach über MTN Mobile Money. Weitere Optionen kommen bald.",
+    "badgeActive": "Aktiv",
+    "badgeSoon": "Bald",
+    "viaYNote": "über Y-Note / PayNote",
     "methods": [
       "Orange Money",
       "MTN MoMo",
