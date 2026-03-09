@@ -900,6 +900,123 @@
                 gap: 20px;
             }
         }
+
+        /* ===== MTN MOMO PAYMENT MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 36px;
+            max-width: 460px;
+            width: 90%;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 12px; right: 16px;
+            background: none; border: none;
+            font-size: 24px; cursor: pointer;
+            color: var(--gray-text);
+        }
+        .modal-content h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--green-dark);
+            font-size: 22px;
+            margin-bottom: 6px;
+        }
+        .modal-content .modal-subtitle {
+            color: var(--gray-text);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .mtn-form-group {
+            margin-bottom: 18px;
+        }
+        .mtn-form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 6px;
+            color: var(--black-soft);
+        }
+        .mtn-form-group input, .mtn-form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            font-size: 15px;
+            transition: border 0.2s;
+            box-sizing: border-box;
+        }
+        .mtn-form-group input:focus, .mtn-form-group select:focus {
+            border-color: var(--green-primary);
+            outline: none;
+        }
+        .mtn-amount-display {
+            background: linear-gradient(135deg, #FFF8E1, #FFF3CD);
+            border: 1.5px solid var(--orange-primary);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .mtn-amount-display .amount {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--orange-dark);
+        }
+        .mtn-amount-display .label {
+            font-size: 13px;
+            color: #888;
+        }
+        .btn-mtn-pay {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FFCC00, #FFB800);
+            color: #000;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-mtn-pay:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255,200,0,0.4); }
+        .btn-mtn-pay:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .payment-status {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        .payment-status.active { display: block; }
+        .payment-status .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #eee;
+            border-top-color: var(--green-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .payment-status.success { color: var(--green-primary); }
+        .payment-status.failed { color: #E74C3C; }
     </style>
 </head>
 <body>
@@ -1229,11 +1346,12 @@
                 <p data-i18n="payment.description">Plusieurs options flexibles pour vos versements mensuels</p>
             </div>
             <div class="payment-methods">
-                <div class="payment-method active">
+                <div class="payment-method active" style="cursor:pointer;" onclick="openMtnModal()">
                     <span class="badge badge-active" data-i18n="payment.badgeActive">Actif</span>
                     <div style="font-size: 36px;">🟡</div>
                     <span>MTN MoMo</span>
                     <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaYNote">via Y-Note / PayNote</small>
+                    <button onclick="openMtnModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
                 </div>
                 <div class="payment-method coming-soon">
                     <span class="badge badge-soon" data-i18n="payment.badgeSoon">Bientot</span>
@@ -1935,6 +2053,222 @@
                 navigator.serviceWorker.register('/service-worker.js').catch(function() {});
             }
         });
+    </script>
+
+    <!-- ===== MTN MOMO PAYMENT MODAL ===== -->
+    <div id="mtn-payment-modal" class="modal-overlay" onclick="if(event.target===this)closeMtnModal()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeMtnModal()">&times;</button>
+
+            <!-- FORM STEP -->
+            <div id="mtn-form-step">
+                <h3>Paiement MTN Mobile Money</h3>
+                <p class="modal-subtitle">Payez votre acompte en toute securite via Y-Note</p>
+
+                <div class="mtn-amount-display">
+                    <div class="label">Montant a payer</div>
+                    <div class="amount" id="mtn-amount-value">10 000 FCFA</div>
+                    <div class="label" id="mtn-amount-desc">Frais d'ouverture de dossier</div>
+                </div>
+
+                <div class="mtn-form-group">
+                    <label>Votre nom complet</label>
+                    <input type="text" id="mtn-name" placeholder="Ex: NKOMO Jean Paul" required>
+                </div>
+
+                <div class="mtn-form-group">
+                    <label>Numero MTN Mobile Money</label>
+                    <input type="tel" id="mtn-phone" placeholder="6XX XX XX XX" required pattern="[0-9]{9}">
+                    <small style="color:#888; font-size:12px;">Format: 6XXXXXXXX (9 chiffres sans indicatif)</small>
+                </div>
+
+                <div class="mtn-form-group">
+                    <label>Email (optionnel)</label>
+                    <input type="email" id="mtn-email" placeholder="nom@email.com">
+                </div>
+
+                <div class="mtn-form-group">
+                    <label>Type de lot</label>
+                    <select id="mtn-lot-type">
+                        <option value="dossier">Frais de dossier — 10 000 FCFA</option>
+                        <option value="standard">Acompte Lot Standard 200m² — 45 000 FCFA</option>
+                        <option value="confort">Acompte Lot Confort 400m² — 90 000 FCFA</option>
+                        <option value="premium">Acompte Lot Premium 500m² — 112 500 FCFA</option>
+                    </select>
+                </div>
+
+                <button class="btn-mtn-pay" id="btn-mtn-submit" onclick="initiateMtnPayment()">
+                    <span style="font-size:22px;">📱</span> Payer avec MTN MoMo
+                </button>
+            </div>
+
+            <!-- PROCESSING STEP -->
+            <div id="mtn-processing-step" class="payment-status">
+                <div class="spinner"></div>
+                <h3 style="font-family:'Playfair Display',serif; color:var(--green-dark);">Validation en cours...</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;">
+                    Un message USSD a ete envoye sur votre telephone.<br>
+                    <strong>Composez votre code PIN MTN</strong> pour valider le paiement.
+                </p>
+                <p id="mtn-order-id" style="font-size:12px; color:#aaa; margin-top:16px;"></p>
+            </div>
+
+            <!-- SUCCESS STEP -->
+            <div id="mtn-success-step" class="payment-status success">
+                <div style="font-size:60px; margin-bottom:12px;">&#10003;</div>
+                <h3 style="font-family:'Playfair Display',serif; color:var(--green-primary);">Paiement reussi !</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;">
+                    Votre paiement a ete confirme. Notre equipe vous contactera sous 24h pour finaliser votre dossier.
+                </p>
+                <button class="btn-mtn-pay" style="margin-top:20px; background:var(--green-primary); color:white;" onclick="closeMtnModal()">Fermer</button>
+            </div>
+
+            <!-- FAILED STEP -->
+            <div id="mtn-failed-step" class="payment-status failed">
+                <div style="font-size:60px; margin-bottom:12px;">&#10007;</div>
+                <h3 style="font-family:'Playfair Display',serif; color:#E74C3C;">Paiement echoue</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;" id="mtn-error-msg">
+                    Le paiement n'a pas abouti. Verifiez votre solde et reessayez.
+                </p>
+                <button class="btn-mtn-pay" style="margin-top:20px;" onclick="resetMtnModal()">Reessayer</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // ===== MTN MOMO PAYMENT LOGIC =====
+    const SUPABASE_URL = 'https://tbwbzbedlghodzlhtjbo.supabase.co';
+    const MTN_PAY_ENDPOINT = SUPABASE_URL + '/functions/v1/mtn-momo-pay';
+
+    const MTN_AMOUNTS = {
+        'dossier': 10000,
+        'standard': 45000,
+        'confort': 90000,
+        'premium': 112500
+    };
+
+    // Update amount display when lot type changes
+    document.getElementById('mtn-lot-type').addEventListener('change', function() {
+        const amount = MTN_AMOUNTS[this.value] || 10000;
+        document.getElementById('mtn-amount-value').textContent = amount.toLocaleString('fr-FR') + ' FCFA';
+        const descs = {
+            'dossier': "Frais d'ouverture de dossier",
+            'standard': 'Acompte mensuel Lot Standard 200m²',
+            'confort': 'Acompte mensuel Lot Confort 400m²',
+            'premium': 'Acompte mensuel Lot Premium 500m²'
+        };
+        document.getElementById('mtn-amount-desc').textContent = descs[this.value] || '';
+    });
+
+    function openMtnModal() {
+        document.getElementById('mtn-payment-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMtnModal() {
+        document.getElementById('mtn-payment-modal').classList.remove('active');
+        document.body.style.overflow = '';
+        resetMtnModal();
+    }
+
+    function resetMtnModal() {
+        document.getElementById('mtn-form-step').style.display = 'block';
+        document.getElementById('mtn-processing-step').classList.remove('active');
+        document.getElementById('mtn-success-step').classList.remove('active');
+        document.getElementById('mtn-failed-step').classList.remove('active');
+        document.getElementById('btn-mtn-submit').disabled = false;
+    }
+
+    function showStep(stepId) {
+        document.getElementById('mtn-form-step').style.display = 'none';
+        document.getElementById('mtn-processing-step').classList.remove('active');
+        document.getElementById('mtn-success-step').classList.remove('active');
+        document.getElementById('mtn-failed-step').classList.remove('active');
+        document.getElementById(stepId).classList.add('active');
+    }
+
+    async function initiateMtnPayment() {
+        const name = document.getElementById('mtn-name').value.trim();
+        const phone = document.getElementById('mtn-phone').value.trim().replace(/\s/g, '');
+        const email = document.getElementById('mtn-email').value.trim();
+        const lotType = document.getElementById('mtn-lot-type').value;
+        const amount = MTN_AMOUNTS[lotType] || 10000;
+
+        if (!name) { alert('Veuillez entrer votre nom'); return; }
+        if (!phone || phone.length < 9) { alert('Veuillez entrer un numero MTN valide (9 chiffres)'); return; }
+
+        document.getElementById('btn-mtn-submit').disabled = true;
+        showStep('mtn-processing-step');
+
+        try {
+            const res = await fetch(MTN_PAY_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'initiate',
+                    amount,
+                    phone,
+                    lotType,
+                    userName: name,
+                    userEmail: email
+                })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || 'Erreur serveur');
+
+            document.getElementById('mtn-order-id').textContent = 'Ref: ' + (data.orderId || '');
+
+            // Poll for status (max 5 minutes)
+            pollPaymentStatus(data.orderId, data.messageId);
+
+        } catch (err) {
+            console.error('Payment error:', err);
+            document.getElementById('mtn-error-msg').textContent = err.message || 'Erreur lors du paiement';
+            showStep('mtn-failed-step');
+        }
+    }
+
+    async function pollPaymentStatus(orderId, messageId) {
+        const maxAttempts = 30; // 30 x 10s = 5 min
+        let attempts = 0;
+
+        const poll = async () => {
+            attempts++;
+            try {
+                const res = await fetch(MTN_PAY_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'status', orderId, messageId })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showStep('mtn-success-step');
+                    return;
+                } else if (data.status === 'failed') {
+                    showStep('mtn-failed-step');
+                    return;
+                }
+
+                // Still processing
+                if (attempts < maxAttempts) {
+                    setTimeout(poll, 10000);
+                } else {
+                    document.getElementById('mtn-error-msg').textContent =
+                        'Delai d\'attente depasse. Si vous avez valide le paiement, contactez-nous avec la ref: ' + orderId;
+                    showStep('mtn-failed-step');
+                }
+            } catch (err) {
+                if (attempts < maxAttempts) {
+                    setTimeout(poll, 10000);
+                }
+            }
+        };
+
+        // First check after 10 seconds
+        setTimeout(poll, 10000);
+    }
     </script>
 </body>
 </html>
