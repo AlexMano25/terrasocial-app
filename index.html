@@ -1393,26 +1393,23 @@
                 <p data-i18n="payment.description">Plusieurs options flexibles pour vos versements mensuels</p>
             </div>
             <div class="payment-methods">
-                <div class="payment-method active" style="cursor:pointer;" onclick="openMtnModal()">
-                    <span class="badge badge-active" data-i18n="payment.badgeActive">Actif</span>
-                    <div style="font-size: 36px;">🟡</div>
-                    <span>MTN MoMo</span>
-                    <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaYNote">via Y-Note / PayNote</small>
-                    <button onclick="openMtnModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
-                </div>
                 <div class="payment-method active" style="cursor:pointer;" onclick="openOrangeModal()">
-                    <span class="badge badge-active" data-i18n="payment.badgeActive">Actif</span>
+                    <span class="badge badge-active">Actif</span>
                     <div style="font-size: 36px;">🟠</div>
                     <span>Orange Money</span>
-                    <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaCamPay">via CamPay</small>
-                    <button onclick="openOrangeModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
+                    <button onclick="openOrangeModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Payer</button>
+                </div>
+                <div class="payment-method active" style="cursor:pointer;" onclick="openMtnModal()">
+                    <span class="badge badge-active">Actif</span>
+                    <div style="font-size: 36px;">🟡</div>
+                    <span>MTN MoMo</span>
+                    <button onclick="openMtnModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Payer</button>
                 </div>
                 <div class="payment-method active" style="cursor:pointer;" onclick="openCardModal()">
-                    <span class="badge badge-active" data-i18n="payment.badgeActive">Actif</span>
+                    <span class="badge badge-active">Actif</span>
                     <div style="font-size: 36px;">💳</div>
-                    <span data-i18n="payment.methods.2">Carte Bancaire</span>
-                    <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaCamPay">via CamPay</small>
-                    <button onclick="openCardModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
+                    <span>Carte Bancaire</span>
+                    <button onclick="openCardModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">Payer</button>
                 </div>
                 <div class="payment-method coming-soon">
                     <span class="badge badge-soon" data-i18n="payment.badgeSoon">Bientot</span>
@@ -1425,11 +1422,11 @@
                 <h3>💰 Simulateur de Paiement</h3>
 
                 <!-- Frais de dossier bien en vue -->
-                <div style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9); border:1.5px solid var(--green-primary); border-radius:10px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; gap:14px;">
+                <div style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2); border:2px solid #FF9800; border-radius:10px; padding:14px 20px; margin-bottom:20px; display:flex; align-items:center; gap:14px;">
                     <span style="font-size:32px;">📋</span>
                     <div>
-                        <strong style="color:var(--green-dark); font-size:16px;">Frais d'ouverture de dossier : 10 000 FCFA</strong><br>
-                        <span style="font-size:13px; color:#555;">Paiement unique à la souscription — aucun acompte supplémentaire</span>
+                        <strong style="color:#E65100; font-size:16px;">Frais d'ouverture de dossier : 10 000 FCFA</strong><br>
+                        <span style="font-size:13px; color:#795548;">Paiement unique à la souscription — aucun acompte supplémentaire</span>
                     </div>
                 </div>
 
@@ -1471,15 +1468,28 @@
                         </div>
                     </div>
 
-                    <!-- Option Assurance -->
+                    <!-- Option Assurance avec nombre de personnes -->
                     <div class="form-group">
-                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; background:linear-gradient(135deg,#E3F2FD,#BBDEFB); border:1.5px solid #1565C0; border-radius:10px; padding:14px 16px;">
-                            <input type="checkbox" id="insurance-option" onchange="calculatePayment()" style="width:20px; height:20px; accent-color:#1565C0;">
-                            <div>
-                                <strong style="color:#1565C0;">🛡️ Assurance Souscripteur</strong>
-                                <span style="font-size:13px; color:#555; display:block; margin-top:2px;">+350 FCFA/jour (invalidité + décès + maladie)</span>
+                        <div style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB); border:1.5px solid #1565C0; border-radius:10px; padding:14px 16px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="insurance-option" onchange="calculatePayment()" style="width:20px; height:20px; accent-color:#1565C0; cursor:pointer;">
+                                <div>
+                                    <strong style="color:#1565C0;">🛡️ Assurance Famille</strong>
+                                    <span style="font-size:13px; color:#555; display:block; margin-top:2px;">+350 FCFA/jour/personne (invalidité + décès + maladie)</span>
+                                </div>
                             </div>
-                        </label>
+                            <div id="insurance-persons-sim" style="display:none; margin-top:8px; padding-top:10px; border-top:1px solid rgba(21,101,192,0.2);">
+                                <div style="display:flex; align-items:center; gap:12px; justify-content:center;">
+                                    <button type="button" onclick="changeInsurancePersons(-1)" style="width:36px;height:36px;border-radius:50%;border:2px solid #1565C0;background:#fff;color:#1565C0;font-size:18px;font-weight:700;cursor:pointer;">−</button>
+                                    <div style="text-align:center;">
+                                        <span id="sim-persons-count" style="font-size:28px; font-weight:700; color:#0D47A1;">1</span>
+                                        <div style="font-size:12px; color:#555;">personne(s)</div>
+                                    </div>
+                                    <button type="button" onclick="changeInsurancePersons(1)" style="width:36px;height:36px;border-radius:50%;border:2px solid #1565C0;background:#fff;color:#1565C0;font-size:18px;font-weight:700;cursor:pointer;">+</button>
+                                </div>
+                                <div style="text-align:center; margin-top:6px; font-size:13px; color:#1565C0; font-weight:600;" id="sim-insurance-cost">= +350 FCFA/jour</div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="simulator-result">
@@ -1784,7 +1794,16 @@
             document.getElementById('nav-menu').classList.toggle('active');
         }
 
-        // Payment simulator — synchronisé avec API lots, modes mensuel & journalier + assurance
+        // ── Variables et fonctions assurance simulateur ──
+        var simInsurancePersons = 1;
+        function changeInsurancePersons(delta) {
+            simInsurancePersons = Math.max(1, simInsurancePersons + delta);
+            document.getElementById('sim-persons-count').textContent = simInsurancePersons;
+            document.getElementById('sim-insurance-cost').textContent = '= +' + (simInsurancePersons * 350).toLocaleString('fr-FR') + ' FCFA/jour';
+            calculatePayment();
+        }
+
+        // Payment simulator
         function calculatePayment() {
             const select = document.getElementById('lot-price');
             if (!select) return;
@@ -1806,12 +1825,18 @@
             // Montant du versement selon fréquence
             const baseAmount = dailyBase * multiplier;
 
-            // Assurance optionnelle : +350 FCFA/jour/personne (1 personne dans le simulateur)
+            // Assurance optionnelle : +350 FCFA/jour/personne
             const insuranceCheck = document.getElementById('insurance-option');
             const hasInsurance = insuranceCheck ? insuranceCheck.checked : false;
             const INSURANCE_DAILY = 350;
-            const insuranceAmount = hasInsurance ? INSURANCE_DAILY * multiplier : 0;
+            const personsCount = hasInsurance ? simInsurancePersons : 0;
+            const insuranceDailyTotal = personsCount * INSURANCE_DAILY;
+            const insuranceAmount = insuranceDailyTotal * multiplier;
             const totalAmount = baseAmount + insuranceAmount;
+
+            // Afficher/masquer le sélecteur de personnes
+            const personsPanel = document.getElementById('insurance-persons-sim');
+            if (personsPanel) personsPanel.style.display = hasInsurance ? 'block' : 'none';
 
             const locale = { 'fr': 'fr-FR', 'en': 'en-GB', 'es': 'es-ES', 'zh': 'zh-CN', 'de': 'de-DE' }[window.i18n && window.i18n.currentLanguage] || 'fr-FR';
             const fmt = (v) => Number(v).toLocaleString(locale);
@@ -1831,7 +1856,7 @@
             if (insuranceEl) {
                 if (hasInsurance) {
                     insuranceEl.style.display = '';
-                    insuranceEl.textContent = `🛡️ dont ${fmt(insuranceAmount)} FCFA assurance (1 pers.)`;
+                    insuranceEl.textContent = `🛡️ dont ${fmt(insuranceAmount)} FCFA assurance (${personsCount} pers. × ${fmt(INSURANCE_DAILY)} FCFA/j)`;
                 } else {
                     insuranceEl.style.display = 'none';
                 }
@@ -1841,7 +1866,7 @@
                 let d = `<strong>${fmt(dailyBase)} FCFA/jour</strong> × ${multiplier} jour(s) = <strong>${fmt(baseAmount)} FCFA/${freqLabels[freq]}</strong>`;
                 if (subscriptions > 1) d += `<br><span style="font-size:12px;color:#555;">📐 ${surface}m² = ${subscriptions} souscription(s) de 200m² × ${fmt(1500)} FCFA/j</span>`;
                 d += `<br><span style="font-size:13px;color:var(--gray-text);">Total du terrain : ${fmt(totalPrice)} FCFA — chaque franc versé avance votre compteur !</span>`;
-                if (hasInsurance) d += `<br><span style="font-size:12px; color:#1565C0;">🛡️ +350 FCFA/j/pers. — ajoutez des membres de famille dans votre dashboard</span>`;
+                if (hasInsurance) d += `<br><span style="font-size:12px; color:#1565C0;">🛡️ ${personsCount} pers. × ${fmt(INSURANCE_DAILY)} FCFA/j = +${fmt(insuranceDailyTotal)} FCFA/jour</span>`;
                 detailEl.innerHTML = d;
             }
 
