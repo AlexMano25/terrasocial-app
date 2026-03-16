@@ -139,8 +139,11 @@
           <label>Fréquence de versement</label>
           <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
             <button type="button" class="freq-btn active" data-freq="daily">🗓️ Quotidien</button>
-            <button type="button" class="freq-btn" data-freq="monthly">📅 Mensuel</button>
-            <button type="button" class="freq-btn" data-freq="custom">✏️ Personnalisé</button>
+            <button type="button" class="freq-btn" data-freq="hebdomadaire">📅 Hebdo</button>
+            <button type="button" class="freq-btn" data-freq="bimensuel">📅 Bimensuel</button>
+            <button type="button" class="freq-btn" data-freq="mensuel">📅 Mensuel</button>
+            <button type="button" class="freq-btn" data-freq="semestriel">📅 Semestriel</button>
+            <button type="button" class="freq-btn" data-freq="custom">✏️ Libre</button>
           </div>
         </div>
 
@@ -226,16 +229,18 @@
         <h2>Nouvelle réservation</h2>
         <form id="reservation-form">
           <label for="lot_type">Type de lot</label>
-          <select id="lot_type" required>
-            <option value="standard">Standard 500m²</option>
-            <option value="confort">Confort 750m²</option>
-            <option value="premium">Premium 1000m²</option>
+          <select id="lot_type" required onchange="document.getElementById('lot_price').value={starter:'40000',standard:'1300000',confort:'3400000',premium:'5000000'}[this.value]||'40000'">
+            <option value="starter">Starter 200m² (quotidien uniquement)</option>
+            <option value="standard">Standard 200m²</option>
+            <option value="confort">Confort 400m² (2 souscriptions)</option>
+            <option value="premium">Premium 500m² (2,5 souscriptions)</option>
           </select>
-          <label for="lot_price">Prix (FCFA)</label>
+          <label for="lot_price">Prix total (FCFA)</label>
           <select id="lot_price" required>
-            <option value="500000">500 000</option>
-            <option value="750000">750 000</option>
-            <option value="1000000">1 000 000</option>
+            <option value="40000">40 000 (Starter)</option>
+            <option value="1300000">1 300 000 (Standard)</option>
+            <option value="3400000">3 400 000 (Confort)</option>
+            <option value="5000000">5 000 000 (Premium)</option>
           </select>
           <label for="duration_months">Durée</label>
           <select id="duration_months" required>

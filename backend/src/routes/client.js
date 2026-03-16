@@ -394,16 +394,28 @@ router.post('/reservations', async (req, res) => {
         const deposit = Math.ceil(price * 0.1);
         const monthly = Math.ceil((price - deposit) / duration);
 
-        // Calcul du montant journalier basé sur la formule Starter
-        // 200m² → 1500/jour, proportionnel pour les autres tailles
-        const lotSizes = { standard: 500, confort: 750, premium: 1000, starter: 200 };
-        const lotSize = lotSizes[lot_type] || 200;
-        const dailyAmount = Math.max(Math.ceil(monthly / 30), 1500);
+        // Prix au m² et surfaces par type de lot
+        const LOT_CONFIG = {
+            starter:  { price_per_m2: 200,   surface: 200, total: 40000 },
+            standard: { price_per_m2: 6500,  surface: 200, total: 1300000 },
+            confort:  { price_per_m2: 8500,  surface: 400, total: 3400000 },
+            premium:  { price_per_m2: 10000, surface: 500, total: 5000000 }
+        };
+        const config = LOT_CONFIG[lot_type] || LOT_CONFIG.starter;
+        const lotSize = config.surface;
+        const pricePerM2 = config.price_per_m2;
+
+        // Souscriptions : chaque 200m² = 1 souscription, minimum 1500 FCFA/jour/souscription
+        const subscriptions = Math.ceil(lotSize / 200);
+        const dailyAmount = subscriptions * 1500;
+
+        // Fréquence par défaut : Starter = quotidien uniquement
+        const defaultFreq = lot_type === 'starter' ? 'quotidien' : 'quotidien';
 
         const result = await run(
-            `INSERT INTO reservations(user_id, lot_type, lot_price, duration_months, deposit_amount, monthly_amount, source, insurance_persons, daily_amount, lot_size_m2)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [req.user.id, lot_type, price, duration, deposit, monthly, source || null, 0, dailyAmount, lotSize]
+            `INSERT INTO reservations(user_id, lot_type, lot_price, duration_months, deposit_amount, monthly_amount, source, insurance_persons, daily_amount, lot_size_m2, price_per_m2, payment_frequency)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [req.user.id, lot_type, price || config.total, duration, deposit, monthly, source || null, 0, dailyAmount, lotSize, pricePerM2, defaultFreq]
         );
 
         await req.audit?.('client.reservation_created', { user_id: req.user.id, reservation_id: result.id });
@@ -411,13 +423,15 @@ router.post('/reservations', async (req, res) => {
         return res.status(201).json({
             id: result.id,
             lot_type,
-            lot_price: price,
+            lot_price: price || config.total,
             lot_size_m2: lotSize,
+            price_per_m2: pricePerM2,
             duration_months: duration,
             deposit_amount: deposit,
             monthly_amount: monthly,
             daily_amount: dailyAmount,
-            insurance_persons: 0
+            insurance_persons: 0,
+            payment_frequency: defaultFreq
         });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur creation reservation' });

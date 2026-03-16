@@ -82,6 +82,7 @@
           opt.dataset.dailyInsurance = r.daily_insurance || 0;
           opt.dataset.monthly = r.monthly_amount;
           opt.dataset.remaining = r.remaining_total;
+          opt.dataset.lotType = r.lot_type || '';
           sel.appendChild(opt);
         });
       }
@@ -206,26 +207,46 @@
     });
   });
 
+  var freqMultipliers = { daily: 1, hebdomadaire: 7, bimensuel: 14, mensuel: 30, semestriel: 180 };
+  var freqLabels = { daily: '/jour', hebdomadaire: '/semaine', bimensuel: '/2 sem.', mensuel: '/mois', semestriel: '/semestre', custom: '' };
+
   function updateAmountFromFreq() {
     var sel = document.getElementById('v-reservation');
     var opt = sel.options[sel.selectedIndex];
     var input = document.getElementById('v-amount');
     var label = document.getElementById('v-min-label');
     var dailyTotal = opt && opt.dataset.dailyTotal ? Number(opt.dataset.dailyTotal) : 1500;
-    var monthly = opt && opt.dataset.monthly ? Number(opt.dataset.monthly) : dailyTotal * 30;
+    var lotType = opt && opt.dataset.lotType ? opt.dataset.lotType : '';
+    var isStarter = lotType === 'starter';
 
-    if (currentFreq === 'daily') {
-      input.value = dailyTotal;
-      input.min = dailyTotal;
-      label.textContent = '(min: ' + dailyTotal.toLocaleString('fr-FR') + ' /jour)';
-    } else if (currentFreq === 'monthly') {
-      input.value = monthly;
-      input.min = dailyTotal;
-      label.textContent = '(mensualit\u00e9: ' + monthly.toLocaleString('fr-FR') + ')';
-    } else {
+    var multiplier = freqMultipliers[currentFreq] || 1;
+
+    if (currentFreq === 'custom') {
       input.value = '';
       input.min = dailyTotal;
       label.textContent = '(min: ' + dailyTotal.toLocaleString('fr-FR') + ')';
+    } else {
+      var amount = dailyTotal * multiplier;
+      input.value = amount;
+      input.min = dailyTotal;
+      label.textContent = '(min: ' + amount.toLocaleString('fr-FR') + ' ' + (freqLabels[currentFreq] || '') + ')';
+    }
+
+    // Activer/désactiver fréquences selon le type de lot
+    document.querySelectorAll('.freq-btn').forEach(function(btn) {
+      var freq = btn.dataset.freq;
+      var available = isStarter ? (freq === 'daily' || freq === 'custom') : true;
+      btn.style.opacity = available ? '1' : '0.4';
+      btn.style.pointerEvents = available ? 'auto' : 'none';
+    });
+
+    // Si Starter et fréquence non-quotidien, forcer quotidien
+    if (isStarter && currentFreq !== 'daily' && currentFreq !== 'custom') {
+      currentFreq = 'daily';
+      document.querySelectorAll('.freq-btn').forEach(function(b) { b.classList.remove('active'); });
+      var dailyBtn = document.querySelector('.freq-btn[data-freq="daily"]');
+      if (dailyBtn) dailyBtn.classList.add('active');
+      updateAmountFromFreq();
     }
   }
 
