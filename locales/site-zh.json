@@ -117,10 +117,11 @@
   },
   "payment": {
     "title": "付款方式",
-    "description": "通过MTN Mobile Money轻松付款。更多选项即将推出。",
+    "description": "通过MTN MoMo、Orange Money或银行卡轻松付款。",
     "badgeActive": "已启用",
     "badgeSoon": "即将推出",
     "viaYNote": "通过 Y-Note / PayNote",
+    "viaCamPay": "通过 CamPay",
     "payNow": "立即付款",
     "methods": [
       "Orange Money",

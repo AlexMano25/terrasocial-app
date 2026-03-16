@@ -1369,15 +1369,19 @@
                     <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaYNote">via Y-Note / PayNote</small>
                     <button onclick="openMtnModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
                 </div>
-                <div class="payment-method coming-soon">
-                    <span class="badge badge-soon" data-i18n="payment.badgeSoon">Bientot</span>
+                <div class="payment-method active" style="cursor:pointer;" onclick="openOrangeModal()">
+                    <span class="badge badge-active" data-i18n="payment.badgeActive">Actif</span>
                     <div style="font-size: 36px;">🟠</div>
                     <span>Orange Money</span>
+                    <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaCamPay">via CamPay</small>
+                    <button onclick="openOrangeModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
                 </div>
-                <div class="payment-method coming-soon">
-                    <span class="badge badge-soon" data-i18n="payment.badgeSoon">Bientot</span>
+                <div class="payment-method active" style="cursor:pointer;" onclick="openCardModal()">
+                    <span class="badge badge-active" data-i18n="payment.badgeActive">Actif</span>
                     <div style="font-size: 36px;">💳</div>
                     <span data-i18n="payment.methods.2">Carte Bancaire</span>
+                    <small style="display:block; font-size:11px; color:var(--green-primary); margin-top:4px; font-weight:600;" data-i18n="payment.viaCamPay">via CamPay</small>
+                    <button onclick="openCardModal()" style="margin-top:10px; padding:8px 20px; background:var(--green-primary); color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" data-i18n="payment.payNow">Payer maintenant</button>
                 </div>
                 <div class="payment-method coming-soon">
                     <span class="badge badge-soon" data-i18n="payment.badgeSoon">Bientot</span>
@@ -2145,10 +2149,140 @@
         </div>
     </div>
 
+    <!-- ========== ORANGE MONEY PAYMENT MODAL ========== -->
+    <div id="orange-payment-modal" class="modal-overlay" onclick="if(event.target===this)closeOrangeModal()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeOrangeModal()">&times;</button>
+
+            <div id="orange-form-step">
+                <h3>Paiement Orange Money</h3>
+                <p class="modal-subtitle">Payez en toute securite via CamPay</p>
+
+                <div class="mtn-amount-display" style="background:linear-gradient(135deg,#FF8C00,#FF6600);">
+                    <div class="label" style="color:rgba(255,255,255,0.8);">Montant a payer</div>
+                    <div class="amount" id="orange-amount-value">10 000 FCFA</div>
+                    <div class="label" style="color:rgba(255,255,255,0.8);" id="orange-amount-desc">Frais d'ouverture de dossier</div>
+                </div>
+
+                <div class="mtn-form-group">
+                    <label>Votre nom complet</label>
+                    <input type="text" id="orange-name" placeholder="Ex: NKOMO Jean Paul" required>
+                </div>
+                <div class="mtn-form-group">
+                    <label>Numero Orange Money</label>
+                    <input type="tel" id="orange-phone" placeholder="6XX XX XX XX" required pattern="[0-9]{9}">
+                    <small style="color:#888; font-size:12px;">Format: 6XXXXXXXX (9 chiffres, commence par 69)</small>
+                </div>
+                <div class="mtn-form-group">
+                    <label>Email (optionnel)</label>
+                    <input type="email" id="orange-email" placeholder="nom@email.com">
+                </div>
+                <div class="mtn-form-group">
+                    <label>Type de lot</label>
+                    <select id="orange-lot-type">
+                        <option value="dossier">Frais de dossier — 10 000 FCFA</option>
+                        <option value="standard">Acompte Lot Standard 200m² — 45 000 FCFA</option>
+                        <option value="confort">Acompte Lot Confort 400m² — 90 000 FCFA</option>
+                        <option value="premium">Acompte Lot Premium 500m² — 112 500 FCFA</option>
+                    </select>
+                </div>
+                <button class="btn-mtn-pay" id="btn-orange-submit" style="background:linear-gradient(135deg,#FF8C00,#FF6600);" onclick="initiateOrangePayment()">
+                    <span style="font-size:22px;">📱</span> Payer avec Orange Money
+                </button>
+            </div>
+
+            <div id="orange-processing-step" class="payment-status">
+                <div class="spinner" style="border-top-color:#FF8C00;"></div>
+                <h3 style="font-family:'Playfair Display',serif; color:var(--green-dark);">Validation en cours...</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;">
+                    Un message USSD a ete envoye sur votre telephone.<br>
+                    <strong>Composez #150*50#</strong> puis validez avec votre code PIN Orange.
+                </p>
+                <p id="orange-order-id" style="font-size:12px; color:#aaa; margin-top:16px;"></p>
+            </div>
+
+            <div id="orange-success-step" class="payment-status success">
+                <div style="font-size:60px; margin-bottom:12px;">&#10003;</div>
+                <h3 style="font-family:'Playfair Display',serif; color:var(--green-primary);">Paiement reussi !</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;">
+                    Votre paiement Orange Money a ete confirme. Notre equipe vous contactera sous 24h.
+                </p>
+                <button class="btn-mtn-pay" style="margin-top:20px; background:var(--green-primary); color:white;" onclick="closeOrangeModal()">Fermer</button>
+            </div>
+
+            <div id="orange-failed-step" class="payment-status failed">
+                <div style="font-size:60px; margin-bottom:12px;">&#10007;</div>
+                <h3 style="font-family:'Playfair Display',serif; color:#E74C3C;">Paiement echoue</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;" id="orange-error-msg">
+                    Le paiement n'a pas abouti. Verifiez votre solde et reessayez.
+                </p>
+                <button class="btn-mtn-pay" style="margin-top:20px; background:#FF8C00;" onclick="resetOrangeModal()">Reessayer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== CARTE BANCAIRE PAYMENT MODAL ========== -->
+    <div id="card-payment-modal" class="modal-overlay" onclick="if(event.target===this)closeCardModal()">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeCardModal()">&times;</button>
+
+            <div id="card-form-step">
+                <h3>Paiement par Carte Bancaire</h3>
+                <p class="modal-subtitle">Paiement securise via CamPay — Visa / Mastercard</p>
+
+                <div class="mtn-amount-display" style="background:linear-gradient(135deg,#1565C0,#0D47A1);">
+                    <div class="label" style="color:rgba(255,255,255,0.8);">Montant a payer</div>
+                    <div class="amount" id="card-amount-value">10 000 FCFA</div>
+                    <div class="label" style="color:rgba(255,255,255,0.8);" id="card-amount-desc">Frais d'ouverture de dossier</div>
+                </div>
+
+                <div class="mtn-form-group">
+                    <label>Votre nom complet</label>
+                    <input type="text" id="card-name" placeholder="Ex: NKOMO Jean Paul" required>
+                </div>
+                <div class="mtn-form-group">
+                    <label>Email</label>
+                    <input type="email" id="card-email" placeholder="nom@email.com" required>
+                    <small style="color:#888; font-size:12px;">Le recu de paiement sera envoye a cette adresse</small>
+                </div>
+                <div class="mtn-form-group">
+                    <label>Type de lot</label>
+                    <select id="card-lot-type">
+                        <option value="dossier">Frais de dossier — 10 000 FCFA</option>
+                        <option value="standard">Acompte Lot Standard 200m² — 45 000 FCFA</option>
+                        <option value="confort">Acompte Lot Confort 400m² — 90 000 FCFA</option>
+                        <option value="premium">Acompte Lot Premium 500m² — 112 500 FCFA</option>
+                    </select>
+                </div>
+                <button class="btn-mtn-pay" id="btn-card-submit" style="background:linear-gradient(135deg,#1565C0,#0D47A1);" onclick="initiateCardPayment()">
+                    <span style="font-size:22px;">💳</span> Payer par Carte Bancaire
+                </button>
+            </div>
+
+            <div id="card-processing-step" class="payment-status">
+                <div class="spinner" style="border-top-color:#1565C0;"></div>
+                <h3 style="font-family:'Playfair Display',serif; color:var(--green-dark);">Redirection en cours...</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;">
+                    Vous allez etre redirige vers la page de paiement securisee CamPay.
+                </p>
+            </div>
+
+            <div id="card-failed-step" class="payment-status failed">
+                <div style="font-size:60px; margin-bottom:12px;">&#10007;</div>
+                <h3 style="font-family:'Playfair Display',serif; color:#E74C3C;">Erreur</h3>
+                <p style="color:var(--gray-text); font-size:14px; margin-top:8px;" id="card-error-msg">
+                    Impossible de creer le lien de paiement. Veuillez reessayer.
+                </p>
+                <button class="btn-mtn-pay" style="margin-top:20px; background:#1565C0;" onclick="resetCardModal()">Reessayer</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-    // ===== MTN MOMO PAYMENT LOGIC =====
+    // ===== PAYMENT LOGIC =====
     const SUPABASE_URL = 'https://tbwbzbedlghodzlhtjbo.supabase.co';
     const MTN_PAY_ENDPOINT = SUPABASE_URL + '/functions/v1/mtn-momo-pay';
+    const CAMPAY_ENDPOINT = SUPABASE_URL + '/functions/v1/campay-pay';
 
     const MTN_AMOUNTS = {
         'dossier': 10000,
@@ -2279,6 +2413,206 @@
         // First check after 10 seconds
         setTimeout(poll, 10000);
     }
+
+    // ===== ORANGE MONEY PAYMENT LOGIC (CamPay) =====
+    const CAMPAY_AMOUNTS = {
+        'dossier': 10000,
+        'standard': 45000,
+        'confort': 90000,
+        'premium': 112500
+    };
+    const CAMPAY_DESCS = {
+        'dossier': "Frais d'ouverture de dossier",
+        'standard': 'Acompte mensuel Lot Standard 200m²',
+        'confort': 'Acompte mensuel Lot Confort 400m²',
+        'premium': 'Acompte mensuel Lot Premium 500m²'
+    };
+
+    // Orange Money amount display update
+    document.getElementById('orange-lot-type').addEventListener('change', function() {
+        const amount = CAMPAY_AMOUNTS[this.value] || 10000;
+        document.getElementById('orange-amount-value').textContent = amount.toLocaleString('fr-FR') + ' FCFA';
+        document.getElementById('orange-amount-desc').textContent = CAMPAY_DESCS[this.value] || '';
+    });
+
+    // Card amount display update
+    document.getElementById('card-lot-type').addEventListener('change', function() {
+        const amount = CAMPAY_AMOUNTS[this.value] || 10000;
+        document.getElementById('card-amount-value').textContent = amount.toLocaleString('fr-FR') + ' FCFA';
+        document.getElementById('card-amount-desc').textContent = CAMPAY_DESCS[this.value] || '';
+    });
+
+    // --- Orange Money Modal ---
+    function openOrangeModal() {
+        document.getElementById('orange-payment-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeOrangeModal() {
+        document.getElementById('orange-payment-modal').classList.remove('active');
+        document.body.style.overflow = '';
+        resetOrangeModal();
+    }
+    function resetOrangeModal() {
+        document.getElementById('orange-form-step').style.display = 'block';
+        document.getElementById('orange-processing-step').classList.remove('active');
+        document.getElementById('orange-success-step').classList.remove('active');
+        document.getElementById('orange-failed-step').classList.remove('active');
+        document.getElementById('btn-orange-submit').disabled = false;
+    }
+    function showOrangeStep(stepId) {
+        document.getElementById('orange-form-step').style.display = 'none';
+        document.getElementById('orange-processing-step').classList.remove('active');
+        document.getElementById('orange-success-step').classList.remove('active');
+        document.getElementById('orange-failed-step').classList.remove('active');
+        document.getElementById(stepId).classList.add('active');
+    }
+
+    async function initiateOrangePayment() {
+        const name = document.getElementById('orange-name').value.trim();
+        const phone = document.getElementById('orange-phone').value.trim().replace(/\s/g, '');
+        const email = document.getElementById('orange-email').value.trim();
+        const lotType = document.getElementById('orange-lot-type').value;
+        const amount = CAMPAY_AMOUNTS[lotType] || 10000;
+
+        if (!name) { alert('Veuillez entrer votre nom'); return; }
+        if (!phone || phone.length < 9) { alert('Veuillez entrer un numero Orange valide (9 chiffres)'); return; }
+
+        document.getElementById('btn-orange-submit').disabled = true;
+        showOrangeStep('orange-processing-step');
+
+        try {
+            const res = await fetch(CAMPAY_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'initiate',
+                    provider: 'orange_money',
+                    amount, phone, name, email, lot_type: lotType
+                })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Erreur serveur');
+
+            document.getElementById('orange-order-id').textContent = 'Ref: ' + (data.order_id || '');
+            pollCampayStatus(data.order_id, data.reference, 'orange');
+
+        } catch (err) {
+            document.getElementById('orange-error-msg').textContent = err.message || 'Erreur lors du paiement';
+            showOrangeStep('orange-failed-step');
+        }
+    }
+
+    // --- Card Modal ---
+    function openCardModal() {
+        document.getElementById('card-payment-modal').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeCardModal() {
+        document.getElementById('card-payment-modal').classList.remove('active');
+        document.body.style.overflow = '';
+        resetCardModal();
+    }
+    function resetCardModal() {
+        document.getElementById('card-form-step').style.display = 'block';
+        document.getElementById('card-processing-step').classList.remove('active');
+        document.getElementById('card-failed-step').classList.remove('active');
+        document.getElementById('btn-card-submit').disabled = false;
+    }
+    function showCardStep(stepId) {
+        document.getElementById('card-form-step').style.display = 'none';
+        document.getElementById('card-processing-step').classList.remove('active');
+        document.getElementById('card-failed-step').classList.remove('active');
+        document.getElementById(stepId).classList.add('active');
+    }
+
+    async function initiateCardPayment() {
+        const name = document.getElementById('card-name').value.trim();
+        const email = document.getElementById('card-email').value.trim();
+        const lotType = document.getElementById('card-lot-type').value;
+        const amount = CAMPAY_AMOUNTS[lotType] || 10000;
+
+        if (!name) { alert('Veuillez entrer votre nom'); return; }
+        if (!email) { alert('Veuillez entrer votre email'); return; }
+
+        document.getElementById('btn-card-submit').disabled = true;
+        showCardStep('card-processing-step');
+
+        try {
+            const res = await fetch(CAMPAY_ENDPOINT, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: 'initiate',
+                    provider: 'card',
+                    amount, name, email, lot_type: lotType
+                })
+            });
+            const data = await res.json();
+            if (!data.success) throw new Error(data.error || 'Erreur serveur');
+
+            // Redirect to CamPay payment page
+            if (data.payment_link) {
+                window.location.href = data.payment_link;
+            } else {
+                throw new Error('Lien de paiement non recu');
+            }
+
+        } catch (err) {
+            document.getElementById('card-error-msg').textContent = err.message || 'Erreur lors du paiement';
+            showCardStep('card-failed-step');
+        }
+    }
+
+    // --- CamPay Status Polling (Orange Money) ---
+    function pollCampayStatus(orderId, reference, provider) {
+        let attempts = 0;
+        const maxAttempts = 30;
+
+        const poll = async () => {
+            attempts++;
+            try {
+                const res = await fetch(CAMPAY_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'status', order_id: orderId, reference })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    showOrangeStep('orange-success-step');
+                    return;
+                } else if (data.status === 'failed') {
+                    showOrangeStep('orange-failed-step');
+                    return;
+                }
+
+                if (attempts < maxAttempts) {
+                    setTimeout(poll, 10000);
+                } else {
+                    document.getElementById('orange-error-msg').textContent =
+                        "Delai d'attente depasse. Si vous avez valide, contactez-nous avec la ref: " + orderId;
+                    showOrangeStep('orange-failed-step');
+                }
+            } catch (err) {
+                if (attempts < maxAttempts) setTimeout(poll, 10000);
+            }
+        };
+        setTimeout(poll, 10000);
+    }
+
+    // ===== CHECK URL PARAMS FOR CARD PAYMENT RETURN =====
+    (function checkPaymentReturn() {
+        const params = new URLSearchParams(window.location.search);
+        const paymentStatus = params.get('payment');
+        const ref = params.get('ref');
+        if (paymentStatus === 'success' && ref) {
+            alert('Paiement par carte reussi ! Reference: ' + ref + '\nNotre equipe vous contactera sous 24h.');
+            window.history.replaceState({}, '', window.location.pathname);
+        } else if (paymentStatus === 'failed' && ref) {
+            alert('Le paiement par carte a echoue. Reference: ' + ref + '\nVeuillez reessayer ou nous contacter.');
+            window.history.replaceState({}, '', window.location.pathname);
+        }
+    })();
     </script>
 </body>
 </html>

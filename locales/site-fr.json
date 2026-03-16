@@ -117,10 +117,11 @@
   },
   "payment": {
     "title": "Moyens de Paiement",
-    "description": "Payez facilement via MTN Mobile Money. D'autres options arrivent bientot.",
+    "description": "Payez facilement via MTN MoMo, Orange Money ou Carte Bancaire.",
     "badgeActive": "Actif",
     "badgeSoon": "Bientot",
     "viaYNote": "via Y-Note / PayNote",
+    "viaCamPay": "via CamPay",
     "payNow": "Payer maintenant",
     "methods": [
       "Orange Money",
