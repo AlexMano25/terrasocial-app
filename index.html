@@ -1870,23 +1870,15 @@
                 detailEl.innerHTML = d;
             }
 
-            // Activer/désactiver les fréquences selon le type de lot
+            // Toutes les fréquences sont disponibles pour tous les lots
             document.querySelectorAll('.sim-freq-btn').forEach(function(btn) {
-                const f = btn.dataset.freq;
-                const available = isStarter ? (f === 'quotidien') : true;
-                btn.style.opacity = available ? '1' : '0.4';
-                btn.style.pointerEvents = available ? 'auto' : 'none';
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'auto';
                 const isActive = btn.querySelector('input').checked;
                 btn.style.borderColor = isActive ? 'var(--green-primary)' : '#ddd';
                 btn.style.background = isActive ? '#f1f8f1' : '#fff';
                 btn.style.color = isActive ? 'var(--green-dark)' : '#888';
             });
-
-            // Si Starter et fréquence non-quotidien, forcer quotidien
-            if (isStarter && freq !== 'quotidien') {
-                const dailyRadio = document.querySelector('input[name="payment-mode"][value="quotidien"]');
-                if (dailyRadio) { dailyRadio.checked = true; calculatePayment(); }
-            }
         }
 
         function resolveApiBase() {
