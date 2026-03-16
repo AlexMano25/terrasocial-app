@@ -278,7 +278,9 @@ router.get('/google/callback', async (req, res) => {
 
         const tokenData = await tokenRes.json();
         if (!tokenData.access_token) {
-            return res.redirect(`${appUrl}/login.html?error=google_token_failed`);
+            console.error('Google token exchange failed:', JSON.stringify(tokenData));
+            const detail = encodeURIComponent(tokenData.error || 'no_access_token');
+            return res.redirect(`${appUrl}/login.html?error=google_token_failed&detail=${detail}`);
         }
 
         // 2. Récupérer le profil Google
@@ -334,7 +336,9 @@ router.get('/google/callback', async (req, res) => {
         const encoded = Buffer.from(userPayload).toString('base64');
         return res.redirect(`${appUrl}/login.html#google_token=${token}&google_user=${encoded}`);
     } catch (err) {
-        return res.redirect(`${appUrl}/login.html?error=google_server_error`);
+        console.error('Google OAuth callback error:', err);
+        const errMsg = encodeURIComponent(err.message || 'unknown');
+        return res.redirect(`${appUrl}/login.html?error=google_server_error&detail=${errMsg}`);
     }
 });
 

@@ -175,7 +175,9 @@
           google_profile_failed: 'Impossible de lire le profil Google.',
           google_server_error: 'Erreur serveur lors de la connexion Google.'
         };
-        showFlash(messages[err] || 'Erreur connexion Google.', 'err');
+        const detail = params.get('detail');
+        const msg = messages[err] || 'Erreur connexion Google.';
+        showFlash(detail ? `${msg} (${decodeURIComponent(detail)})` : msg, 'err');
         history.replaceState(null, '', 'login.html');
         return;
       }
