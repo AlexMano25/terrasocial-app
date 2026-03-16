@@ -6,7 +6,6 @@
 
   // ── Config Endpoints ────────────────────────────────────────────────────
   var CAMPAY_ENDPOINT = 'https://tbwbzbedlghodzlhtjbo.supabase.co/functions/v1/campay-pay';
-  var MTN_ENDPOINT = 'https://tbwbzbedlghodzlhtjbo.supabase.co/functions/v1/mtn-momo-pay';
 
   // ── Utilitaires ──────────────────────────────────────────────────────────
   function xaf(v) { return Number(v || 0).toLocaleString('fr-FR') + ' FCFA'; }
@@ -281,56 +280,20 @@
     document.getElementById('campay-ref').textContent = paymentData.reference;
     document.getElementById('campay-amount').textContent = xaf(paymentData.amount);
 
-    // ── MTN MoMo via Y-Note ──────────────────────────────────────────────
-    if (method === 'mtn_momo') {
-      document.getElementById('campay-instructions').textContent =
-        'Validez le paiement avec votre code secret MTN MoMo.';
+    // ── Mobile Money (MTN MoMo ou Orange Money) via CamPay ───────────────
+    if (method === 'mtn_momo' || method === 'orange_money') {
+      var isMtn = method === 'mtn_momo';
+      document.getElementById('campay-instructions').textContent = isMtn
+        ? 'Validez le paiement avec votre code secret MTN MoMo.'
+        : 'Composez #150*50# sur votre t\u00e9l\u00e9phone pour valider.';
 
       try {
-        var resp = await fetch(MTN_ENDPOINT, {
+        var resp = await fetch(CAMPAY_ENDPOINT, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             action: 'initiate',
-            amount: paymentData.amount,
-            phone: paymentData.user_phone,
-            userName: paymentData.user_name,
-            userEmail: paymentData.user_email || '',
-            lotType: 'versement',
-            external_reference: paymentData.reference
-          })
-        });
-        var result = await resp.json();
-
-        if (!result.success) {
-          showModal('failed');
-          document.getElementById('campay-error-msg').textContent = result.error || 'Erreur MTN MoMo';
-          await cancelPendingPayment(paymentData.id);
-          return;
-        }
-
-        // Polling du statut via Y-Note
-        pollMtnStatus(result.order_id, result.message_id, paymentData);
-      } catch (err) {
-        showModal('failed');
-        document.getElementById('campay-error-msg').textContent = 'Erreur de connexion MTN MoMo';
-        await cancelPendingPayment(paymentData.id);
-      }
-      return;
-    }
-
-    // ── Orange Money via CamPay ──────────────────────────────────────────
-    if (method === 'orange_money') {
-      document.getElementById('campay-instructions').textContent =
-        'Composez #150*50# sur votre t\u00e9l\u00e9phone pour valider.';
-
-      try {
-        var resp2 = await fetch(CAMPAY_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'initiate',
-            provider: 'orange_money',
+            provider: isMtn ? 'mtn_momo' : 'orange_money',
             amount: paymentData.amount,
             phone: paymentData.user_phone,
             name: paymentData.user_name,
@@ -339,19 +302,19 @@
             external_reference: paymentData.reference
           })
         });
-        var result2 = await resp2.json();
+        var result = await resp.json();
 
-        if (!result2.success) {
+        if (!result.success) {
           showModal('failed');
-          document.getElementById('campay-error-msg').textContent = result2.error || 'Erreur Orange Money';
+          document.getElementById('campay-error-msg').textContent = result.error || (isMtn ? 'Erreur MTN MoMo' : 'Erreur Orange Money');
           await cancelPendingPayment(paymentData.id);
           return;
         }
 
-        pollCamPayStatus(result2.order_id, result2.reference, paymentData);
+        pollCamPayStatus(result.order_id, result.reference, paymentData);
       } catch (err) {
         showModal('failed');
-        document.getElementById('campay-error-msg').textContent = 'Erreur de connexion Orange Money';
+        document.getElementById('campay-error-msg').textContent = 'Erreur de connexion ' + (isMtn ? 'MTN MoMo' : 'Orange Money');
         await cancelPendingPayment(paymentData.id);
       }
       return;
@@ -388,44 +351,6 @@
       document.getElementById('campay-error-msg').textContent = 'Erreur de connexion Carte';
       await cancelPendingPayment(paymentData.id);
     }
-  }
-
-  // ── Polling MTN MoMo (Y-Note) ────────────────────────────────────────
-  async function pollMtnStatus(orderId, messageId, paymentData) {
-    var attempts = 0;
-    var maxAttempts = 30; // 5 minutes
-    var interval = setInterval(async function() {
-      attempts++;
-      if (attempts > maxAttempts) {
-        clearInterval(interval);
-        showModal('failed');
-        document.getElementById('campay-error-msg').textContent = 'D\u00e9lai d\u00e9pass\u00e9. V\u00e9rifiez votre t\u00e9l\u00e9phone et r\u00e9essayez.';
-        await cancelPendingPayment(paymentData.id);
-        return;
-      }
-      try {
-        var resp = await fetch(MTN_ENDPOINT, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'status', order_id: orderId, message_id: messageId })
-        });
-        var result = await resp.json();
-
-        if (result.status === 'success') {
-          clearInterval(interval);
-          await TSApi.request('/api/client/versement/' + paymentData.id + '/confirm', {
-            method: 'POST',
-            body: JSON.stringify({ campay_reference: 'MTN-' + (orderId || messageId) })
-          });
-          showModal('success');
-        } else if (result.status === 'failed') {
-          clearInterval(interval);
-          showModal('failed');
-          document.getElementById('campay-error-msg').textContent = 'Le paiement MTN MoMo a \u00e9t\u00e9 refus\u00e9.';
-          await cancelPendingPayment(paymentData.id);
-        }
-      } catch (e) { /* continue polling */ }
-    }, 10000);
   }
 
   async function pollCamPayStatus(orderId, reference, paymentData) {
@@ -538,7 +463,7 @@
 
       pendingPaymentId = payment.id;
 
-      // 2. Initier le paiement (CamPay ou Y-Note selon méthode)
+      // 2. Initier le paiement via CamPay (MTN, Orange, Carte)
       await initiatePayment(payment);
     } catch (err) {
       flash(err.message, 'err');
