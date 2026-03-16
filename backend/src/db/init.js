@@ -389,15 +389,6 @@ async function initializeDatabase() {
         );
     }
 
-    // v1.4 — Colonnes Starter: insurance_persons, daily_amount, lot_size_m2 sur reservations
-    try { await run('ALTER TABLE reservations ADD COLUMN insurance_persons INTEGER DEFAULT 0'); } catch (e) { /* already exists */ }
-    try { await run('ALTER TABLE reservations ADD COLUMN daily_amount INTEGER DEFAULT 1500'); } catch (e) { /* already exists */ }
-    try { await run('ALTER TABLE reservations ADD COLUMN lot_size_m2 INTEGER DEFAULT 200'); } catch (e) { /* already exists */ }
-
-    // v1.5 — Fréquences de paiement + prix au m²
-    try { await run("ALTER TABLE reservations ADD COLUMN payment_frequency TEXT DEFAULT 'quotidien'"); } catch (e) { /* already exists */ }
-    try { await run('ALTER TABLE reservations ADD COLUMN price_per_m2 INTEGER DEFAULT 200'); } catch (e) { /* already exists */ }
-
     // v1.3 — Bootstrap compte Manager par défaut.
     let managerUser = await get('SELECT id FROM users WHERE email = ?', ['manager@terrasocial.cm']);
     if (!managerUser) {
