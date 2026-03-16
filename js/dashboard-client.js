@@ -323,7 +323,10 @@
             external_reference: paymentData.reference
           })
         });
-        var result = await resp.json();
+        var result;
+        try { result = await resp.json(); } catch (parseErr) {
+          result = { success: false, error: 'Réponse invalide du serveur de paiement (code ' + resp.status + ')' };
+        }
 
         if (!result.success) {
           showModal('failed');
@@ -357,7 +360,10 @@
           external_reference: paymentData.reference
         })
       });
-      var result3 = await resp3.json();
+      var result3;
+      try { result3 = await resp3.json(); } catch (parseErr) {
+        result3 = { success: false, error: 'Réponse invalide du serveur de paiement (code ' + resp3.status + ')' };
+      }
 
       if (result3.success && result3.payment_link) {
         localStorage.setItem('pending_versement', JSON.stringify(paymentData));
@@ -392,7 +398,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'status', order_id: orderId, reference: reference })
         });
-        var result = await resp.json();
+        var result;
+        try { result = await resp.json(); } catch (parseErr) { result = {}; }
 
         if (result.status === 'success') {
           clearInterval(interval);

@@ -64,6 +64,13 @@
     } catch (error) {
       throw new Error(`Backend injoignable (${API_BASE}). Configure ts_api_base vers ton API publique.`);
     }
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      // Server returned HTML or other non-JSON (likely Vercel error page or missing route)
+      const statusMsg = response.ok ? 'réponse non-JSON du serveur' : `HTTP ${response.status}`;
+      throw new Error(`Erreur serveur: ${statusMsg}. Rechargez la page ou réessayez.`);
+    }
+
     const data = await response.json().catch(() => ({}));
 
     if (!response.ok) {
