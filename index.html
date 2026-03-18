@@ -2045,7 +2045,16 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error('Erreur enregistrement demande');
+                const ct = response.headers.get('content-type') || '';
+                if (!ct.includes('application/json')) {
+                    throw new Error('Le serveur est temporairement indisponible (code ' + response.status + '). Réessayez dans quelques instants.');
+                }
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Erreur enregistrement (code ' + response.status + ')');
+                }
 
                 const msg = (window.i18n && window.i18n.t)
                     ? window.i18n.t('messages.success', '')
@@ -2054,7 +2063,7 @@
                 form.reset();
                 calculatePayment();
             } catch (error) {
-                alert('Une erreur est survenue. Veuillez réessayer ou nous contacter directement.');
+                alert(error.message || 'Une erreur est survenue. Veuillez réessayer ou nous contacter directement.');
             }
         });
 
