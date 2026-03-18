@@ -198,10 +198,31 @@
       <section id="panel-documents" class="panel">
         <div class="card">
           <h3>Gestion Documentaire</h3>
-          <table>
-            <thead><tr><th>ID</th><th>Type</th><th>Nom</th><th>Utilisateur</th><th>Statut</th><th>Actions</th></tr></thead>
-            <tbody id="docs-tbody"></tbody>
-          </table>
+          <div class="toolbar" style="margin-bottom:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <input id="doc-search" type="text" placeholder="Rechercher nom, utilisateur..." style="flex:1; min-width:180px; padding:8px 12px; border:1px solid #ddd; border-radius:8px;">
+            <select id="doc-type-filter" style="padding:8px 12px; border:1px solid #ddd; border-radius:8px;">
+              <option value="">Tous les types</option>
+            </select>
+            <button id="doc-filter-btn" class="btn-sm" style="padding:8px 16px; background:#1B5E20; color:#fff; border:none; border-radius:8px; cursor:pointer;">Filtrer</button>
+            <span id="doc-count" style="font-size:13px; color:#666;"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Type</th>
+                  <th>Nom du fichier</th>
+                  <th>Utilisateur</th>
+                  <th>Contact</th>
+                  <th>Date</th>
+                  <th>Stockage</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="docs-tbody"></tbody>
+            </table>
+          </div>
         </div>
       </section>
 

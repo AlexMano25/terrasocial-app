@@ -115,21 +115,43 @@
   }
 
   function renderDocs() {
-    const tbody = document.getElementById('docs-tbody');
-    tbody.innerHTML = state.documents.length ? state.documents.map((d) => `
-      <tr>
-        <td>${d.id}</td>
-        <td>${d.document_type}</td>
-        <td>${d.file_name}</td>
-        <td>${d.user_id}</td>
-        <td><span class="status-pill">${d.storage_mode || 'local'}</span></td>
-        <td>
-          <button class="btn" data-action="download-doc" data-id="${d.id}" data-name="${d.file_name}">Télécharger</button>
-          <button class="btn" data-action="edit-doc" data-id="${d.id}">Renommer type</button>
-          <button class="btn" data-action="delete-doc" data-id="${d.id}">Supprimer</button>
-        </td>
-      </tr>
-    `).join('') : '<tr><td colspan="6">Aucun document</td></tr>';
+    var tbody = document.getElementById('docs-tbody');
+    var countEl = document.getElementById('doc-count');
+    if (countEl) countEl.textContent = state.documents.length + ' document(s)';
+
+    var typeBadge = function(t) {
+      var colors = { contrat_signe: '#1B5E20', titre_foncier: '#1565C0', pv_jouissance: '#6A1B9A', cni: '#E65100', facture: '#00695C', autre: '#555' };
+      var c = colors[t] || '#555';
+      return '<span style="background:' + c + ';color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;">' + (t || '-') + '</span>';
+    };
+
+    var fmtDate = function(d) {
+      if (!d) return '-';
+      try { return new Date(d).toLocaleDateString('fr-FR'); } catch(e) { return d; }
+    };
+
+    tbody.innerHTML = state.documents.length ? state.documents.map(function(d) {
+      var userName = d.user_name || ('User #' + d.user_id);
+      var userContact = d.user_email || d.user_phone || '-';
+      var userRole = d.user_role ? '<span style="font-size:10px;color:#888;">(' + d.user_role + ')</span>' : '';
+      var storageBadge = d.storage_mode === 'supabase'
+        ? '<span style="background:#1565C0;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;">cloud</span>'
+        : '<span style="background:#888;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;">local</span>';
+
+      return '<tr>' +
+        '<td>' + d.id + '</td>' +
+        '<td>' + typeBadge(d.document_type) + '</td>' +
+        '<td style="font-size:12px;">' + d.file_name + '</td>' +
+        '<td><strong>' + userName + '</strong> ' + userRole + '</td>' +
+        '<td style="font-size:12px;">' + userContact + '</td>' +
+        '<td style="font-size:12px;">' + fmtDate(d.uploaded_at) + '</td>' +
+        '<td>' + storageBadge + '</td>' +
+        '<td>' +
+          '<button class="btn" data-action="download-doc" data-id="' + d.id + '" data-name="' + d.file_name + '">Télécharger</button>' +
+          '<button class="btn" data-action="edit-doc" data-id="' + d.id + '">Renommer</button>' +
+          '<button class="btn" data-action="delete-doc" data-id="' + d.id + '">Supprimer</button>' +
+        '</td></tr>';
+    }).join('') : '<tr><td colspan="8">Aucun document</td></tr>';
   }
 
   function lotFormReset() {
@@ -214,10 +236,27 @@
     renderMessages();
   }
 
-  async function loadDocuments() {
-    const data = await TSApi.request('/api/super-admin/documents');
+  async function loadDocuments(filters) {
+    var params = new URLSearchParams();
+    if (filters) {
+      if (filters.type) params.set('type', filters.type);
+      if (filters.q) params.set('q', filters.q);
+    }
+    var qs = params.toString() ? '?' + params.toString() : '';
+    var data = await TSApi.request('/api/super-admin/documents' + qs);
     state.documents = data.documents || [];
     renderDocs();
+
+    // Remplir le filtre des types (une seule fois)
+    var typeSelect = document.getElementById('doc-type-filter');
+    if (typeSelect && data.document_types && typeSelect.options.length <= 1) {
+      (data.document_types || []).forEach(function(t) {
+        var opt = document.createElement('option');
+        opt.value = t;
+        opt.textContent = t;
+        typeSelect.appendChild(opt);
+      });
+    }
   }
 
   async function loadLots() {
@@ -514,6 +553,16 @@
     } catch (error) {
       flash(error.message, 'err');
     }
+  });
+
+  // Filtre documents
+  document.getElementById('doc-filter-btn').addEventListener('click', function() {
+    var type = document.getElementById('doc-type-filter').value;
+    var q = document.getElementById('doc-search').value.trim();
+    loadDocuments({ type: type, q: q }).catch(function(e) { flash(e.message, 'err'); });
+  });
+  document.getElementById('doc-search').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') document.getElementById('doc-filter-btn').click();
   });
 
   document.getElementById('lots-tbody').addEventListener('click', async (e) => {

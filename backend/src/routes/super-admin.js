@@ -344,13 +344,30 @@ router.get('/messages', async (req, res) => {
 
 router.get('/documents', async (req, res) => {
     try {
-        const docs = await all(
-            `SELECT id, user_id, document_type, file_name, file_path, storage_mode, public_url, uploaded_at
-             FROM documents
-             ORDER BY id DESC
-             LIMIT 500`
-        );
-        return res.json({ documents: docs });
+        const typeFilter = sanitizeOptionalText(req.query.type, 50);
+        const userFilter = req.query.user_id ? Number(req.query.user_id) : null;
+        const search = sanitizeOptionalText(req.query.q, 100);
+
+        let sql = `SELECT d.id, d.user_id, d.document_type, d.file_name, d.file_path, d.storage_mode, d.public_url, d.uploaded_at,
+                          u.full_name AS user_name, u.email AS user_email, u.phone AS user_phone, u.role AS user_role
+                   FROM documents d
+                   LEFT JOIN users u ON d.user_id = u.id`;
+        const conditions = [];
+        const params = [];
+
+        if (typeFilter) { conditions.push('d.document_type = ?'); params.push(typeFilter); }
+        if (userFilter) { conditions.push('d.user_id = ?'); params.push(userFilter); }
+        if (search) { conditions.push('(d.file_name LIKE ? OR u.full_name LIKE ? OR u.email LIKE ?)'); params.push(`%${search}%`, `%${search}%`, `%${search}%`); }
+
+        if (conditions.length) sql += ' WHERE ' + conditions.join(' AND ');
+        sql += ' ORDER BY d.id DESC LIMIT 500';
+
+        const docs = await all(sql, params);
+
+        // Collecter les types distincts pour le filtre frontend
+        const types = await all('SELECT DISTINCT document_type FROM documents ORDER BY document_type');
+
+        return res.json({ documents: docs, document_types: types.map(t => t.document_type) });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur lecture documents admin' });
     }
