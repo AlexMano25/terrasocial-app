@@ -59,6 +59,9 @@
       // Résumé journalier
       renderDailySummary(data.metrics, data.reservations);
 
+      // Frais d'adhésion
+      renderAdhesionSection(data.reservations, data.payments || []);
+
       // Police d'assurance
       var hasRes = data.reservations && data.reservations.length > 0;
       document.getElementById('btn-insurance').disabled = !hasRes;
@@ -132,6 +135,73 @@
     });
     breakdown.innerHTML = h;
     document.getElementById('daily-total-display').textContent = 'Total quotidien: ' + xaf(metrics.total_daily_amount);
+  }
+
+  // ── Frais d'adhésion ─────────────────────────────────────────────────────
+  function renderAdhesionSection(reservations, payments) {
+    var section = document.getElementById('adhesion-section');
+    if (!section) return;
+    if (!reservations || !reservations.length) { section.style.display = 'none'; return; }
+    section.style.display = 'block';
+
+    // Vérifier si les frais d'adhésion ont été payés
+    var adhesionPaid = payments.some(function(p) {
+      return p.status === 'paid' && p.reference && p.reference.indexOf('ADHESION') !== -1;
+    });
+
+    var statusEl = document.getElementById('adhesion-status');
+    var actionEl = document.getElementById('adhesion-action');
+
+    if (adhesionPaid) {
+      statusEl.innerHTML = '<span style="background:#E8F5E9;color:#1B5E20;padding:4px 12px;border-radius:6px;font-size:13px;font-weight:600;">✅ Payé</span>';
+      actionEl.innerHTML = '';
+      section.style.borderLeft = '4px solid #2E7D32';
+    } else {
+      statusEl.innerHTML = '<span style="background:#FFF3E0;color:#E65100;padding:4px 12px;border-radius:6px;font-size:13px;font-weight:600;">⏳ En attente</span>';
+      actionEl.innerHTML = '<button type="button" id="btn-pay-adhesion" style="background:linear-gradient(135deg,#FF8F00,#F57C00);color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:700;font-size:15px;cursor:pointer;">Payer les frais d\'adhésion — 10 000 FCFA</button>';
+      section.style.borderLeft = '4px solid #FF8F00';
+
+      // Event listener pour le paiement
+      var btn = document.getElementById('btn-pay-adhesion');
+      if (btn) {
+        btn.addEventListener('click', async function() {
+          var firstRes = reservations[0];
+          if (!firstRes) { flash('Aucune réservation active.', 'err'); return; }
+
+          var method = prompt('Mode de paiement :\n1 = Orange Money\n2 = MTN MoMo\n3 = Carte bancaire', '1');
+          var methodMap = { '1': 'orange_money', '2': 'mtn_momo', '3': 'carte' };
+          var selectedMethod = methodMap[method] || 'orange_money';
+          var phone = '';
+
+          if (selectedMethod !== 'carte') {
+            phone = prompt('Numéro de téléphone pour le paiement mobile :', '');
+            if (!phone) return;
+          }
+
+          try {
+            btn.disabled = true;
+            btn.textContent = 'Traitement en cours...';
+
+            var payment = await TSApi.request('/api/client/versement', {
+              method: 'POST',
+              body: JSON.stringify({
+                reservation_id: Number(firstRes.reservation_id),
+                amount: 10000,
+                method: selectedMethod,
+                phone: phone,
+                reference_prefix: 'ADHESION'
+              })
+            });
+
+            await initiatePayment(payment);
+          } catch (err) {
+            flash(err.message, 'err');
+            btn.disabled = false;
+            btn.textContent = 'Payer les frais d\'adhésion — 10 000 FCFA';
+          }
+        });
+      }
+    }
   }
 
   // ── Section personnes assurées ─────────────────────────────────────────
