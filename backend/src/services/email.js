@@ -54,9 +54,15 @@ async function sendEmail(to, subject, text, html) {
         const info = await transport.sendMail({
             from,
             to,
+            replyTo: process.env.SMTP_REPLY_TO || from,
             subject,
             text,
-            html: html || undefined
+            html: html || undefined,
+            headers: {
+                'X-Mailer': 'TERRASOCIAL Platform',
+                'List-Unsubscribe': '<mailto:' + (process.env.SMTP_USER || 'direction@manovende.com') + '?subject=unsubscribe>',
+                'Precedence': 'bulk'
+            }
         });
         console.log('[EMAIL] Envoyé à', to, '— ID:', info.messageId);
         return { success: true, messageId: info.messageId };
