@@ -345,7 +345,7 @@
       resultEl.innerHTML = html;
 
       await loadReservations();
-      await loadOverview();
+      try { await loadOverview(); } catch (e) { /* Chart.js may not be ready */ }
     } catch (err) {
       resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + err.message + '</span>';
     }
