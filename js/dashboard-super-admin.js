@@ -51,6 +51,7 @@
   }
 
   function buildCharts(monthlyUsers, monthlyRevenue) {
+    if (typeof Chart === 'undefined') return; // Chart.js not loaded yet
     if (state.charts.users) state.charts.users.destroy();
     if (state.charts.revenue) state.charts.revenue.destroy();
 
@@ -361,12 +362,14 @@
   });
 
   async function loadAll() {
-    try {
-      await Promise.all([loadOverview(), loadUsers(), loadMessages(), loadLots(), loadDocuments(), loadReservations()]);
-      document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`;
-    } catch (error) {
-      flash(error.message, 'err');
-    }
+    // Afficher le profil immédiatement
+    document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`;
+
+    // Charger chaque section indépendamment (une erreur n'empêche pas les autres)
+    var loaders = [loadOverview, loadUsers, loadMessages, loadLots, loadDocuments, loadReservations];
+    await Promise.allSettled(loaders.map(function(fn) {
+      return fn().catch(function(e) { console.warn(fn.name + ':', e.message); });
+    }));
   }
 
   document.querySelectorAll('.side-nav button').forEach((btn) => {
