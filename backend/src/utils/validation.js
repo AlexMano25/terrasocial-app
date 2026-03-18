@@ -23,8 +23,9 @@ function parsePositiveInt(value) {
 
 function isValidPhone(phone) {
     if (typeof phone !== 'string') return false;
-    const trimmed = phone.trim();
-    return /^[+0-9\s()-]{8,20}$/.test(trimmed);
+    const trimmed = phone.trim().replace(/[\s()-]/g, '');
+    // Accepter numéros internationaux : +indicatif + numéro (5 à 15 chiffres après le +)
+    return /^\+?[0-9]{5,20}$/.test(trimmed);
 }
 
 function isStrongPassword(password) {
@@ -46,8 +47,8 @@ function validateReservationPayload(payload) {
         return { ok: false, error: 'Données de réservation invalides' };
     }
 
-    if (![12, 24, 36].includes(duration)) {
-        return { ok: false, error: 'Durée non autorisée (12, 24, 36 mois)' };
+    if (duration < 1 || duration > 120) {
+        return { ok: false, error: 'Durée non autorisée (1 à 120 mois)' };
     }
 
     return {

@@ -1608,7 +1608,40 @@
                         </div>
                         <div class="form-group">
                             <label for="telephone">Numéro de téléphone *</label>
-                            <input id="telephone" type="tel" name="telephone" required placeholder="Ex: 6XX XX XX XX">
+                            <div style="display:flex; gap:6px;">
+                                <select id="country-code" name="country_code" style="width:120px; flex-shrink:0; font-size:14px; padding:10px 6px;">
+                                    <option value="+237" selected>🇨🇲 +237</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                    <option value="+34">🇪🇸 +34</option>
+                                    <option value="+39">🇮🇹 +39</option>
+                                    <option value="+32">🇧🇪 +32</option>
+                                    <option value="+41">🇨🇭 +41</option>
+                                    <option value="+225">🇨🇮 +225</option>
+                                    <option value="+221">🇸🇳 +221</option>
+                                    <option value="+241">🇬🇦 +241</option>
+                                    <option value="+240">🇬🇶 +240</option>
+                                    <option value="+235">🇹🇩 +235</option>
+                                    <option value="+236">🇨🇫 +236</option>
+                                    <option value="+242">🇨🇬 +242</option>
+                                    <option value="+243">🇨🇩 +243</option>
+                                    <option value="+234">🇳🇬 +234</option>
+                                    <option value="+27">🇿🇦 +27</option>
+                                    <option value="+212">🇲🇦 +212</option>
+                                    <option value="+216">🇹🇳 +216</option>
+                                    <option value="+86">🇨🇳 +86</option>
+                                    <option value="+91">🇮🇳 +91</option>
+                                    <option value="+55">🇧🇷 +55</option>
+                                    <option value="+7">🇷🇺 +7</option>
+                                    <option value="+81">🇯🇵 +81</option>
+                                    <option value="+971">🇦🇪 +971</option>
+                                    <option value="+966">🇸🇦 +966</option>
+                                    <option value="+90">🇹🇷 +90</option>
+                                </select>
+                                <input id="telephone" type="tel" name="telephone" required placeholder="6XX XX XX XX" style="flex:1;">
+                            </div>
                         </div>
                     </div>
                     <div class="form-row">
@@ -2019,22 +2052,30 @@
         document.getElementById('reservation-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             const form = e.target;
-            const lotMap = { starter: 40000, standard: 1300000, confort: 3400000, premium: 5000000 };
+            const lotFallbackMap = { starter: 40000, standard: 1300000, confort: 3400000, premium: 5000000 };
 
-            const lotType  = form.querySelector('select[name="lot"]').value;
-            const lotPrice = lotMap[lotType] || 0;
-            const modeVers = (form.querySelector('input[name="mode_versement"]:checked') || {}).value || 'mensuel';
+            const lotSelect = form.querySelector('select[name="lot"]');
+            const lotType   = lotSelect.value;
+            const lotOpt    = lotSelect.options[lotSelect.selectedIndex];
+            // Priorité : data-price de l'option dynamique, sinon lotFallbackMap, sinon 0
+            const lotPrice  = Number(lotOpt && lotOpt.dataset.price ? lotOpt.dataset.price : 0) || lotFallbackMap[lotType] || 0;
+            const modeVers  = (form.querySelector('input[name="mode_versement"]:checked') || {}).value || 'mensuel';
+
+            // Téléphone avec indicatif pays
+            const countryCode = form.querySelector('select[name="country_code"]').value || '+237';
+            const rawPhone    = form.querySelector('input[name="telephone"]').value.replace(/\s+/g, '');
+            const fullPhone   = rawPhone.startsWith('+') ? rawPhone : countryCode + rawPhone;
 
             const payload = {
                 full_name:      form.querySelector('input[name="nom"]').value,
-                phone:          form.querySelector('input[name="telephone"]').value,
+                phone:          fullPhone,
                 email:          form.querySelector('input[name="email"]').value,
                 city:           form.querySelector('input[name="ville"]').value,
                 lot_type:       lotType,
                 lot_price:      lotPrice,
                 duration_months: Number(form.querySelector('select[name="duree"]').value),
-                mode_versement: modeVers,   // mensuel | journalier
-                dossier_fee:    10000,       // frais d'ouverture de dossier fixes
+                mode_versement: modeVers,
+                dossier_fee:    10000,
                 source:         form.querySelector('select[name="source"]').value || 'site-web'
             };
 
