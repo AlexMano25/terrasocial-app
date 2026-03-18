@@ -76,6 +76,7 @@ function buildApp() {
     app.use('/api/admin', require('./routes/admin'));
     app.use('/api/manager', require('./routes/manager'));
     app.use('/api/super-admin', require('./routes/super-admin'));
+    app.use('/api/agent', require('./routes/agent'));
 
     app.get('/api/health', (req, res) => {
         res.json({

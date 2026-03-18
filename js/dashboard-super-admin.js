@@ -17,6 +17,7 @@
     documents: [],
     messages: [],
     reservations: [],
+    agents: [],
     charts: { users: null, revenue: null }
   };
 
@@ -25,6 +26,7 @@
     users: document.getElementById('panel-users'),
     reservations: document.getElementById('panel-reservations'),
     messages: document.getElementById('panel-messages'),
+    agents: document.getElementById('panel-agents'),
     lots: document.getElementById('panel-lots'),
     documents: document.getElementById('panel-documents'),
     roadmap: document.getElementById('panel-roadmap')
@@ -431,12 +433,87 @@
     loadReservations(status).catch(function(e) { flash(e.message, 'err'); });
   });
 
+  // ── Agents / Partenaires ──────────────────────────────────────────────────
+  async function loadAgents(status) {
+    var qs = status ? '?status=' + encodeURIComponent(status) : '';
+    var data = await TSApi.request('/api/super-admin/agents' + qs);
+    state.agents = data.agents || [];
+    renderAgents();
+  }
+
+  function agentStatusBadge(s) {
+    var map = {
+      pending: '<span style="background:#FFF3E0;color:#E65100;padding:3px 8px;border-radius:6px;font-size:12px;">🟡 En attente</span>',
+      active: '<span style="background:#E8F5E9;color:#1B5E20;padding:3px 8px;border-radius:6px;font-size:12px;">🟢 Actif</span>',
+      suspended: '<span style="background:#FFF8E1;color:#F57F17;padding:3px 8px;border-radius:6px;font-size:12px;">🟠 Suspendu</span>',
+      rejected: '<span style="background:#FFEBEE;color:#B71C1C;padding:3px 8px;border-radius:6px;font-size:12px;">❌ Rejeté</span>'
+    };
+    return map[s] || (s || '-');
+  }
+
+  function renderAgents() {
+    var tbody = document.getElementById('agents-tbody');
+    var countEl = document.getElementById('agent-count');
+    if (countEl) countEl.textContent = state.agents.length + ' agent(s)';
+
+    tbody.innerHTML = state.agents.length ? state.agents.map(function(a) {
+      var name = a.full_name || '-';
+      var contact = (a.email || '') + (a.phone ? '<br>' + a.phone : '');
+      var company = a.company_name || '-';
+      var status = a.status || (a.is_active ? 'active' : 'pending');
+      var date = a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR') : '-';
+
+      var actions = '';
+      if (status === 'pending') {
+        actions += '<button data-action="approve-agent" data-id="' + a.id + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Approuver</button>';
+        actions += '<button data-action="reject-agent" data-id="' + a.id + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
+      } else if (status === 'active') {
+        actions += '<button data-action="suspend-agent" data-id="' + a.id + '" style="background:#F57F17;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Suspendre</button>';
+      } else if (status === 'suspended' || status === 'rejected') {
+        actions += '<button data-action="approve-agent" data-id="' + a.id + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Réactiver</button>';
+      }
+
+      return '<tr><td style="font-weight:600;">' + (a.agent_code || '-') + '</td><td>' + name + '</td><td style="font-size:12px;">' + contact + '</td><td>' + company + '</td><td>' + agentStatusBadge(status) + '</td><td style="font-size:12px;">' + date + '</td><td>' + actions + '</td></tr>';
+    }).join('') : '<tr><td colspan="7">Aucun agent</td></tr>';
+  }
+
+  // Event delegation agents
+  document.getElementById('agents-tbody').addEventListener('click', async function(e) {
+    var btn = e.target.closest('button');
+    if (!btn) return;
+    var action = btn.dataset.action;
+    var id = btn.dataset.id;
+
+    try {
+      if (action === 'approve-agent') {
+        await TSApi.request('/api/super-admin/agents/' + id + '/approve', { method: 'POST' });
+        flash('Agent approuvé et email envoyé !', 'ok');
+        await loadAgents();
+      }
+      if (action === 'reject-agent') {
+        if (!confirm('Rejeter cet agent ?')) return;
+        await TSApi.request('/api/super-admin/agents/' + id + '/reject', { method: 'POST', body: JSON.stringify({ reason: 'Rejeté par admin' }) });
+        flash('Agent rejeté.', 'ok');
+        await loadAgents();
+      }
+      if (action === 'suspend-agent') {
+        if (!confirm('Suspendre cet agent ?')) return;
+        await TSApi.request('/api/super-admin/agents/' + id + '/suspend', { method: 'POST' });
+        flash('Agent suspendu.', 'ok');
+        await loadAgents();
+      }
+    } catch (err) { flash(err.message, 'err'); }
+  });
+
+  document.getElementById('agent-filter-btn').addEventListener('click', function() {
+    var status = document.getElementById('agent-status-filter').value;
+    loadAgents(status).catch(function(e) { flash(e.message, 'err'); });
+  });
+
   async function loadAll() {
-    // Afficher le profil immédiatement
     document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`;
 
-    // Charger chaque section indépendamment (une erreur n'empêche pas les autres)
-    var loaders = [loadOverview, loadUsers, loadMessages, loadLots, loadDocuments, loadReservations];
+    var loaders = [loadOverview, loadUsers, loadMessages, loadLots, loadDocuments, loadReservations, loadAgents];
     await Promise.allSettled(loaders.map(function(fn) {
       return fn().catch(function(e) { console.warn(fn.name + ':', e.message); });
     }));

@@ -1059,6 +1059,7 @@
                     <li><a href="#comment-ca-marche" data-i18n="header.nav.howItWorks">Comment ça marche</a></li>
                     <li><a href="#paiement" data-i18n="header.nav.payment">Paiement</a></li>
                     <li><a href="#transparence" data-i18n="header.nav.transparency">Transparence</a></li>
+                    <li><a href="#partenariat" style="color:#FF8F00;font-weight:600;">Partenariat</a></li>
                     <li><a href="#contact" data-i18n="header.nav.contact">Contact</a></li>
                     <li><a href="login.html">Mon espace</a></li>
                     <li><a href="#souscrire" class="btn btn-primary" data-i18n="header.nav.subscribe">Souscrire</a></li>
@@ -1689,16 +1690,27 @@
                             </label>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="source" data-i18n="subscription.form.source">Comment avez-vous connu TERRASOCIAL ?</label>
-                        <select id="source" name="source">
-                            <option value="" data-i18n="subscription.form.sourceSelect">-- Sélectionnez --</option>
-                            <option value="facebook" data-i18n="subscription.form.sources.facebook">Facebook</option>
-                            <option value="whatsapp" data-i18n="subscription.form.sources.whatsapp">WhatsApp</option>
-                            <option value="radio" data-i18n="subscription.form.sources.radio">Radio</option>
-                            <option value="ami" data-i18n="subscription.form.sources.friend">Un ami / Bouche à oreille</option>
-                            <option value="autre" data-i18n="subscription.form.sources.other">Autre</option>
-                        </select>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="source" data-i18n="subscription.form.source">Comment avez-vous connu TERRASOCIAL ?</label>
+                            <select id="source" name="source">
+                                <option value="" data-i18n="subscription.form.sourceSelect">-- Sélectionnez --</option>
+                                <option value="facebook" data-i18n="subscription.form.sources.facebook">Facebook</option>
+                                <option value="whatsapp" data-i18n="subscription.form.sources.whatsapp">WhatsApp</option>
+                                <option value="radio" data-i18n="subscription.form.sources.radio">Radio</option>
+                                <option value="ami" data-i18n="subscription.form.sources.friend">Un ami / Bouche à oreille</option>
+                                <option value="agent">Agent partenaire</option>
+                                <option value="autre" data-i18n="subscription.form.sources.other">Autre</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="promo-code">Code promo / parrainage</label>
+                            <div style="display:flex;gap:6px;">
+                                <input id="promo-code" type="text" name="promo_code" placeholder="Ex: AG-MOT-12345" style="flex:1;text-transform:uppercase;">
+                                <button type="button" id="verify-promo-btn" style="background:#1B5E20;color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:13px;white-space:nowrap;">Vérifier</button>
+                            </div>
+                            <div id="promo-result" style="margin-top:4px;font-size:12px;"></div>
+                        </div>
                     </div>
                     <div class="checkbox-group">
                         <input type="checkbox" id="cgv" name="cgv" required>
@@ -1711,6 +1723,97 @@
                     <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; font-size: 18px;">
                         <span data-i18n="subscription.form.submit">Envoyer ma demande de réservation</span>
                     </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- PARTENARIAT -->
+    <section id="partenariat" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0); padding:60px 0;">
+        <div class="container">
+            <div class="section-header">
+                <h2 style="color:#E65100;">🤝 Devenez Partenaire TERRASOCIAL</h2>
+                <p>Rejoignez notre réseau d'agents immobiliers et générez des revenus en recrutant des clients et propriétaires</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; margin-bottom:40px;">
+                <div style="background:#fff; border-radius:12px; padding:24px; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <div style="font-size:40px; margin-bottom:12px;">💰</div>
+                    <h3 style="color:#1B5E20; margin:0 0 8px;">500 FCFA / client</h3>
+                    <p style="font-size:14px; color:#666; margin:0;">Par souscription validée de chaque client recruté via votre lien ou code promo</p>
+                </div>
+                <div style="background:#fff; border-radius:12px; padding:24px; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <div style="font-size:40px; margin-bottom:12px;">🏡</div>
+                    <h3 style="color:#1B5E20; margin:0 0 8px;">1% à 4% / propriétaire</h3>
+                    <p style="font-size:14px; color:#666; margin:0;">Ristourne sur chaque versement par hectare — taux évolutif selon la surface</p>
+                </div>
+                <div style="background:#fff; border-radius:12px; padding:24px; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <div style="font-size:40px; margin-bottom:12px;">📊</div>
+                    <h3 style="color:#1B5E20; margin:0 0 8px;">Dashboard dédié</h3>
+                    <p style="font-size:14px; color:#666; margin:0;">Suivez vos commissions, parrainages, codes promo et revenus en temps réel</p>
+                </div>
+                <div style="background:#fff; border-radius:12px; padding:24px; text-align:center; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                    <div style="font-size:40px; margin-bottom:12px;">🔗</div>
+                    <h3 style="color:#1B5E20; margin:0 0 8px;">Lien & codes promo</h3>
+                    <p style="font-size:14px; color:#666; margin:0;">Générez vos liens de parrainage et codes promo personnalisés à partager</p>
+                </div>
+            </div>
+
+            <!-- Barème commissions propriétaires -->
+            <div style="background:#fff; border-radius:12px; padding:24px; margin-bottom:30px; box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+                <h3 style="color:#E65100; text-align:center; margin-top:0;">📈 Barème des commissions propriétaires</h3>
+                <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                    <thead>
+                        <tr style="background:#FFF3E0;">
+                            <th style="padding:10px; text-align:left;">Surface totale</th>
+                            <th style="padding:10px; text-align:center;">Taux de commission</th>
+                            <th style="padding:10px; text-align:right;">Exemple (versement 100 000 FCFA)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:10px;">Jusqu'à 5 Ha</td><td style="padding:10px;text-align:center;font-weight:700;color:#1B5E20;">1%</td><td style="padding:10px;text-align:right;">1 000 FCFA</td></tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:10px;">5 à 10 Ha</td><td style="padding:10px;text-align:center;font-weight:700;color:#1B5E20;">2%</td><td style="padding:10px;text-align:right;">2 000 FCFA</td></tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:10px;">10 à 15 Ha</td><td style="padding:10px;text-align:center;font-weight:700;color:#1B5E20;">3%</td><td style="padding:10px;text-align:right;">3 000 FCFA</td></tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:10px;">15 à 20 Ha</td><td style="padding:10px;text-align:center;font-weight:700;color:#E65100;">4%</td><td style="padding:10px;text-align:right;">4 000 FCFA</td></tr>
+                        <tr><td style="padding:10px;">Plus de 25 Ha</td><td style="padding:10px;text-align:center;font-weight:700;color:#C62828;">À négocier</td><td style="padding:10px;text-align:right;">Sur devis</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Formulaire de demande de partenariat -->
+            <div style="background:#fff; border-radius:12px; padding:28px; max-width:600px; margin:0 auto; box-shadow:0 4px 16px rgba(0,0,0,0.1);">
+                <h3 style="color:#1B5E20; text-align:center; margin-top:0;">📋 Devenir partenaire</h3>
+                <form id="partnership-form">
+                    <div style="margin-bottom:12px;">
+                        <label style="font-weight:600; font-size:14px;">Nom complet *</label>
+                        <input type="text" name="full_name" required placeholder="Ex: NKOMO Jean Paul" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+                    </div>
+                    <div style="display:flex;gap:12px;margin-bottom:12px;">
+                        <div style="flex:1;">
+                            <label style="font-weight:600; font-size:14px;">Téléphone *</label>
+                            <input type="tel" name="phone" required placeholder="+237 6XX XX XX XX" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+                        </div>
+                        <div style="flex:1;">
+                            <label style="font-weight:600; font-size:14px;">Email *</label>
+                            <input type="email" name="email" required placeholder="nom@email.com" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:12px;margin-bottom:12px;">
+                        <div style="flex:1;">
+                            <label style="font-weight:600; font-size:14px;">Ville</label>
+                            <input type="text" name="city" placeholder="Yaoundé" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+                        </div>
+                        <div style="flex:1;">
+                            <label style="font-weight:600; font-size:14px;">Société / Agence</label>
+                            <input type="text" name="company_name" placeholder="Nom de votre agence" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+                        </div>
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <label style="font-weight:600; font-size:14px;">Motivation / Expérience</label>
+                        <textarea name="motivation" rows="3" placeholder="Décrivez votre expérience et votre motivation..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;resize:vertical;"></textarea>
+                    </div>
+                    <button type="submit" style="width:100%;background:linear-gradient(135deg,#FF8F00,#F57C00);color:#fff;border:none;padding:14px;border-radius:8px;font-weight:700;font-size:16px;cursor:pointer;">Envoyer ma demande de partenariat</button>
+                    <div id="partnership-result" style="margin-top:12px;text-align:center;font-size:14px;"></div>
                 </form>
             </div>
         </div>
@@ -2076,7 +2179,8 @@
                 duration_months: Number(form.querySelector('select[name="duree"]').value),
                 mode_versement: modeVers,
                 dossier_fee:    10000,
-                source:         form.querySelector('select[name="source"]').value || 'site-web'
+                source:         form.querySelector('select[name="source"]').value || 'site-web',
+                promo_code:     (document.getElementById('promo-code').dataset.verified === 'true') ? document.getElementById('promo-code').value.trim().toUpperCase() : null
             };
 
             try {
@@ -2128,10 +2232,92 @@
             calculatePayment();
         });
 
+        // ── Code promo / parrainage ──────────────────────────────────
+        document.getElementById('verify-promo-btn').addEventListener('click', async function() {
+            var code = document.getElementById('promo-code').value.trim().toUpperCase();
+            var resultEl = document.getElementById('promo-result');
+            if (!code) { resultEl.innerHTML = '<span style="color:#C62828;">Entrez un code promo</span>'; return; }
+
+            try {
+                var resp = await fetch(apiBase + '/api/agent/verify-promo/' + encodeURIComponent(code));
+                var data = await resp.json();
+                if (data.valid) {
+                    resultEl.innerHTML = '<span style="color:#1B5E20;font-weight:600;">✅ Code valide — Partenaire : ' + data.agent_name + '</span>';
+                    document.getElementById('promo-code').dataset.verified = 'true';
+                    document.getElementById('promo-code').dataset.agentCode = data.agent_code;
+                } else {
+                    resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + (data.error || 'Code invalide') + '</span>';
+                    document.getElementById('promo-code').dataset.verified = '';
+                }
+            } catch (err) {
+                resultEl.innerHTML = '<span style="color:#C62828;">Erreur de vérification</span>';
+            }
+        });
+
+        // Détecter le lien de parrainage ?ref=AGENT_CODE
+        function detectReferral() {
+            var params = new URLSearchParams(window.location.search);
+            var ref = params.get('ref');
+            if (ref) {
+                var promoInput = document.getElementById('promo-code');
+                if (promoInput) {
+                    promoInput.value = ref.toUpperCase();
+                    // Vérifier automatiquement
+                    fetch(apiBase + '/api/agent/verify-ref/' + encodeURIComponent(ref))
+                        .then(function(r) { return r.json(); })
+                        .then(function(data) {
+                            if (data.valid) {
+                                document.getElementById('promo-result').innerHTML = '<span style="color:#1B5E20;font-weight:600;">✅ Parrainé par : ' + data.agent_name + '</span>';
+                                promoInput.dataset.verified = 'true';
+                                promoInput.dataset.agentCode = data.agent_code;
+                                // Sélectionner "Agent partenaire" dans la source
+                                var srcSel = document.getElementById('source');
+                                if (srcSel) srcSel.value = 'agent';
+                            }
+                        }).catch(function() {});
+                }
+            }
+        }
+
+        // ── Formulaire partenariat ───────────────────────────────────
+        document.getElementById('partnership-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            var form = e.target;
+            var resultEl = document.getElementById('partnership-result');
+            resultEl.innerHTML = '<span style="color:#666;">Envoi en cours...</span>';
+
+            try {
+                var resp = await fetch(apiBase + '/api/public/partnership', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        full_name: form.querySelector('[name="full_name"]').value,
+                        phone: form.querySelector('[name="phone"]').value,
+                        email: form.querySelector('[name="email"]').value,
+                        city: form.querySelector('[name="city"]').value,
+                        company_name: form.querySelector('[name="company_name"]').value,
+                        motivation: form.querySelector('[name="motivation"]').value
+                    })
+                });
+                var ct = resp.headers.get('content-type') || '';
+                var data = ct.includes('json') ? await resp.json() : { error: 'Erreur serveur' };
+
+                if (resp.ok) {
+                    resultEl.innerHTML = '<div style="background:#E8F5E9;padding:12px;border-radius:8px;color:#1B5E20;font-weight:600;">✅ ' + data.message + '<br>Votre code agent : <strong>' + data.agent_code + '</strong></div>';
+                    form.reset();
+                } else {
+                    resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + (data.error || 'Erreur') + '</span>';
+                }
+            } catch (err) {
+                resultEl.innerHTML = '<span style="color:#C62828;">Erreur de connexion</span>';
+            }
+        });
+
         // Initialize calculator on page load
         document.addEventListener('DOMContentLoaded', function() {
             calculatePayment();
             loadLotsDisponibles();
+            detectReferral();
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/service-worker.js').catch(function() {});
             }

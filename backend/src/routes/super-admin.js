@@ -1262,4 +1262,89 @@ router.post('/reservations/:id/send-welcome', async (req, res) => {
     }
 });
 
+// ══════════════════════════════════════════════════════════════════════════════
+// AGENTS / PARTENAIRES — Gestion des demandes
+// ══════════════════════════════════════════════════════════════════════════════
+
+router.get('/agents', async (req, res) => {
+    try {
+        const status = sanitizeOptionalText(req.query.status, 20);
+        let sql = `SELECT a.*, u.full_name, u.email, u.phone, u.city
+                    FROM agents a
+                    LEFT JOIN users u ON a.user_id = u.id
+                    ORDER BY a.created_at DESC LIMIT 200`;
+        let params = [];
+        if (status) {
+            sql = `SELECT a.*, u.full_name, u.email, u.phone, u.city
+                   FROM agents a
+                   LEFT JOIN users u ON a.user_id = u.id
+                   WHERE a.status = ?
+                   ORDER BY a.created_at DESC LIMIT 200`;
+            params = [status];
+        }
+        const agents = await all(sql, params);
+        return res.json({ agents });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture agents' });
+    }
+});
+
+// Valider un agent partenaire
+router.post('/agents/:id/approve', async (req, res) => {
+    try {
+        const agentId = req.params.id;
+        await run(
+            'UPDATE agents SET status = ?, is_active = TRUE, approved_at = NOW(), approved_by = ? WHERE id = ?',
+            ['active', req.user.id, agentId]
+        );
+
+        // Envoyer email de bienvenue agent si SMTP configuré
+        const agent = await get(
+            'SELECT a.*, u.full_name, u.email FROM agents a JOIN users u ON a.user_id = u.id WHERE a.id = ?',
+            [agentId]
+        );
+        if (agent && agent.email) {
+            try {
+                const { sendEmail } = require('../services/email');
+                await sendEmail(
+                    agent.email,
+                    '✅ TERRASOCIAL — Votre partenariat est activé !',
+                    `Bonjour ${agent.full_name},\n\nVotre demande de partenariat TERRASOCIAL a été approuvée !\n\nVotre code agent : ${agent.agent_code}\nLien de parrainage : https://social.manovende.com/index.html?ref=${agent.agent_code}\n\nConnectez-vous pour créer vos codes promo et suivre vos commissions.\n\nBienvenue dans l'équipe !\nTERRASOCIAL — Mano Verde Inc SA`,
+                    `<div style="font-family:Arial;max-width:600px;margin:auto;"><div style="background:#1B5E20;color:#fff;padding:20px;text-align:center;border-radius:12px 12px 0 0;"><h1 style="margin:0;">🤝 TERRASOCIAL</h1></div><div style="background:#fff;padding:24px;border:1px solid #e0e0e0;border-radius:0 0 12px 12px;"><h2 style="color:#1B5E20;">Bienvenue ${agent.full_name} !</h2><p>Votre partenariat a été <strong style="color:#1B5E20;">approuvé</strong>.</p><div style="background:#E8F5E9;padding:16px;border-radius:8px;margin:16px 0;"><p style="margin:0;"><strong>Code agent :</strong> ${agent.agent_code}</p><p style="margin:6px 0 0;"><strong>Lien de parrainage :</strong><br><a href="https://social.manovende.com/index.html?ref=${agent.agent_code}">https://social.manovende.com/?ref=${agent.agent_code}</a></p></div><div style="background:#FFF3E0;padding:16px;border-radius:8px;margin:16px 0;"><p style="margin:0;font-weight:bold;color:#E65100;">💰 Vos commissions</p><p style="margin:6px 0 0;">Client souscrit : <strong>500 FCFA</strong></p><p style="margin:4px 0 0;">Propriétaire : <strong>1% à 4%</strong> par versement/Ha</p></div><p style="text-align:center;"><a href="https://social.manovende.com/login.html" style="background:#1B5E20;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;display:inline-block;">Accéder à mon espace agent →</a></p></div></div>`
+                );
+            } catch (emailErr) { /* non-bloquant */ }
+        }
+
+        await req.audit?.('super_admin.agent_approved', { actor_id: req.user.id, agent_id: agentId });
+        return res.json({ ok: true, message: 'Agent approuvé et notifié' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur approbation agent' });
+    }
+});
+
+// Rejeter un agent
+router.post('/agents/:id/reject', async (req, res) => {
+    try {
+        const agentId = req.params.id;
+        const reason = sanitizeOptionalText(req.body.reason, 500);
+        await run('UPDATE agents SET status = ?, is_active = FALSE WHERE id = ?', ['rejected', agentId]);
+        await req.audit?.('super_admin.agent_rejected', { actor_id: req.user.id, agent_id: agentId, reason });
+        return res.json({ ok: true });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur rejet agent' });
+    }
+});
+
+// Suspendre un agent
+router.post('/agents/:id/suspend', async (req, res) => {
+    try {
+        const agentId = req.params.id;
+        await run('UPDATE agents SET status = ?, is_active = FALSE WHERE id = ?', ['suspended', agentId]);
+        await req.audit?.('super_admin.agent_suspended', { actor_id: req.user.id, agent_id: agentId });
+        return res.json({ ok: true });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur suspension agent' });
+    }
+});
+
 module.exports = router;

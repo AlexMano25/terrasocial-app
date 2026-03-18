@@ -73,4 +73,59 @@ router.post('/reservations', async (req, res) => {
     }
 });
 
+// ── Demande de partenariat (formulaire public) ──────────────────────────────
+router.post('/partnership', async (req, res) => {
+    try {
+        const { full_name, phone, email, city, company_name, motivation } = req.body;
+        const safeName = sanitizeText(full_name, 120);
+        const safePhone = sanitizeText(phone, 30);
+        const safeEmail = normalizeEmail(email);
+        const safeCompany = sanitizeOptionalText(company_name, 120);
+        const safeMotivation = sanitizeOptionalText(motivation, 1000);
+
+        if (!safeName || !safePhone) {
+            return res.status(400).json({ error: 'Nom et téléphone requis' });
+        }
+
+        // Créer un compte utilisateur agent (inactif jusqu'à validation)
+        const bcrypt = require('bcryptjs');
+        const tempPassword = 'AG-' + Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+        const passwordHash = await bcrypt.hash(tempPassword, 10);
+        const agentEmail = safeEmail || `agent.${Date.now()}@terrasocial.cm`;
+
+        // Vérifier si email déjà utilisé
+        const existing = await get('SELECT id FROM users WHERE email = ?', [agentEmail]);
+        let userId;
+        if (existing) {
+            userId = existing.id;
+        } else {
+            const created = await run(
+                'INSERT INTO users(role, full_name, email, phone, city, password_hash) VALUES (?, ?, ?, ?, ?, ?)',
+                ['admin', safeName, agentEmail, safePhone, safeCity || city || '', passwordHash]
+            );
+            userId = created.id;
+        }
+
+        // Créer l'entrée agent
+        const agentCode = 'AG-' + safeName.slice(0, 3).toUpperCase().replace(/[^A-Z]/g, 'X') + '-' + String(Date.now()).slice(-5);
+        const existingAgent = await get('SELECT id FROM agents WHERE user_id = ?', [userId]);
+        if (existingAgent) {
+            return res.status(400).json({ error: 'Une demande de partenariat existe déjà pour ce compte' });
+        }
+
+        await run(
+            `INSERT INTO agents(user_id, agent_code, status, company_name, motivation, is_active)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [userId, agentCode, 'pending', safeCompany || safeName, safeMotivation, false]
+        );
+
+        return res.status(201).json({
+            message: 'Demande de partenariat enregistrée ! Nous vous contacterons après validation.',
+            agent_code: agentCode
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur enregistrement demande partenariat: ' + error.message });
+    }
+});
+
 module.exports = router;

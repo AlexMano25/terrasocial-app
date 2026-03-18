@@ -17,6 +17,7 @@
         <button data-panel="users">Utilisateurs</button>
         <button data-panel="reservations">Réservations</button>
         <button data-panel="messages">Messagerie</button>
+        <button data-panel="agents" style="color:#FF8F00;">Agents/Partenaires</button>
         <button data-panel="lots">Lots Disponibles</button>
         <button data-panel="documents">Documents</button>
         <button data-panel="roadmap">Roadmap & Status</button>
@@ -150,6 +151,40 @@
             <table>
               <thead><tr><th>Scope</th><th>Canaux</th><th>Statut</th><th>Date</th></tr></thead>
               <tbody id="messages-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ AGENTS / PARTENAIRES ═══ -->
+      <section id="panel-agents" class="panel">
+        <div class="card">
+          <h3>🤝 Gestion des Agents & Partenaires</h3>
+          <div class="toolbar" style="margin-bottom:16px;">
+            <select id="agent-status-filter">
+              <option value="">Tous statuts</option>
+              <option value="pending">🟡 En attente</option>
+              <option value="active">🟢 Actifs</option>
+              <option value="suspended">🟠 Suspendus</option>
+              <option value="rejected">❌ Rejetés</option>
+            </select>
+            <button id="agent-filter-btn" class="btn-sm">Filtrer</button>
+            <span id="agent-count" style="margin-left:12px; font-size:13px; color:#666;"></span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Nom</th>
+                  <th>Contact</th>
+                  <th>Société</th>
+                  <th>Statut</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="agents-tbody"></tbody>
             </table>
           </div>
         </div>
