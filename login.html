@@ -149,6 +149,11 @@
           return;
         }
 
+        if (payload.user.is_agent) {
+          window.location.href = 'dashboard-agent.html';
+          return;
+        }
+
         if (payload.user.role === 'owner') {
           window.location.href = 'dashboard-owner.html';
           return;

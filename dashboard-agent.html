@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Dashboard - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', Arial, sans-serif; background: #f5f5f5; color: #333; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 1px solid #eee; flex-wrap: wrap; gap: 12px; }
+    .topbar h1 { font-size: 22px; color: #1B5E20; }
+    .topbar .actions { display: flex; gap: 8px; }
+    .topbar .btn { padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-size: 13px; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .kpi-card .kpi-value { font-size: 28px; font-weight: 700; color: #1B5E20; }
+    .kpi-card .kpi-label { font-size: 13px; color: #666; margin-top: 4px; }
+    .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card h3 { margin: 0 0 16px; color: #1B5E20; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f9f9f9; padding: 10px; text-align: left; font-size: 12px; color: #666; text-transform: uppercase; }
+    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+    .ref-link { background: #E8F5E9; border: 2px dashed #1B5E20; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px; }
+    .ref-link input { width: 100%; max-width: 500px; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; text-align: center; margin: 8px 0; }
+    .ref-link button { background: #1B5E20; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .btn-create { background: #FF8F00; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .badge-ok { background: #E8F5E9; color: #1B5E20; }
+    .badge-pending { background: #FFF3E0; color: #E65100; }
+    .badge-paid { background: #E3F2FD; color: #1565C0; }
+    .flash { padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+    .flash.ok { background: #E8F5E9; color: #1B5E20; }
+    .flash.err { background: #FFEBEE; color: #C62828; }
+    @media (max-width: 600px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>🤝 TERRASOCIAL Agent</h1>
+      <p id="agent-meta" style="font-size:13px;color:#666;">Chargement...</p>
+    </div>
+    <div class="actions">
+      <a href="index.html" class="btn">Site public</a>
+      <button class="btn" id="logout-btn">Déconnexion</button>
+    </div>
+  </div>
+
+  <!-- PWA Install -->
+  <div id="pwa-install-banner" style="display:none; background:linear-gradient(135deg,#1B5E20,#2E7D32); color:#fff; border-radius:12px; padding:14px 20px; margin:16px 24px 0; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; cursor:pointer;" onclick="installPWA()">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <span style="font-size:28px;">📲</span>
+      <div><strong>Installer TERRASOCIAL</strong><br><span style="font-size:12px; opacity:0.9;">Accédez rapidement depuis votre écran d'accueil</span></div>
+    </div>
+    <button id="pwa-install-btn" style="background:#fff; color:#1B5E20; border:none; padding:10px 20px; border-radius:8px; font-weight:700; cursor:pointer;">Installer l'app</button>
+  </div>
+
+  <div class="container">
+    <div id="flash"></div>
+
+    <!-- KPIs -->
+    <div class="grid-4">
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-clients">0</div>
+        <div class="kpi-label">Clients recrutés</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-owners">0</div>
+        <div class="kpi-label">Propriétaires recrutés</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-earned" style="color:#FF8F00;">0 FCFA</div>
+        <div class="kpi-label">Commissions totales</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-value" id="kpi-pending" style="color:#1565C0;">0 FCFA</div>
+        <div class="kpi-label">En attente de paiement</div>
+      </div>
+    </div>
+
+    <!-- Lien de parrainage -->
+    <div class="ref-link">
+      <h3>🔗 Votre lien de parrainage</h3>
+      <p style="font-size:13px; color:#666;">Partagez ce lien pour recruter des clients et propriétaires</p>
+      <input type="text" id="referral-link" readonly>
+      <br>
+      <button onclick="copyReferralLink()">📋 Copier le lien</button>
+      <button onclick="shareReferralLink()" style="background:#25D366;margin-left:8px;">📱 Partager WhatsApp</button>
+    </div>
+
+    <!-- Codes promo -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+        <h3 style="margin:0;">🏷️ Mes codes promo</h3>
+        <button class="btn-create" id="btn-create-promo">+ Créer un code</button>
+      </div>
+      <div id="create-promo-form" style="display:none; background:#f9f9f9; padding:16px; border-radius:8px; margin-bottom:16px;">
+        <input id="promo-desc" type="text" placeholder="Description (ex: Promo Noël 2026)" style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px;">
+        <div style="display:flex; gap:8px;">
+          <input id="promo-max-uses" type="number" placeholder="Max utilisations (vide = illimité)" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:8px;">
+          <button id="btn-submit-promo" style="background:#1B5E20; color:#fff; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600;">Créer</button>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Code</th><th>Description</th><th>Utilisations</th><th>Statut</th><th>Actions</th></tr></thead>
+        <tbody id="promo-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Parrainages -->
+    <div class="card">
+      <h3>👥 Mes parrainages</h3>
+      <table>
+        <thead><tr><th>Nom</th><th>Type</th><th>Contact</th><th>Code utilisé</th><th>Statut</th><th>Date</th></tr></thead>
+        <tbody id="referrals-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Commissions -->
+    <div class="card">
+      <h3>💰 Mes commissions</h3>
+      <table>
+        <thead><tr><th>Type</th><th>Montant</th><th>Taux</th><th>Statut</th><th>Date</th></tr></thead>
+        <tbody id="commissions-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- Barème -->
+    <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);">
+      <h3 style="color:#E65100;">📈 Barème de vos commissions</h3>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
+        <div>
+          <h4 style="color:#1B5E20;">Clients recrutés</h4>
+          <p style="font-size:24px; font-weight:700; color:#1B5E20;">500 FCFA</p>
+          <p style="font-size:13px; color:#666;">Par souscription validée</p>
+        </div>
+        <div>
+          <h4 style="color:#E65100;">Propriétaires</h4>
+          <table style="font-size:13px;">
+            <tr><td>≤ 5 Ha</td><td style="font-weight:700; color:#1B5E20;">1%</td></tr>
+            <tr><td>5-10 Ha</td><td style="font-weight:700; color:#1B5E20;">2%</td></tr>
+            <tr><td>10-15 Ha</td><td style="font-weight:700; color:#1B5E20;">3%</td></tr>
+            <tr><td>15-20 Ha</td><td style="font-weight:700; color:#E65100;">4%</td></tr>
+            <tr><td>25+ Ha</td><td style="font-weight:700; color:#C62828;">Négociable</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/runtime-config.js"></script>
+  <script src="js/app-api.js"></script>
+  <script>
+  (function() {
+    var userRaw = localStorage.getItem('ts_user');
+    if (!userRaw || !TSApi.getToken()) { window.location.href = 'login.html'; return; }
+
+    function flash(msg, type) { document.getElementById('flash').innerHTML = '<div class="flash ' + type + '">' + msg + '</div>'; }
+    function xaf(v) { return Number(v || 0).toLocaleString('fr-FR') + ' FCFA'; }
+
+    var agentData = null;
+
+    async function loadDashboard() {
+      try {
+        var data = await TSApi.request('/api/agent/dashboard');
+        agentData = data;
+
+        document.getElementById('agent-meta').textContent = data.agent.company_name + ' — Code: ' + data.agent.agent_code;
+        document.getElementById('kpi-clients').textContent = data.metrics.total_clients;
+        document.getElementById('kpi-owners').textContent = data.metrics.total_owners;
+        document.getElementById('kpi-earned').textContent = xaf(data.metrics.total_earned);
+        document.getElementById('kpi-pending').textContent = xaf(data.metrics.pending_commissions);
+        document.getElementById('referral-link').value = data.agent.referral_link;
+
+        // Codes promo
+        var promoTbody = document.getElementById('promo-tbody');
+        promoTbody.innerHTML = data.promo_codes.length ? data.promo_codes.map(function(p) {
+          var statusBadge = p.is_active ? '<span class="badge badge-ok">Actif</span>' : '<span class="badge" style="background:#eee;color:#666;">Inactif</span>';
+          var uses = p.usage_count + (p.max_uses ? '/' + p.max_uses : '/∞');
+          return '<tr><td style="font-weight:600;font-family:monospace;">' + p.code + '</td><td>' + (p.description || '-') + '</td><td>' + uses + '</td><td>' + statusBadge + '</td><td>' + (p.is_active ? '<button data-action="copy-code" data-code="' + p.code + '" style="background:#1B5E20;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;">Copier</button> <button data-action="deactivate" data-id="' + p.id + '" style="background:#C62828;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;">Désactiver</button>' : '-') + '</td></tr>';
+        }).join('') : '<tr><td colspan="5" style="color:#666;">Aucun code promo. Créez-en un !</td></tr>';
+
+        // Parrainages
+        var refTbody = document.getElementById('referrals-tbody');
+        refTbody.innerHTML = data.referrals.length ? data.referrals.map(function(r) {
+          var typeBadge = r.referred_type === 'client' ? '<span class="badge badge-ok">Client</span>' : '<span class="badge badge-paid">Propriétaire</span>';
+          return '<tr><td>' + (r.referred_name || '-') + '</td><td>' + typeBadge + '</td><td style="font-size:12px;">' + (r.referred_email || r.referred_phone || '-') + '</td><td style="font-family:monospace;font-size:12px;">' + (r.promo_code_used || '-') + '</td><td><span class="badge badge-pending">' + r.status + '</span></td><td style="font-size:12px;">' + new Date(r.created_at).toLocaleDateString('fr-FR') + '</td></tr>';
+        }).join('') : '<tr><td colspan="6" style="color:#666;">Aucun parrainage. Partagez votre lien !</td></tr>';
+
+        // Commissions
+        var comTbody = document.getElementById('commissions-tbody');
+        comTbody.innerHTML = data.commissions.length ? data.commissions.map(function(c) {
+          var typeLabel = c.commission_type === 'client_subscription' ? 'Client' : 'Propriétaire';
+          var statusBadge = c.status === 'paid' ? '<span class="badge badge-ok">Payé</span>' : c.status === 'approved' ? '<span class="badge badge-paid">Approuvé</span>' : '<span class="badge badge-pending">En attente</span>';
+          return '<tr><td>' + typeLabel + '</td><td style="font-weight:700;">' + xaf(c.amount) + '</td><td>' + (c.rate_percent ? c.rate_percent + '%' : '-') + '</td><td>' + statusBadge + '</td><td style="font-size:12px;">' + new Date(c.created_at).toLocaleDateString('fr-FR') + '</td></tr>';
+        }).join('') : '<tr><td colspan="5" style="color:#666;">Aucune commission pour le moment.</td></tr>';
+
+      } catch (err) {
+        flash(err.message, 'err');
+      }
+    }
+
+    // Copier lien
+    window.copyReferralLink = function() {
+      var input = document.getElementById('referral-link');
+      input.select();
+      document.execCommand('copy');
+      flash('Lien copié !', 'ok');
+    };
+
+    // Partager WhatsApp
+    window.shareReferralLink = function() {
+      var link = document.getElementById('referral-link').value;
+      var text = 'Rejoignez TERRASOCIAL et devenez propriétaire dès 1 500 FCFA/jour ! ' + link;
+      window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+    };
+
+    // Créer code promo
+    document.getElementById('btn-create-promo').addEventListener('click', function() {
+      var form = document.getElementById('create-promo-form');
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+
+    document.getElementById('btn-submit-promo').addEventListener('click', async function() {
+      try {
+        var desc = document.getElementById('promo-desc').value;
+        var maxUses = document.getElementById('promo-max-uses').value;
+        var result = await TSApi.request('/api/agent/promo-codes', {
+          method: 'POST',
+          body: JSON.stringify({ description: desc, max_uses: maxUses || null })
+        });
+        flash('Code promo créé : ' + result.code, 'ok');
+        document.getElementById('promo-desc').value = '';
+        document.getElementById('promo-max-uses').value = '';
+        document.getElementById('create-promo-form').style.display = 'none';
+        await loadDashboard();
+      } catch (err) { flash(err.message, 'err'); }
+    });
+
+    // Actions sur les codes promo
+    document.getElementById('promo-tbody').addEventListener('click', async function(e) {
+      var btn = e.target.closest('button');
+      if (!btn) return;
+
+      if (btn.dataset.action === 'copy-code') {
+        navigator.clipboard.writeText(btn.dataset.code);
+        flash('Code copié : ' + btn.dataset.code, 'ok');
+      }
+
+      if (btn.dataset.action === 'deactivate') {
+        if (!confirm('Désactiver ce code ?')) return;
+        try {
+          await TSApi.request('/api/agent/promo-codes/' + btn.dataset.id + '/deactivate', { method: 'POST' });
+          flash('Code désactivé.', 'ok');
+          await loadDashboard();
+        } catch (err) { flash(err.message, 'err'); }
+      }
+    });
+
+    document.getElementById('logout-btn').addEventListener('click', function() {
+      TSApi.clearSession();
+      window.location.href = 'login.html';
+    });
+
+    loadDashboard();
+  })();
+  </script>
+  <script src="js/pwa-install.js"></script>
+</body>
+</html>

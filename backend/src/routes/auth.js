@@ -129,6 +129,8 @@ router.post('/login', async (req, res) => {
 
         const isSuperAdmin = user.role === 'admin' ? await isSuperAdminUser(user.id) : false;
         const isManager = (!isSuperAdmin && user.role === 'admin') ? await isManagerUser(user.id) : false;
+        const agentRow = await get('SELECT id, agent_code, status, is_active FROM agents WHERE user_id = ? AND (status = ? OR is_active = TRUE)', [user.id, 'active']);
+        const isAgent = Boolean(agentRow);
 
         return res.json({
             token: tokenForUser(user),
@@ -140,7 +142,9 @@ router.post('/login', async (req, res) => {
                 phone: user.phone,
                 reliability_score: user.reliability_score,
                 is_super_admin: isSuperAdmin,
-                is_manager: isManager
+                is_manager: isManager,
+                is_agent: isAgent,
+                agent_code: agentRow ? agentRow.agent_code : null
             }
         });
     } catch (error) {
@@ -227,7 +231,8 @@ router.post('/reset-password', async (req, res) => {
 router.get('/me', requireAuth, async (req, res) => {
     const isSuperAdmin = req.user.role === 'admin' ? await isSuperAdminUser(req.user.id) : false;
     const isManager = (!isSuperAdmin && req.user.role === 'admin') ? await isManagerUser(req.user.id) : false;
-    return res.json({ user: Object.assign({}, req.user, { is_super_admin: isSuperAdmin, is_manager: isManager }) });
+    const agentRow = await get('SELECT id, agent_code FROM agents WHERE user_id = ? AND (status = ? OR is_active = TRUE)', [req.user.id, 'active']);
+    return res.json({ user: Object.assign({}, req.user, { is_super_admin: isSuperAdmin, is_manager: isManager, is_agent: Boolean(agentRow), agent_code: agentRow ? agentRow.agent_code : null }) });
 });
 
 // ─── GOOGLE OAUTH ──────────────────────────────────────────────────────────
