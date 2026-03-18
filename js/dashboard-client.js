@@ -346,7 +346,9 @@
       if (r.schedule && r.schedule.length) {
         h += '<div class="table-wrap"><table class="schedule-table"><thead><tr><th>Mois</th><th>\u00c9ch\u00e9ance</th><th>D\u00fb</th><th>Pay\u00e9</th><th>Reste</th><th>Statut</th></tr></thead><tbody>';
         r.schedule.forEach(function(m) {
-          h += '<tr class="' + m.status + '"><td>' + m.month + '</td><td>' + fmtDate(m.due_date) + '</td><td>' + xaf(m.amount_due) + '</td><td>' + xaf(m.amount_paid) + '</td><td>' + xaf(m.remaining) + '</td><td>' + statusBadge(m.status) + '</td></tr>';
+          var dueLabel = xaf(m.amount_due);
+          if (m.label) dueLabel += '<br><span style="font-size:11px;color:#FF8F00;font-weight:600;">' + m.label + '</span>';
+          h += '<tr class="' + m.status + '"><td>' + m.month + '</td><td>' + fmtDate(m.due_date) + '</td><td>' + dueLabel + '</td><td>' + xaf(m.amount_paid) + '</td><td>' + xaf(m.remaining) + '</td><td>' + statusBadge(m.status) + '</td></tr>';
         });
         h += '</tbody></table></div>';
       }

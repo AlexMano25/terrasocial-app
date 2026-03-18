@@ -17,13 +17,27 @@ function buildPaymentSchedule(reservation, payments) {
     const totalDue = Number(reservation.lot_price) || 0;
     const now = new Date();
 
+    let cumulativeDue = 0;
+
     for (let i = 0; i < reservation.duration_months; i++) {
+        // Calcul du montant restant à planifier
+        const remainingTotal = totalDue - cumulativeDue;
+
+        // Si tout est planifié, arrêter l'échéancier
+        if (remainingTotal <= 0) break;
+
         const dueDate = new Date(startDate);
         dueDate.setMonth(dueDate.getMonth() + i + 1);
         const dueDateStr = dueDate.toISOString().slice(0, 10);
 
-        const amountDue = Math.min(monthly, totalDue - (monthly * i));
-        const allocated = Math.min(monthly, Math.max(0, totalPaid));
+        // Dernier versement : si le reste est inférieur à la mensualité
+        const isFinalPayment = remainingTotal < monthly;
+        const amountDue = isFinalPayment ? remainingTotal : monthly;
+        const label = isFinalPayment ? 'Versement final' : null;
+
+        cumulativeDue += amountDue;
+
+        const allocated = Math.min(amountDue, Math.max(0, totalPaid));
         totalPaid -= allocated;
 
         let status = 'pending';
@@ -39,7 +53,8 @@ function buildPaymentSchedule(reservation, payments) {
             amount_due: amountDue,
             amount_paid: allocated,
             remaining: Math.max(0, amountDue - allocated),
-            status
+            status,
+            label
         });
     }
     return schedule;
