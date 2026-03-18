@@ -20,6 +20,18 @@
   </header>
 
   <main class="container">
+    <!-- Bannière installation PWA -->
+    <div id="pwa-install-banner" style="display:none; background:linear-gradient(135deg,#1B5E20,#2E7D32); color:#fff; border-radius:12px; padding:14px 20px; margin-bottom:16px; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; cursor:pointer;" onclick="installPWA()">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span style="font-size:28px;">📲</span>
+        <div>
+          <strong style="font-size:15px;">Installer TERRASOCIAL</strong><br>
+          <span style="font-size:12px; opacity:0.9;">Accédez rapidement depuis votre écran d'accueil</span>
+        </div>
+      </div>
+      <button id="pwa-install-btn" style="background:#fff; color:#1B5E20; border:none; padding:10px 20px; border-radius:8px; font-weight:700; font-size:14px; cursor:pointer; white-space:nowrap;">Installer l'app</button>
+    </div>
+
     <h1 class="page-title">Tableau de bord propriétaire</h1>
     <p class="page-subtitle">Déposez vos terrains, transmettez vos preuves de propriété et suivez les paiements selon votre calendrier choisi.</p>
     <div id="flash"></div>
@@ -133,5 +145,6 @@
   <script src="js/runtime-config.js"></script>
   <script src="js/app-api.js"></script>
   <script src="js/dashboard-owner.js"></script>
+  <script src="js/pwa-install.js"></script>
 </body>
 </html>
