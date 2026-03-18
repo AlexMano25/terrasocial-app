@@ -969,94 +969,172 @@ router.post('/reservations/:id/send-welcome', async (req, res) => {
         const lotType = (reservation.lot_type || '').toUpperCase();
         const surface = reservation.lot_size_m2 || 200;
 
-        // Générer le contrat PDF en mémoire
+        // Générer le contrat PDF officiel basé sur le modèle notarié
         const pdfBuffers = [];
         const doc = new PDFDocument({ size: 'A4', margin: 50 });
         doc.on('data', (chunk) => pdfBuffers.push(chunk));
-
         const pdfReady = new Promise((resolve) => doc.on('end', resolve));
 
-        // En-tête
-        doc.fontSize(22).font('Helvetica-Bold').text('TERRASOCIAL', { align: 'center' });
-        doc.fontSize(10).font('Helvetica').text('Mano Verde Inc SA — Société par Actions', { align: 'center' });
+        const fmt = (v) => Number(v || 0).toLocaleString('fr-FR');
+        const dateStr = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        const duration = Number(reservation.duration_months || 24);
+        const clientName = reservation.full_name || 'Non renseigné';
+        const pricePerM2 = reservation.price_per_m2 ? `${fmt(reservation.price_per_m2)} FCFA/m²` : '';
+
+        // ═══ EN-TÊTE ═══
+        doc.fontSize(10).font('Helvetica').text('Projet TERRASOCIAL — MANO VERDE INC SA', { align: 'center' });
         doc.moveDown(0.5);
-        doc.fontSize(16).font('Helvetica-Bold').text('CONTRAT DE RÉSERVATION FONCIÈRE', { align: 'center' });
+        doc.fontSize(18).font('Helvetica-Bold').text('CONTRAT DE RÉSERVATION DE LOT', { align: 'center' });
+        doc.fontSize(14).text('AVEC PAIEMENT ÉCHELONNÉ', { align: 'center' });
         doc.moveDown(0.3);
-        doc.fontSize(10).font('Helvetica').text(`Contrat N° ${contractNumber}`, { align: 'center' });
-        doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, { align: 'center' });
-        doc.moveDown(1.5);
+        doc.fontSize(10).font('Helvetica').text(`Contrat N° ${contractNumber}  —  ${dateStr}`, { align: 'center' });
+        doc.moveDown(0.5);
         doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke('#1B5E20');
         doc.moveDown(1);
 
-        // Article 1
-        doc.fontSize(13).font('Helvetica-Bold').text('Article 1 — Les Parties');
-        doc.moveDown(0.4);
+        // ═══ ART. 1 — PARTIES ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('1. PARTIES AU CONTRAT');
+        doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica');
-        doc.text('LE VENDEUR : MANO VERDE INC SA, société de droit camerounais, représentée par son PDG.');
-        doc.moveDown(0.5);
-        doc.text(`L'ACQUÉREUR : ${reservation.full_name || 'Non renseigné'}`);
-        doc.text(`Téléphone : ${reservation.phone || 'Non renseigné'}  |  Email : ${reservation.email || '-'}`);
-        doc.text(`Ville : ${reservation.city || 'Non renseigné'}`);
-        doc.moveDown(1);
+        doc.text('Le présent contrat est conclu entre :');
+        doc.text(`  • VENDEUR : MANO VERDE INC SA, société par actions de droit camerounais,`);
+        doc.text(`    représentée par son Président Directeur Général.`);
+        doc.text(`  • ACQUÉREUR : ${clientName}`);
+        doc.text(`    Téléphone : ${reservation.phone || '-'}  |  Email : ${reservation.email || '-'}`);
+        doc.text(`    Ville de résidence : ${reservation.city || '-'}`);
+        doc.moveDown(0.8);
 
-        // Article 2
-        doc.fontSize(13).font('Helvetica-Bold').text('Article 2 — Objet du Contrat');
-        doc.moveDown(0.4);
+        // ═══ ART. 2 — OBJET ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('2. OBJET DU CONTRAT');
+        doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica');
-        doc.text(`Réservation d'un terrain de type ${lotType} — Surface : ${surface} m²`);
-        doc.text(`Prix total : ${lotPrice.toLocaleString('fr-FR')} FCFA`);
-        if (reservation.price_per_m2) doc.text(`Prix au m² : ${Number(reservation.price_per_m2).toLocaleString('fr-FR')} FCFA/m²`);
-        doc.moveDown(1);
+        doc.text(`Par ce contrat, le Vendeur s'engage à réserver à l'Acquéreur un lot de terrain situé :`);
+        doc.text(`  • Localisation : Région du Centre, Cameroun — Projet TERRASOCIAL`);
+        doc.text(`  • Type de lot : ${lotType}`);
+        doc.text(`  • Superficie : ${surface} m²`);
+        doc.text(`  • Description : Terrain nu, rural, situé dans le projet TERRASOCIAL`);
+        doc.moveDown(0.8);
 
-        // Article 3
-        doc.fontSize(13).font('Helvetica-Bold').text('Article 3 — Modalités de Paiement');
-        doc.moveDown(0.4);
+        // ═══ ART. 3 — PRIX ET CONDITIONS ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('3. PRIX ET CONDITIONS DE PAIEMENT');
+        doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica');
-        doc.text(`Montant journalier minimum : ${dailyAmount.toLocaleString('fr-FR')} FCFA/jour`);
-        doc.text(`Fréquence : ${reservation.payment_frequency || 'quotidien'}`);
-        doc.text('Moyens acceptés : Orange Money, MTN MoMo, Carte bancaire');
-        doc.moveDown(1);
+        doc.text(`  Désignation                           Montant`);
+        doc.text(`  ─────────────────────────────────────────────────`);
+        doc.text(`  Prix total du lot                     ${fmt(lotPrice)} FCFA`);
+        if (pricePerM2) doc.text(`  Prix au mètre carré                  ${pricePerM2}`);
+        doc.text(`  Frais d'ouverture de dossier          10 000 FCFA`);
+        doc.text(`  Durée de l'échelonnement              ${duration} mois`);
+        doc.text(`  Versement journalier minimum          ${fmt(dailyAmount)} FCFA/jour`);
+        doc.text(`  Fréquence de paiement                 ${reservation.payment_frequency || 'quotidien'}`);
+        doc.moveDown(0.3);
+        doc.text('Moyens de paiement acceptés : Orange Money, MTN Mobile Money, Carte bancaire.');
+        doc.text(`Chaque versement est comptabilisé et avance le compteur de l'Acquéreur.`);
+        doc.moveDown(0.8);
 
-        // Article 4 — Assurance
-        doc.fontSize(13).font('Helvetica-Bold').text('Article 4 — Assurance Famille');
-        doc.moveDown(0.4);
+        // ═══ ART. 4 — ÉCHÉANCIER ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('4. ÉCHÉANCIER DE PAIEMENT');
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('Les paiements sont effectués selon la fréquence choisie par l\'Acquéreur :');
+        doc.text(`  • Quotidien : ${fmt(dailyAmount)} FCFA minimum par jour`);
+        doc.text(`  • Hebdomadaire : ${fmt(dailyAmount * 7)} FCFA/semaine`);
+        doc.text(`  • Mensuel : ${fmt(dailyAmount * 30)} FCFA/mois`);
+        doc.text('Le suivi des versements est accessible depuis l\'espace client TERRASOCIAL.');
+        doc.moveDown(0.8);
+
+        // ═══ ART. 5 — CONDITIONS SUSPENSIVES ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('5. CONDITIONS SUSPENSIVES');
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('La réservation du lot est soumise aux conditions suspensives suivantes :');
+        doc.text('  • Obtention de la conformité cadastrale');
+        doc.text('  • Vérification de la non-inscription d\'hypothèque');
+        doc.text('  • Agrément administratif (le cas échéant)');
+        doc.text('  • Validation par les autorités locales');
+        doc.moveDown(0.8);
+
+        // ═══ ART. 6 — CLAUSE RÉSOLUTOIRE ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('6. CLAUSE RÉSOLUTOIRE');
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('En cas de défaut de paiement d\'une ou plusieurs échéances :');
+        doc.text('  • Un délai de grâce de 30 jours calendaires sera accordé');
+        doc.text('  • Passé ce délai, le contrat pourra être résilié de plein droit');
+        doc.text('  • Les sommes versées seront remboursées sous 30 jours, déduction faite');
+        doc.text('    des frais de dossier et d\'une indemnité forfaitaire de 10%');
+        doc.moveDown(0.8);
+
+        // ═══ ART. 7 — JOUISSANCE ANTICIPÉE ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('7. JOUISSANCE ANTICIPÉE');
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('L\'Acquéreur aura la jouissance anticipée du lot dès le versement de 50% du prix total.');
+        doc.text('Cette jouissance sera matérialisée par un procès-verbal de mise en jouissance anticipée.');
+        doc.text('Elle ne constitue pas un titre de propriété et demeure strictement personnelle.');
+        doc.moveDown(0.8);
+
+        // ═══ ART. 8 — ASSURANCE FAMILLE ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('8. ASSURANCE FAMILLE (OPTIONNELLE)');
+        doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica');
         if (insurancePersons > 0) {
-            doc.text(`Nombre de personnes assurées : ${insurancePersons}`);
-            doc.text(`Coût : ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour`);
-            doc.text('Couverture : invalidité, décès, maladie — 500 000 FCFA/an/personne');
+            doc.text(`L'Acquéreur a souscrit à l'assurance famille pour ${insurancePersons} personne(s).`);
+            doc.text(`  • Coût : ${fmt(insurancePersons * 350)} FCFA/jour (350 FCFA/jour/personne)`);
+            doc.text('  • Couverture : invalidité, décès, maladie — 500 000 FCFA/an/personne');
         } else {
-            doc.text('Aucune assurance souscrite. Option disponible à 350 FCFA/jour/personne.');
+            doc.text('L\'Acquéreur n\'a pas souscrit à l\'assurance famille à ce jour.');
+            doc.text('Option disponible à tout moment : 350 FCFA/jour/personne (invalidité + décès + maladie).');
         }
-        doc.moveDown(1);
+        doc.moveDown(0.8);
 
-        // Article 5
-        doc.fontSize(13).font('Helvetica-Bold').text('Article 5 — Engagements');
-        doc.moveDown(0.4);
+        // ═══ ART. 9 — OBLIGATIONS ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('9. OBLIGATIONS DES PARTIES');
+        doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica');
-        doc.text('Le vendeur garantit : disponibilité du terrain, titre foncier sécurisé, PV de jouissance à 50%.');
-        doc.text('L\'acquéreur s\'engage à : respecter les échéances, payer les frais de dossier (10 000 FCFA).');
-        doc.moveDown(1);
+        doc.font('Helvetica-Bold').text('Obligations du Vendeur :');
+        doc.font('Helvetica');
+        doc.text('  • Assurer la quiétude de jouissance du lot');
+        doc.text('  • Procédure d\'immatriculation auprès du cadastre');
+        doc.text('  • Fournir tous les documents nécessaires');
+        doc.text('  • Délivrer l\'acte authentique après paiement intégral');
+        doc.text('  • Délivrer un PV de jouissance anticipée à 50% du paiement');
+        doc.moveDown(0.3);
+        doc.font('Helvetica-Bold').text('Obligations de l\'Acquéreur :');
+        doc.font('Helvetica');
+        doc.text('  • Effectuer les paiements selon la fréquence convenue');
+        doc.text('  • Payer les frais d\'ouverture de dossier (10 000 FCFA)');
+        doc.text('  • Supporter les frais de mutation (droits d\'enregistrement)');
+        doc.text('  • Respecter la destination du lot (vocation résidentielle)');
+        doc.moveDown(0.8);
 
-        // Article 6
-        doc.fontSize(13).font('Helvetica-Bold').text('Article 6 — Signature Électronique');
-        doc.moveDown(0.4);
+        // ═══ ART. 10 — DISPOSITIONS DIVERSES ═══
+        doc.fontSize(12).font('Helvetica-Bold').text('10. DISPOSITIONS DIVERSES');
+        doc.moveDown(0.3);
         doc.fontSize(10).font('Helvetica');
-        doc.text('Ce contrat peut être signé électroniquement via votre espace client TERRASOCIAL.');
-        doc.text('La signature électronique a la même valeur juridique qu\'une signature manuscrite.');
-        doc.text(`Connectez-vous sur : https://social.manovende.com/login.html`);
+        doc.text('  • Droit applicable : Lois de la République du Cameroun');
+        doc.text('  • Compétence : Tribunaux du Centre');
+        doc.text('  • Frais de rédaction : À la charge du Vendeur');
+        doc.text('  • Enregistrement : À la charge de l\'Acquéreur');
+        doc.text('  • Signature électronique : acceptée via l\'espace client TERRASOCIAL');
+        doc.text(`  • Espace client : https://social.manovende.com/login.html`);
         doc.moveDown(1.5);
 
-        // Signatures
-        doc.fontSize(13).font('Helvetica-Bold').text('Signatures', { align: 'center' });
+        // ═══ SIGNATURES ═══
+        doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke('#1B5E20');
+        doc.moveDown(1);
+        doc.fontSize(11).font('Helvetica-Bold').text('SIGNATURES', { align: 'center' });
         doc.moveDown(1);
         doc.fontSize(10).font('Helvetica');
-        doc.text('Le Vendeur                                                    L\'Acquéreur');
-        doc.moveDown(2);
-        doc.text('_______________________                            _______________________');
-        doc.text('MANO VERDE INC SA                                   ' + (reservation.full_name || ''));
-        doc.moveDown(1);
-        doc.fontSize(8).text(`Généré le ${new Date().toLocaleString('fr-FR')} — ${contractNumber}`, { align: 'center' });
+        doc.text('Pour le Vendeur :                                              Pour l\'Acquéreur :');
+        doc.moveDown(2.5);
+        doc.text('_______________________________                    _______________________________');
+        doc.text('MANO VERDE INC SA                                         ' + clientName);
+        doc.text('Président Directeur Général');
+        doc.moveDown(1.5);
+        doc.fontSize(8).font('Helvetica').fillColor('#666666');
+        doc.text(`Document généré le ${new Date().toLocaleString('fr-FR')} — Contrat N° ${contractNumber}`, { align: 'center' });
+        doc.text('Ce document doit être signé et retourné via votre espace client TERRASOCIAL.', { align: 'center' });
 
         doc.end();
         await pdfReady;
