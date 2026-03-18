@@ -20,6 +20,25 @@
     .insurance-btn:hover{transform:scale(1.03)}
     .insurance-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
     .versement-card{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-left:4px solid #2E7D32}
+    .freq-btn{padding:8px 16px;border:2px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;font-size:13px;font-weight:600;transition:all .2s}
+    .freq-btn.active{border-color:#2E7D32;background:#E8F5E9;color:#1B5E20}
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);display:none;z-index:1000;align-items:center;justify-content:center}
+    .modal-overlay.show{display:flex}
+    .modal-box{background:#fff;border-radius:12px;padding:30px;max-width:420px;width:90%;position:relative;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+    .modal-close{position:absolute;top:12px;right:16px;font-size:24px;cursor:pointer;color:#999;border:none;background:none}
+    .spinner{border:4px solid #e0e0e0;border-top:4px solid #2E7D32;border-radius:50%;width:40px;height:40px;animation:spin 1s linear infinite;margin:20px auto}
+    @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+    .daily-summary{background:linear-gradient(135deg,#1B5E20,#2E7D32);color:#fff;border-radius:12px;padding:16px 20px;margin-top:16px}
+    .daily-summary h3{margin:0 0 8px;font-size:16px}
+    .daily-summary .daily-row{display:flex;justify-content:space-between;padding:4px 0;font-size:14px;border-bottom:1px solid rgba(255,255,255,.15)}
+    .daily-summary .daily-row:last-child{border:none}
+    .daily-summary .daily-total{font-size:20px;font-weight:700;margin-top:8px;text-align:right}
+    .insurance-persons-card{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-left:4px solid #1565C0;border-radius:8px;padding:16px;margin-top:16px}
+    .insurance-persons-card h3{color:#0D47A1;margin:0 0 8px}
+    .persons-control{display:flex;align-items:center;gap:12px}
+    .persons-control button{width:36px;height:36px;border-radius:50%;border:2px solid #1565C0;background:#fff;color:#1565C0;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .persons-control button:hover{background:#E3F2FD}
+    .persons-control .count{font-size:24px;font-weight:700;color:#0D47A1;min-width:40px;text-align:center}
   </style>
 </head>
 <body>
@@ -38,11 +57,19 @@
     <p class="page-subtitle">Engagements, versements, échéancier, police d'assurance et score de fiabilité.</p>
     <div id="flash"></div>
 
+    <!-- Résumé journalier -->
+    <section id="daily-summary-section" class="daily-summary" style="display:none">
+      <h3>Votre engagement quotidien</h3>
+      <div id="daily-breakdown"></div>
+      <div id="daily-total-display" class="daily-total"></div>
+    </section>
+
     <!-- Métriques -->
-    <section class="grid grid-3">
+    <section class="grid grid-3" style="margin-top:16px">
       <article class="card">
         <div class="small">Engagement total</div>
         <div id="m-commitment" class="metric-value">-</div>
+        <div id="m-lots" class="small" style="color:#1565C0"></div>
       </article>
       <article class="card">
         <div class="small">Total versé</div>
@@ -55,6 +82,31 @@
         <div id="m-score" class="small"></div>
         <div id="m-late"></div>
       </article>
+    </section>
+
+    <!-- Personnes assurées -->
+    <section id="insurance-persons-section" class="insurance-persons-card" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <h3>👥 Personnes assurées</h3>
+          <p class="small" style="color:#37474F;margin:0">Ajoutez des personnes à votre assurance foncière (350 FCFA/personne/jour)</p>
+        </div>
+        <div>
+          <label for="insurance-res-select" class="small" style="color:#0D47A1;font-weight:600">Réservation :</label>
+          <select id="insurance-res-select" style="padding:6px 10px;border-radius:6px;border:1px solid #90CAF9;font-size:13px"></select>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap;gap:12px">
+        <div class="persons-control">
+          <button type="button" id="persons-minus">−</button>
+          <span class="count" id="persons-count">0</span>
+          <button type="button" id="persons-plus">+</button>
+        </div>
+        <div style="text-align:right">
+          <div class="small" style="color:#37474F">Coût journalier assurance</div>
+          <div id="insurance-daily-cost" style="font-size:18px;font-weight:700;color:#0D47A1">0 FCFA</div>
+        </div>
+      </div>
     </section>
 
     <!-- Police d'assurance -->
@@ -73,13 +125,29 @@
     <!-- Effectuer un versement -->
     <section class="card versement-card" style="margin-top:16px">
       <h2 style="color:#1B5E20">💰 Effectuer un versement</h2>
-      <p class="small" style="color:#555;margin-bottom:12px">Le montant minimum correspond à votre mensualité. Vous pouvez payer davantage pour avancer sur votre échéancier.</p>
+      <p class="small" style="color:#555;margin-bottom:12px">Choisissez votre fréquence de versement. Le paiement est sécurisé.</p>
+
       <form id="versement-form">
-        <div class="grid grid-2" style="gap:12px">
-          <div>
-            <label for="v-reservation">Réservation</label>
-            <select id="v-reservation" required><option value="">Chargement…</option></select>
+        <!-- Réservation -->
+        <div style="margin-bottom:12px">
+          <label for="v-reservation">Réservation</label>
+          <select id="v-reservation" required><option value="">Chargement…</option></select>
+        </div>
+
+        <!-- Choix fréquence -->
+        <div style="margin-bottom:12px">
+          <label>Fréquence de versement</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+            <button type="button" class="freq-btn active" data-freq="daily">🗓️ Quotidien</button>
+            <button type="button" class="freq-btn" data-freq="hebdomadaire">📅 Hebdo</button>
+            <button type="button" class="freq-btn" data-freq="bimensuel">📅 Bimensuel</button>
+            <button type="button" class="freq-btn" data-freq="mensuel">📅 Mensuel</button>
+            <button type="button" class="freq-btn" data-freq="semestriel">📅 Semestriel</button>
+            <button type="button" class="freq-btn" data-freq="custom">✏️ Libre</button>
           </div>
+        </div>
+
+        <div class="grid grid-2" style="gap:12px">
           <div>
             <label for="v-amount">Montant (FCFA) <span id="v-min-label" class="small" style="color:#E65100"></span></label>
             <input id="v-amount" type="number" min="1" required>
@@ -87,23 +155,60 @@
           <div>
             <label for="v-method">Mode de paiement</label>
             <select id="v-method" required>
-              <option value="orange_money">Orange Money</option>
-              <option value="mtn_momo">MTN MoMo</option>
-              <option value="virement">Virement bancaire</option>
-              <option value="carte">Carte bancaire</option>
+              <option value="orange_money">🟠 Orange Money</option>
+              <option value="mtn_momo">🟡 MTN MoMo</option>
+              <option value="carte">💳 Carte Bancaire</option>
             </select>
           </div>
+          <div id="phone-field" style="display:none">
+            <label for="v-phone">Numéro de téléphone (pour le paiement)</label>
+            <input id="v-phone" type="tel" placeholder="+237 6XX XXX XXX">
+          </div>
           <div style="display:flex;align-items:flex-end">
-            <button class="btn btn-primary" type="submit" style="width:100%">Valider le versement</button>
+            <button class="btn btn-primary" type="submit" style="width:100%">Payer</button>
           </div>
         </div>
       </form>
     </section>
 
+    <!-- Modal de paiement -->
+    <div id="campay-modal" class="modal-overlay">
+      <div class="modal-box">
+        <button class="modal-close" id="campay-close">&times;</button>
+
+        <!-- Étape traitement -->
+        <div id="campay-processing">
+          <div style="text-align:center">
+            <div class="spinner"></div>
+            <h3 style="color:#1B5E20">Paiement en cours…</h3>
+            <p id="campay-instructions" class="small" style="color:#666">Veuillez valider le paiement sur votre téléphone.</p>
+            <p class="small" style="color:#999">Réf: <span id="campay-ref">-</span></p>
+            <p class="small" style="color:#999">Montant: <span id="campay-amount">-</span></p>
+          </div>
+        </div>
+
+        <!-- Étape succès -->
+        <div id="campay-success" style="display:none;text-align:center">
+          <div style="font-size:60px">✅</div>
+          <h3 style="color:#2E7D32">Paiement confirmé !</h3>
+          <p class="small">Votre versement a été enregistré avec succès.</p>
+          <button class="btn btn-primary" id="campay-done" style="margin-top:12px">Fermer</button>
+        </div>
+
+        <!-- Étape échec -->
+        <div id="campay-failed" style="display:none;text-align:center">
+          <div style="font-size:60px">❌</div>
+          <h3 style="color:#C62828">Paiement échoué</h3>
+          <p class="small" id="campay-error-msg">Le paiement n'a pas abouti. Veuillez réessayer.</p>
+          <button class="btn btn-danger" id="campay-retry" style="margin-top:12px">Réessayer</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Échéancier -->
     <section class="card" style="margin-top:16px">
       <h2>📅 Échéancier de paiement</h2>
-      <p class="small" style="color:#666">Suivi mois par mois de vos obligations.</p>
+      <p class="small" style="color:#666">Suivi mois par mois de vos obligations par lot souscrit.</p>
       <div id="schedule-container"><p class="small">Aucune réservation active.</p></div>
     </section>
 
@@ -112,7 +217,7 @@
       <h2>📋 Historique des versements</h2>
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Référence</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Statut</th></tr></thead>
+          <thead><tr><th>Référence</th><th>Lot</th><th>Montant</th><th>Méthode</th><th>Date</th><th>Statut</th></tr></thead>
           <tbody id="payments-body"></tbody>
         </table>
       </div>
@@ -124,16 +229,18 @@
         <h2>Nouvelle réservation</h2>
         <form id="reservation-form">
           <label for="lot_type">Type de lot</label>
-          <select id="lot_type" required>
-            <option value="standard">Standard 500m²</option>
-            <option value="confort">Confort 750m²</option>
-            <option value="premium">Premium 1000m²</option>
+          <select id="lot_type" required onchange="document.getElementById('lot_price').value={starter:'40000',standard:'1300000',confort:'3400000',premium:'5000000'}[this.value]||'40000'">
+            <option value="starter">Starter 200m² (quotidien uniquement)</option>
+            <option value="standard">Standard 200m²</option>
+            <option value="confort">Confort 400m² (2 souscriptions)</option>
+            <option value="premium">Premium 500m² (2,5 souscriptions)</option>
           </select>
-          <label for="lot_price">Prix (FCFA)</label>
+          <label for="lot_price">Prix total (FCFA)</label>
           <select id="lot_price" required>
-            <option value="500000">500 000</option>
-            <option value="750000">750 000</option>
-            <option value="1000000">1 000 000</option>
+            <option value="40000">40 000 (Starter)</option>
+            <option value="1300000">1 300 000 (Standard)</option>
+            <option value="3400000">3 400 000 (Confort)</option>
+            <option value="5000000">5 000 000 (Premium)</option>
           </select>
           <label for="duration_months">Durée</label>
           <select id="duration_months" required>
