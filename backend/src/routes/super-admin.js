@@ -257,14 +257,72 @@ router.post('/messages', async (req, res) => {
         }
         if (!content) return res.status(400).json({ error: 'Message requis' });
 
+        // Collecter les destinataires email
+        let recipients = [];
+        if (targetScope === 'user' && targetUserId) {
+            const u = await get('SELECT id, full_name, email FROM users WHERE id = ?', [targetUserId]);
+            if (!u) return res.status(400).json({ error: 'Utilisateur #' + targetUserId + ' introuvable' });
+            if (u.email) recipients.push(u);
+        } else if (targetScope === 'role' && targetRole) {
+            recipients = await all('SELECT id, full_name, email FROM users WHERE role = ?', [targetRole]);
+        } else if (targetScope === 'all') {
+            recipients = await all('SELECT id, full_name, email FROM users WHERE email IS NOT NULL');
+        }
+
+        // Sauvegarder le message
         const result = await run(
             `INSERT INTO admin_messages(sender_user_id, target_scope, target_role, target_user_id, content, channels, status)
              VALUES (?, ?, ?, ?, ?, ?, ?)`,
-            [req.user.id, targetScope, targetRole, targetUserId, content, channels, 'queued']
+            [req.user.id, targetScope, targetRole, targetUserId, content, channels, 'sending']
         );
 
-        await req.audit?.('super_admin.message_broadcast', { actor_id: req.user.id, message_id: result.id, target_scope: targetScope });
-        return res.status(201).json({ id: result.id, status: 'queued' });
+        // Envoi réel des emails si le canal email est sélectionné
+        let emailsSent = 0;
+        let emailErrors = [];
+        if (channels.includes('email') && recipients.length > 0) {
+            const { sendEmail, isSmtpConfigured } = require('../services/email');
+            if (isSmtpConfigured()) {
+                for (const recipient of recipients) {
+                    if (recipient.email && !recipient.email.includes('@terrasocial.cm') && !recipient.email.includes('@example.com')) {
+                        try {
+                            const emailResult = await sendEmail(
+                                recipient.email,
+                                'TERRASOCIAL — Message de la direction',
+                                content,
+                                `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+                                    <div style="background:#1B5E20;color:#fff;padding:16px;text-align:center;border-radius:8px 8px 0 0;">
+                                        <h2 style="margin:0;">🏡 TERRASOCIAL</h2>
+                                    </div>
+                                    <div style="padding:20px;background:#fff;border:1px solid #e0e0e0;border-radius:0 0 8px 8px;">
+                                        <p>Bonjour <strong>${recipient.full_name}</strong>,</p>
+                                        <div style="background:#f5f5f5;padding:16px;border-radius:8px;margin:16px 0;white-space:pre-wrap;">${content}</div>
+                                        <hr style="border:none;border-top:1px solid #eee;">
+                                        <p style="font-size:12px;color:#999;text-align:center;">TERRASOCIAL — Mano Verde Inc SA</p>
+                                    </div>
+                                </div>`
+                            );
+                            if (emailResult.success) emailsSent++;
+                            else emailErrors.push(recipient.email + ': ' + emailResult.error);
+                        } catch (e) { emailErrors.push(recipient.email + ': ' + e.message); }
+                    }
+                }
+            } else {
+                emailErrors.push('SMTP non configuré sur le serveur');
+            }
+        }
+
+        // Mettre à jour le statut
+        const finalStatus = emailsSent > 0 ? 'sent' : (channels.includes('email') ? 'partial' : 'queued');
+        await run('UPDATE admin_messages SET status = ? WHERE id = ?', [finalStatus, result.id]);
+
+        await req.audit?.('super_admin.message_broadcast', { actor_id: req.user.id, message_id: result.id, target_scope: targetScope, emails_sent: emailsSent });
+        return res.status(201).json({
+            id: result.id,
+            status: finalStatus,
+            emails_sent: emailsSent,
+            recipients_count: recipients.length,
+            errors: emailErrors.length > 0 ? emailErrors : undefined
+        });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur envoi message: ' + (error.message || 'Vérifiez que l\'ID utilisateur existe') });
     }

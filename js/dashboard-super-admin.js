@@ -428,13 +428,17 @@
         channels
       };
 
-      await TSApi.request('/api/super-admin/messages', {
+      var result = await TSApi.request('/api/super-admin/messages', {
         method: 'POST',
         body: JSON.stringify(body)
       });
 
       document.getElementById('msg-content').value = '';
-      flash('Message planifié.', 'ok');
+      var msg = result.emails_sent > 0
+        ? '✅ ' + result.emails_sent + ' email(s) envoyé(s) sur ' + result.recipients_count + ' destinataire(s)'
+        : 'Message enregistré (statut: ' + result.status + ')';
+      if (result.errors && result.errors.length) msg += ' — Erreurs: ' + result.errors.join(', ');
+      flash(msg, result.emails_sent > 0 ? 'ok' : 'warn');
       await loadMessages();
     } catch (error) {
       flash(error.message, 'err');
