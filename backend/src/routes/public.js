@@ -58,12 +58,12 @@ router.post('/reservations', async (req, res) => {
         const monthly = Math.ceil((price - deposit) / duration);
 
         await run(
-            `INSERT INTO reservations(user_id, lot_type, lot_price, duration_months, deposit_amount, monthly_amount, source, status)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [null, lotType, price, duration, deposit, monthly, safeSource || 'site', 'lead']
+            `INSERT INTO reservations(user_id, lot_type, lot_price, duration_months, deposit_amount, monthly_amount, source, status, lead_name, lead_phone, lead_email, lead_city)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [null, lotType, price, duration, deposit, monthly, safeSource || 'site', 'lead', safeName, safePhone, safeEmail || null, safeCity || null]
         );
 
-        await req.audit?.('public.reservation_lead_created', { lot_type: lotType, lot_price: price });
+        await req.audit?.('public.reservation_lead_created', { lot_type: lotType, lot_price: price, lead_name: safeName, lead_phone: safePhone });
         return res.status(201).json({
             message: 'Demande recue. Un conseiller vous contactera rapidement.',
             contact: { full_name: safeName, phone: safePhone, email: safeEmail || null, city: safeCity || null }

@@ -239,15 +239,19 @@
     countEl.textContent = state.reservations.length + ' réservation(s)';
 
     tbody.innerHTML = state.reservations.map(function(r) {
-      var clientName = r.client_name || r.source || 'Lead anonyme';
-      var contact = r.client_email || r.client_phone || '-';
+      var clientName = r.client_name || r.lead_name || r.source || 'Lead anonyme';
+      var leadPhone = r.client_phone || r.lead_phone || '';
+      var leadEmail = r.client_email || r.lead_email || '';
+      var contact = leadPhone || leadEmail || '-';
+      if (leadPhone && leadEmail) contact = leadPhone + '<br><span style="color:#888;">' + leadEmail + '</span>';
+      var leadCity = r.lead_city || '';
       var price = Number(r.lot_price || 0).toLocaleString('fr-FR') + ' FCFA';
       var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '-';
       var lotLabel = (r.lot_type || '-').toUpperCase();
 
       var actions = '';
       if (r.status === 'lead' || r.status === 'pending') {
-        actions += '<button data-action="validate" data-id="' + r.id + '" data-name="' + (r.client_name || '') + '" data-phone="' + (r.client_phone || '') + '" data-email="' + (r.client_email || '') + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Valider</button>';
+        actions += '<button data-action="validate" data-id="' + r.id + '" data-name="' + (r.client_name || r.lead_name || '') + '" data-phone="' + (r.client_phone || r.lead_phone || '') + '" data-email="' + (r.client_email || r.lead_email || '') + '" data-city="' + leadCity + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Valider</button>';
         actions += '<button data-action="reject" data-id="' + r.id + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
       }
       if (r.status === 'active' || r.status === 'completed') {
@@ -272,7 +276,7 @@
       document.getElementById('val-name').value = btn.dataset.name || '';
       document.getElementById('val-phone').value = btn.dataset.phone || '';
       document.getElementById('val-email').value = btn.dataset.email || '';
-      document.getElementById('val-city').value = '';
+      document.getElementById('val-city').value = btn.dataset.city || '';
       document.getElementById('val-result').innerHTML = '';
       modal.style.display = 'flex';
     }
