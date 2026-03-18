@@ -4,7 +4,8 @@ const path = require('path');
 const PDFDocument = require('pdfkit');
 const { all, get, run } = require('../db/connection');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
-const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt } = require('../utils/validation');
+const bcrypt = require('bcryptjs');
+const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt, isValidPhone } = require('../utils/validation');
 
 const uploadsPath = process.env.VERCEL
     ? '/tmp/terrasocial-uploads'
@@ -521,6 +522,326 @@ router.put('/roadmap', async (req, res) => {
         return res.json({ ok: true });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur mise a jour roadmap' });
+    }
+});
+
+// ══════════════════════════════════════════════════════════════════════════════
+// RÉSERVATIONS / LEADS — Workflow complet
+// ══════════════════════════════════════════════════════════════════════════════
+
+// Liste toutes les réservations (leads inclus)
+router.get('/reservations', async (req, res) => {
+    try {
+        const status = sanitizeOptionalText(req.query.status, 30);
+        let sql = `SELECT r.*, u.full_name AS client_name, u.email AS client_email, u.phone AS client_phone
+                    FROM reservations r
+                    LEFT JOIN users u ON r.user_id = u.id
+                    ORDER BY r.id DESC LIMIT 500`;
+        let params = [];
+
+        if (status) {
+            sql = `SELECT r.*, u.full_name AS client_name, u.email AS client_email, u.phone AS client_phone
+                   FROM reservations r
+                   LEFT JOIN users u ON r.user_id = u.id
+                   WHERE r.status = ?
+                   ORDER BY r.id DESC LIMIT 500`;
+            params = [status];
+        }
+
+        const rows = await all(sql, params);
+        return res.json({ reservations: rows });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture réservations' });
+    }
+});
+
+// Détails d'une réservation
+router.get('/reservations/:id', async (req, res) => {
+    try {
+        const id = parsePositiveInt(req.params.id);
+        if (!id) return res.status(400).json({ error: 'ID invalide' });
+
+        const reservation = await get(
+            `SELECT r.*, u.full_name AS client_name, u.email AS client_email, u.phone AS client_phone, u.city AS client_city
+             FROM reservations r
+             LEFT JOIN users u ON r.user_id = u.id
+             WHERE r.id = ?`, [id]
+        );
+        if (!reservation) return res.status(404).json({ error: 'Réservation introuvable' });
+
+        const payments = await all(
+            'SELECT * FROM payments WHERE reservation_id = ? ORDER BY paid_at DESC', [id]
+        );
+        const contract = await get(
+            'SELECT * FROM contracts WHERE reservation_id = ? ORDER BY id DESC LIMIT 1', [id]
+        );
+
+        return res.json({ reservation, payments, contract });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture réservation' });
+    }
+});
+
+// Valider un lead → créer compte client + activer réservation
+router.post('/reservations/:id/validate', async (req, res) => {
+    try {
+        const id = parsePositiveInt(req.params.id);
+        if (!id) return res.status(400).json({ error: 'ID invalide' });
+
+        const reservation = await get('SELECT * FROM reservations WHERE id = ?', [id]);
+        if (!reservation) return res.status(404).json({ error: 'Réservation introuvable' });
+        if (reservation.status !== 'lead' && reservation.status !== 'pending') {
+            return res.status(400).json({ error: 'Cette réservation est déjà traitée (statut: ' + reservation.status + ')' });
+        }
+
+        const { full_name, phone, email, city } = req.body;
+        const safeName = sanitizeText(full_name, 120);
+        const safePhone = sanitizeText(phone, 30);
+        const safeEmail = normalizeEmail(email);
+        const safeCity = sanitizeOptionalText(city, 80);
+
+        if (!safeName || !safePhone) {
+            return res.status(400).json({ error: 'Nom et téléphone du client requis' });
+        }
+
+        let userId = reservation.user_id;
+
+        // Si pas d'utilisateur lié (lead public), créer un compte client
+        if (!userId) {
+            // Vérifier si email déjà pris
+            if (safeEmail) {
+                const existing = await get('SELECT id FROM users WHERE email = ?', [safeEmail]);
+                if (existing) {
+                    // Lier à l'utilisateur existant
+                    userId = existing.id;
+                } else {
+                    // Créer nouveau compte
+                    const tempPassword = 'TS' + Date.now().toString(36) + '!' + Math.random().toString(36).slice(2, 6).toUpperCase();
+                    const passwordHash = await bcrypt.hash(tempPassword, 10);
+                    const created = await run(
+                        'INSERT INTO users(role, full_name, email, phone, city, password_hash) VALUES (?, ?, ?, ?, ?, ?)',
+                        ['client', safeName, safeEmail || `lead.${id}@terrasocial.cm`, safePhone, safeCity || '', passwordHash]
+                    );
+                    userId = created.id;
+
+                    // Stocker le mot de passe temporaire dans la réponse (admin le communique au client)
+                    res.locals.tempPassword = tempPassword;
+                }
+            } else {
+                // Pas d'email → créer avec email généré
+                const tempPassword = 'TS' + Date.now().toString(36) + '!' + Math.random().toString(36).slice(2, 6).toUpperCase();
+                const passwordHash = await bcrypt.hash(tempPassword, 10);
+                const generatedEmail = `client.${id}.${Date.now()}@terrasocial.cm`;
+                const created = await run(
+                    'INSERT INTO users(role, full_name, email, phone, city, password_hash) VALUES (?, ?, ?, ?, ?, ?)',
+                    ['client', safeName, generatedEmail, safePhone, safeCity || '', passwordHash]
+                );
+                userId = created.id;
+                res.locals.tempPassword = tempPassword;
+            }
+        }
+
+        // Activer la réservation
+        await run(
+            'UPDATE reservations SET user_id = ?, status = ? WHERE id = ?',
+            [userId, 'active', id]
+        );
+
+        // Générer un numéro de contrat
+        const contractNumber = 'TS-CTR-' + String(id).padStart(5, '0') + '-' + new Date().getFullYear();
+        const existingContract = await get('SELECT id FROM contracts WHERE reservation_id = ?', [id]);
+        if (!existingContract) {
+            await run(
+                'INSERT INTO contracts(user_id, reservation_id, contract_number, contract_type, status, signed_at) VALUES (?, ?, ?, ?, ?, ?)',
+                [userId, id, contractNumber, 'reservation', 'draft', null]
+            );
+        }
+
+        await req.audit?.('super_admin.reservation_validated', { actor_id: req.user.id, reservation_id: id, user_id: userId });
+
+        const user = await get('SELECT id, full_name, email, phone FROM users WHERE id = ?', [userId]);
+        return res.json({
+            ok: true,
+            message: 'Réservation validée et compte client créé',
+            user,
+            contract_number: contractNumber,
+            temp_password: res.locals.tempPassword || null
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur validation réservation: ' + error.message });
+    }
+});
+
+// Rejeter un lead
+router.post('/reservations/:id/reject', async (req, res) => {
+    try {
+        const id = parsePositiveInt(req.params.id);
+        if (!id) return res.status(400).json({ error: 'ID invalide' });
+
+        const reason = sanitizeOptionalText(req.body.reason, 500) || 'Non précisé';
+
+        await run('UPDATE reservations SET status = ? WHERE id = ?', ['cancelled', id]);
+        await req.audit?.('super_admin.reservation_rejected', { actor_id: req.user.id, reservation_id: id, reason });
+
+        return res.json({ ok: true, message: 'Réservation rejetée' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur rejet réservation' });
+    }
+});
+
+// Modifier le statut d'une réservation
+router.put('/reservations/:id', async (req, res) => {
+    try {
+        const id = parsePositiveInt(req.params.id);
+        if (!id) return res.status(400).json({ error: 'ID invalide' });
+
+        const newStatus = sanitizeText(req.body.status, 30);
+        const validStatuses = ['lead', 'pending', 'active', 'completed', 'cancelled'];
+        if (!validStatuses.includes(newStatus)) {
+            return res.status(400).json({ error: 'Statut invalide: ' + validStatuses.join(', ') });
+        }
+
+        await run('UPDATE reservations SET status = ? WHERE id = ?', [newStatus, id]);
+        await req.audit?.('super_admin.reservation_status_updated', { actor_id: req.user.id, reservation_id: id, status: newStatus });
+
+        return res.json({ ok: true });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur mise à jour réservation' });
+    }
+});
+
+// Générer contrat PDF pour une réservation
+router.get('/reservations/:id/contract-pdf', async (req, res) => {
+    try {
+        const id = parsePositiveInt(req.params.id);
+        if (!id) return res.status(400).json({ error: 'ID invalide' });
+
+        const reservation = await get(
+            `SELECT r.*, u.full_name, u.email, u.phone, u.city
+             FROM reservations r
+             LEFT JOIN users u ON r.user_id = u.id
+             WHERE r.id = ?`, [id]
+        );
+        if (!reservation) return res.status(404).json({ error: 'Réservation introuvable' });
+
+        const contract = await get('SELECT * FROM contracts WHERE reservation_id = ? ORDER BY id DESC LIMIT 1', [id]);
+        const contractNumber = contract ? contract.contract_number : 'TS-CTR-' + String(id).padStart(5, '0');
+
+        const lotPrice = Number(reservation.lot_price || 0);
+        const deposit = Number(reservation.deposit_amount || 0);
+        const monthly = Number(reservation.monthly_amount || 0);
+        const duration = Number(reservation.duration_months || 24);
+        const dailyAmount = Number(reservation.daily_amount || 1500);
+
+        const doc = new PDFDocument({ size: 'A4', margin: 50 });
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `inline; filename="contrat-${contractNumber}.pdf"`);
+        doc.pipe(res);
+
+        // En-tête
+        doc.fontSize(22).font('Helvetica-Bold').text('TERRASOCIAL', { align: 'center' });
+        doc.fontSize(10).font('Helvetica').text('Mano Verde Inc SA — Société par Actions', { align: 'center' });
+        doc.moveDown(0.5);
+        doc.fontSize(16).font('Helvetica-Bold').text('CONTRAT DE RÉSERVATION FONCIÈRE', { align: 'center' });
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('Helvetica').text(`Contrat N° ${contractNumber}`, { align: 'center' });
+        doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, { align: 'center' });
+        doc.moveDown(1.5);
+
+        // Ligne de séparation
+        doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke('#1B5E20');
+        doc.moveDown(1);
+
+        // Article 1 — Parties
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 1 — Les Parties');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('LE VENDEUR : MANO VERDE INC SA, société de droit camerounais, immatriculée au RCCM,');
+        doc.text('représentée par son Président Directeur Général.');
+        doc.moveDown(0.5);
+        doc.text(`L'ACQUÉREUR : ${reservation.full_name || 'Non renseigné'}`);
+        doc.text(`Téléphone : ${reservation.phone || 'Non renseigné'}`);
+        doc.text(`Email : ${reservation.email || 'Non renseigné'}`);
+        doc.text(`Ville : ${reservation.city || 'Non renseigné'}`);
+        doc.moveDown(1);
+
+        // Article 2 — Objet
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 2 — Objet du Contrat');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text(`Le présent contrat porte sur la réservation d'un terrain de type ${(reservation.lot_type || '').toUpperCase()}.`);
+        doc.text(`Surface : ${reservation.lot_size_m2 || 200} m²`);
+        doc.text(`Prix total : ${lotPrice.toLocaleString('fr-FR')} FCFA`);
+        if (reservation.price_per_m2) doc.text(`Prix au m² : ${Number(reservation.price_per_m2).toLocaleString('fr-FR')} FCFA/m²`);
+        doc.moveDown(1);
+
+        // Article 3 — Modalités de paiement
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 3 — Modalités de Paiement');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text(`Montant journalier minimum : ${dailyAmount.toLocaleString('fr-FR')} FCFA/jour`);
+        doc.text(`Montant mensuel indicatif : ${monthly.toLocaleString('fr-FR')} FCFA/mois`);
+        doc.text(`Durée de paiement : ${duration} mois`);
+        doc.text(`Fréquence : ${reservation.payment_frequency || 'quotidien'}`);
+        doc.moveDown(0.3);
+        doc.text('Le paiement peut être effectué par Orange Money, MTN Mobile Money ou carte bancaire.');
+        doc.text('Chaque franc versé avance le compteur de l\'acquéreur vers la propriété complète.');
+        doc.moveDown(1);
+
+        // Article 4 — Assurance
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 4 — Assurance (optionnelle)');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        const insurancePersons = Number(reservation.insurance_persons || 0);
+        if (insurancePersons > 0) {
+            doc.text(`Nombre de personnes assurées : ${insurancePersons}`);
+            doc.text(`Coût assurance : ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour`);
+        } else {
+            doc.text('Aucune assurance famille souscrite à ce jour.');
+        }
+        doc.text('Couverture : invalidité, décès, maladie — 500 000 FCFA/an par personne.');
+        doc.moveDown(1);
+
+        // Article 5 — Engagements
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 5 — Engagements des Parties');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('Le vendeur s\'engage à :');
+        doc.text('  - Garantir la disponibilité du terrain réservé');
+        doc.text('  - Fournir un titre foncier sécurisé à la fin du paiement');
+        doc.text('  - Délivrer un procès-verbal de jouissance à 50% du paiement');
+        doc.moveDown(0.3);
+        doc.text('L\'acquéreur s\'engage à :');
+        doc.text('  - Respecter les échéances de paiement convenues');
+        doc.text('  - Payer les frais d\'ouverture de dossier de 10 000 FCFA');
+        doc.text('  - Informer le vendeur de tout changement de coordonnées');
+        doc.moveDown(1);
+
+        // Article 6 — Clause de résiliation
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 6 — Résiliation');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('En cas de non-paiement pendant 3 mois consécutifs, le vendeur se réserve le droit de résilier');
+        doc.text('le présent contrat. Les sommes versées seront remboursées sous 30 jours, déduction faite');
+        doc.text('des frais de dossier et d\'une indemnité forfaitaire de 10% des sommes versées.');
+        doc.moveDown(1.5);
+
+        // Signatures
+        doc.fontSize(13).font('Helvetica-Bold').text('Signatures', { align: 'center' });
+        doc.moveDown(1);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('Le Vendeur                                                    L\'Acquéreur');
+        doc.moveDown(2);
+        doc.text('_______________________                            _______________________');
+        doc.text('MANO VERDE INC SA                                   ' + (reservation.full_name || ''));
+        doc.moveDown(1);
+        doc.fontSize(8).text(`Document généré le ${new Date().toLocaleString('fr-FR')} — Contrat N° ${contractNumber}`, { align: 'center' });
+
+        doc.end();
+
+        await req.audit?.('super_admin.contract_pdf_generated', { actor_id: req.user.id, reservation_id: id, contract: contractNumber });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur génération contrat PDF' });
     }
 });
 
