@@ -955,6 +955,11 @@ router.post('/reservations/:id/send-welcome', async (req, res) => {
             return res.status(400).json({ error: 'Pas d\'email client valide pour cette réservation' });
         }
 
+        // Générer un nouveau mot de passe temporaire et mettre à jour le compte
+        const tempPassword = 'TS-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+        const passwordHash = await bcrypt.hash(tempPassword, 10);
+        await run('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, reservation.user_id]);
+
         const contract = await get('SELECT * FROM contracts WHERE reservation_id = ? ORDER BY id DESC LIMIT 1', [id]);
         const contractNumber = contract ? contract.contract_number : 'TS-CTR-' + String(id).padStart(5, '0');
 
@@ -1087,8 +1092,8 @@ router.post('/reservations/:id/send-welcome', async (req, res) => {
         <div style="background:#FFF3E0;padding:16px;border-radius:8px;margin:16px 0;border-left:4px solid #FF9800;">
             <p style="margin:0;font-weight:bold;color:#E65100;">🔐 Vos identifiants de connexion</p>
             <p style="margin:6px 0 0;">Email : <strong>${clientEmail}</strong></p>
-            <p style="margin:6px 0 0;">Mot de passe : <em>celui communiqué lors de la validation</em></p>
-            <p style="margin:10px 0 0;font-size:13px;color:#666;">Changez votre mot de passe après la première connexion.</p>
+            <p style="margin:6px 0 0;">Mot de passe provisoire : <strong style="font-size:16px;letter-spacing:1px;color:#C62828;">${tempPassword}</strong></p>
+            <p style="margin:10px 0 0;font-size:13px;color:#C62828;font-weight:bold;">⚠️ Ce mot de passe est temporaire. Veuillez le changer dès votre première connexion.</p>
         </div>
 
         <p style="text-align:center;margin:24px 0;">
@@ -1112,7 +1117,7 @@ router.post('/reservations/:id/send-welcome', async (req, res) => {
     </div>
 </div>`;
 
-        const text = `Bonjour ${reservation.full_name},\n\nVotre réservation TERRASOCIAL a été validée !\n\nContrat : ${contractNumber}\nLot : ${lotType} — ${surface} m²\nPrix : ${lotPrice.toLocaleString('fr-FR')} FCFA\nVersement min : ${dailyAmount.toLocaleString('fr-FR')} FCFA/jour\n${insurancePersons > 0 ? `Assurance : ${insurancePersons} pers. — ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour\n` : ''}\nConnexion : ${loginUrl}\nEmail : ${clientEmail}\n\nLe contrat est en pièce jointe. Veuillez le signer et le retourner via votre espace client.\n\nMerci !\nTERRASOCIAL — Mano Verde Inc SA`;
+        const text = `Bonjour ${reservation.full_name},\n\nVotre réservation TERRASOCIAL a été validée !\n\nContrat : ${contractNumber}\nLot : ${lotType} — ${surface} m²\nPrix : ${lotPrice.toLocaleString('fr-FR')} FCFA\nVersement min : ${dailyAmount.toLocaleString('fr-FR')} FCFA/jour\n${insurancePersons > 0 ? `Assurance : ${insurancePersons} pers. — ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour\n` : ''}\nVos identifiants :\nEmail : ${clientEmail}\nMot de passe provisoire : ${tempPassword}\n⚠️ Changez ce mot de passe dès votre première connexion.\n\nConnexion : ${loginUrl}\n\nLe contrat est en pièce jointe. Veuillez le signer et le retourner via votre espace client (section Documents).\n\nMerci de votre confiance !\nTERRASOCIAL — Mano Verde Inc SA`;
 
         // Utiliser nodemailer directement pour les pièces jointes
         const smtpUser = process.env.SMTP_USER;
