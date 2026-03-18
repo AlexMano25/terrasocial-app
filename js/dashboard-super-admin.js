@@ -89,6 +89,17 @@
         </td>
       </tr>
     `).join('') : '<tr><td colspan="6">Aucun utilisateur</td></tr>';
+
+    // Mettre à jour le sélecteur d'utilisateurs dans la messagerie
+    var userSelect = document.getElementById('msg-user-id');
+    if (userSelect && userSelect.tagName === 'SELECT') {
+      var current = userSelect.value;
+      userSelect.innerHTML = '<option value="">-- Choisir un utilisateur --</option>' +
+        state.users.map(function(u) {
+          return '<option value="' + u.id + '">#' + u.id + ' — ' + u.full_name + ' (' + u.email + ')</option>';
+        }).join('');
+      if (current) userSelect.value = current;
+    }
   }
 
   function renderMessages() {

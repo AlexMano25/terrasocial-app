@@ -6,6 +6,7 @@ const { all, get, run } = require('../db/connection');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
 const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt, isValidPhone } = require('../utils/validation');
+const { sendWelcomeEmail, isSmtpConfigured } = require('../services/email');
 
 const uploadsPath = process.env.VERCEL
     ? '/tmp/terrasocial-uploads'
@@ -659,25 +660,44 @@ router.post('/reservations/:id/validate', async (req, res) => {
 
         await req.audit?.('super_admin.reservation_validated', { actor_id: req.user.id, reservation_id: id, user_id: userId });
 
-        // Notification automatique au client
-        const notifContent = `Bonjour ${safeName},\n\nVotre réservation TERRASOCIAL a été validée !\n\nLot : ${(reservation.lot_type || '').toUpperCase()}\nPrix : ${Number(reservation.lot_price || 0).toLocaleString('fr-FR')} FCFA\nContrat : ${contractNumber}\n\n${res.locals.tempPassword ? 'Vos accès :\nEmail : ' + (safeEmail || 'voir avec votre conseiller') + '\nMot de passe : ' + res.locals.tempPassword + '\nConnectez-vous sur https://social.manovende.com/login.html\n\n' : ''}Merci de votre confiance !\nL\'équipe TERRASOCIAL — Mano Verde Inc SA`;
-
+        // Notification in-app
+        const notifContent = `Votre réservation ${contractNumber} a été validée. Lot : ${(reservation.lot_type || '').toUpperCase()} — ${Number(reservation.lot_price || 0).toLocaleString('fr-FR')} FCFA.`;
         try {
             await run(
                 `INSERT INTO admin_messages(sender_user_id, target_scope, target_role, target_user_id, content, channels, status)
                  VALUES (?, ?, ?, ?, ?, ?, ?)`,
-                [req.user.id, 'user', null, userId, notifContent, 'in_app,email', 'queued']
+                [req.user.id, 'user', null, userId, notifContent, 'in_app', 'queued']
             );
-        } catch (msgErr) { /* notification non-bloquante */ }
+        } catch (msgErr) { /* non-bloquant */ }
+
+        // Envoi email réel via SMTP
+        let emailResult = { success: false, error: 'Email non envoyé' };
+        const clientEmail = safeEmail || (await get('SELECT email FROM users WHERE id = ?', [userId]))?.email;
+        if (clientEmail && !clientEmail.includes('@terrasocial.cm')) {
+            try {
+                emailResult = await sendWelcomeEmail(clientEmail, safeName, {
+                    contractNumber,
+                    lotType: reservation.lot_type,
+                    lotPrice: reservation.lot_price,
+                    tempPassword: res.locals.tempPassword || null,
+                    loginUrl: 'https://social.manovende.com/login.html'
+                });
+            } catch (emailErr) {
+                emailResult = { success: false, error: emailErr.message };
+            }
+        }
 
         const user = await get('SELECT id, full_name, email, phone FROM users WHERE id = ?', [userId]);
         return res.json({
             ok: true,
-            message: 'Réservation validée, compte créé et notification envoyée',
+            message: emailResult.success
+                ? 'Réservation validée, compte créé et email envoyé à ' + clientEmail
+                : 'Réservation validée et compte créé' + (isSmtpConfigured() ? ' (email: ' + (emailResult.error || 'échec') + ')' : ' (SMTP non configuré)'),
             user,
             contract_number: contractNumber,
             temp_password: res.locals.tempPassword || null,
-            notification_sent: true
+            email_sent: emailResult.success,
+            email_error: emailResult.success ? null : emailResult.error
         });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur validation réservation: ' + error.message });
