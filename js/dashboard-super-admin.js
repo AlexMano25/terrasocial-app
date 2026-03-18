@@ -268,6 +268,7 @@
       }
       if (r.status === 'active' || r.status === 'completed') {
         actions += '<button data-action="contract" data-id="' + r.id + '" style="background:#1565C0;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📄 Contrat</button>';
+        actions += '<button data-action="send-welcome" data-id="' + r.id + '" style="background:#FF8F00;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📧 Envoyer</button>';
       }
       actions += '<button data-action="details" data-id="' + r.id + '" style="background:#eee;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Détails</button>';
 
@@ -304,6 +305,25 @@
 
     if (action === 'contract') {
       window.open(TSApi.API_BASE + '/api/super-admin/reservations/' + id + '/contract-pdf?token=' + encodeURIComponent(TSApi.getToken()), '_blank');
+    }
+
+    if (action === 'send-welcome') {
+      try {
+        btn.disabled = true;
+        btn.textContent = '⏳...';
+        var result = await TSApi.request('/api/super-admin/reservations/' + id + '/send-welcome', { method: 'POST' });
+        if (result.email_sent) {
+          flash('✅ Email de bienvenue envoyé à ' + result.recipient + ' avec contrat ' + result.contract_number, 'ok');
+        } else {
+          flash('⚠️ ' + (result.error || 'Email non envoyé'), 'err');
+        }
+        btn.textContent = '📧 Envoyer';
+        btn.disabled = false;
+      } catch (err) {
+        flash(err.message, 'err');
+        btn.textContent = '📧 Envoyer';
+        btn.disabled = false;
+      }
     }
 
     if (action === 'details') {

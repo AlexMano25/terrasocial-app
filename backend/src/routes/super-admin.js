@@ -935,4 +935,231 @@ router.get('/reservations/:id/contract-pdf', async (req, res) => {
     }
 });
 
+// Envoyer email de bienvenue complet (contrat PDF en pièce jointe + credentials)
+router.post('/reservations/:id/send-welcome', async (req, res) => {
+    try {
+        const id = parsePositiveInt(req.params.id);
+        if (!id) return res.status(400).json({ error: 'ID invalide' });
+
+        const reservation = await get(
+            `SELECT r.*, u.full_name, u.email, u.phone, u.city
+             FROM reservations r
+             LEFT JOIN users u ON r.user_id = u.id
+             WHERE r.id = ?`, [id]
+        );
+        if (!reservation) return res.status(404).json({ error: 'Réservation introuvable' });
+        if (!reservation.user_id) return res.status(400).json({ error: 'Réservation non validée (pas de compte client lié)' });
+
+        const clientEmail = reservation.email;
+        if (!clientEmail || clientEmail.includes('@terrasocial.cm')) {
+            return res.status(400).json({ error: 'Pas d\'email client valide pour cette réservation' });
+        }
+
+        const contract = await get('SELECT * FROM contracts WHERE reservation_id = ? ORDER BY id DESC LIMIT 1', [id]);
+        const contractNumber = contract ? contract.contract_number : 'TS-CTR-' + String(id).padStart(5, '0');
+
+        const lotPrice = Number(reservation.lot_price || 0);
+        const dailyAmount = Number(reservation.daily_amount || 1500);
+        const insurancePersons = Number(reservation.insurance_persons || 0);
+        const lotType = (reservation.lot_type || '').toUpperCase();
+        const surface = reservation.lot_size_m2 || 200;
+
+        // Générer le contrat PDF en mémoire
+        const pdfBuffers = [];
+        const doc = new PDFDocument({ size: 'A4', margin: 50 });
+        doc.on('data', (chunk) => pdfBuffers.push(chunk));
+
+        const pdfReady = new Promise((resolve) => doc.on('end', resolve));
+
+        // En-tête
+        doc.fontSize(22).font('Helvetica-Bold').text('TERRASOCIAL', { align: 'center' });
+        doc.fontSize(10).font('Helvetica').text('Mano Verde Inc SA — Société par Actions', { align: 'center' });
+        doc.moveDown(0.5);
+        doc.fontSize(16).font('Helvetica-Bold').text('CONTRAT DE RÉSERVATION FONCIÈRE', { align: 'center' });
+        doc.moveDown(0.3);
+        doc.fontSize(10).font('Helvetica').text(`Contrat N° ${contractNumber}`, { align: 'center' });
+        doc.text(`Date : ${new Date().toLocaleDateString('fr-FR')}`, { align: 'center' });
+        doc.moveDown(1.5);
+        doc.moveTo(50, doc.y).lineTo(545, doc.y).stroke('#1B5E20');
+        doc.moveDown(1);
+
+        // Article 1
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 1 — Les Parties');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('LE VENDEUR : MANO VERDE INC SA, société de droit camerounais, représentée par son PDG.');
+        doc.moveDown(0.5);
+        doc.text(`L'ACQUÉREUR : ${reservation.full_name || 'Non renseigné'}`);
+        doc.text(`Téléphone : ${reservation.phone || 'Non renseigné'}  |  Email : ${reservation.email || '-'}`);
+        doc.text(`Ville : ${reservation.city || 'Non renseigné'}`);
+        doc.moveDown(1);
+
+        // Article 2
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 2 — Objet du Contrat');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text(`Réservation d'un terrain de type ${lotType} — Surface : ${surface} m²`);
+        doc.text(`Prix total : ${lotPrice.toLocaleString('fr-FR')} FCFA`);
+        if (reservation.price_per_m2) doc.text(`Prix au m² : ${Number(reservation.price_per_m2).toLocaleString('fr-FR')} FCFA/m²`);
+        doc.moveDown(1);
+
+        // Article 3
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 3 — Modalités de Paiement');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text(`Montant journalier minimum : ${dailyAmount.toLocaleString('fr-FR')} FCFA/jour`);
+        doc.text(`Fréquence : ${reservation.payment_frequency || 'quotidien'}`);
+        doc.text('Moyens acceptés : Orange Money, MTN MoMo, Carte bancaire');
+        doc.moveDown(1);
+
+        // Article 4 — Assurance
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 4 — Assurance Famille');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        if (insurancePersons > 0) {
+            doc.text(`Nombre de personnes assurées : ${insurancePersons}`);
+            doc.text(`Coût : ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour`);
+            doc.text('Couverture : invalidité, décès, maladie — 500 000 FCFA/an/personne');
+        } else {
+            doc.text('Aucune assurance souscrite. Option disponible à 350 FCFA/jour/personne.');
+        }
+        doc.moveDown(1);
+
+        // Article 5
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 5 — Engagements');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('Le vendeur garantit : disponibilité du terrain, titre foncier sécurisé, PV de jouissance à 50%.');
+        doc.text('L\'acquéreur s\'engage à : respecter les échéances, payer les frais de dossier (10 000 FCFA).');
+        doc.moveDown(1);
+
+        // Article 6
+        doc.fontSize(13).font('Helvetica-Bold').text('Article 6 — Signature Électronique');
+        doc.moveDown(0.4);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('Ce contrat peut être signé électroniquement via votre espace client TERRASOCIAL.');
+        doc.text('La signature électronique a la même valeur juridique qu\'une signature manuscrite.');
+        doc.text(`Connectez-vous sur : https://social.manovende.com/login.html`);
+        doc.moveDown(1.5);
+
+        // Signatures
+        doc.fontSize(13).font('Helvetica-Bold').text('Signatures', { align: 'center' });
+        doc.moveDown(1);
+        doc.fontSize(10).font('Helvetica');
+        doc.text('Le Vendeur                                                    L\'Acquéreur');
+        doc.moveDown(2);
+        doc.text('_______________________                            _______________________');
+        doc.text('MANO VERDE INC SA                                   ' + (reservation.full_name || ''));
+        doc.moveDown(1);
+        doc.fontSize(8).text(`Généré le ${new Date().toLocaleString('fr-FR')} — ${contractNumber}`, { align: 'center' });
+
+        doc.end();
+        await pdfReady;
+
+        const pdfBuffer = Buffer.concat(pdfBuffers);
+
+        // Envoyer l'email avec le PDF en pièce jointe
+        const { sendEmail } = require('../services/email');
+        const nodemailer = require('nodemailer');
+
+        const loginUrl = 'https://social.manovende.com/login.html';
+        const subject = `✅ TERRASOCIAL — Contrat ${contractNumber} — Bienvenue ${reservation.full_name} !`;
+
+        const html = `
+<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;">
+    <div style="background:#1B5E20;color:#fff;padding:20px;text-align:center;border-radius:12px 12px 0 0;">
+        <h1 style="margin:0;font-size:24px;">🏡 TERRASOCIAL</h1>
+        <p style="margin:4px 0 0;opacity:0.9;">Mano Verde Inc SA</p>
+    </div>
+    <div style="background:#fff;padding:24px;border:1px solid #e0e0e0;border-radius:0 0 12px 12px;">
+        <h2 style="color:#1B5E20;margin-top:0;">Bonjour ${reservation.full_name},</h2>
+        <p>Félicitations ! Votre réservation foncière a été <strong style="color:#1B5E20;">validée</strong>.</p>
+
+        <div style="background:#E8F5E9;padding:16px;border-radius:8px;margin:16px 0;">
+            <p style="margin:0;font-weight:bold;">📋 Détails de votre réservation</p>
+            <p style="margin:6px 0 0;">Contrat : <strong>${contractNumber}</strong></p>
+            <p style="margin:4px 0 0;">Lot : <strong>${lotType}</strong> — ${surface} m²</p>
+            <p style="margin:4px 0 0;">Prix : <strong>${lotPrice.toLocaleString('fr-FR')} FCFA</strong></p>
+            <p style="margin:4px 0 0;">Versement minimum : <strong>${dailyAmount.toLocaleString('fr-FR')} FCFA/jour</strong></p>
+            ${insurancePersons > 0 ? `<p style="margin:4px 0 0;">🛡️ Assurance : <strong>${insurancePersons} personne(s)</strong> — ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour</p>` : ''}
+        </div>
+
+        <div style="background:#FFF3E0;padding:16px;border-radius:8px;margin:16px 0;border-left:4px solid #FF9800;">
+            <p style="margin:0;font-weight:bold;color:#E65100;">🔐 Vos identifiants de connexion</p>
+            <p style="margin:6px 0 0;">Email : <strong>${clientEmail}</strong></p>
+            <p style="margin:6px 0 0;">Mot de passe : <em>celui communiqué lors de la validation</em></p>
+            <p style="margin:10px 0 0;font-size:13px;color:#666;">Changez votre mot de passe après la première connexion.</p>
+        </div>
+
+        <p style="text-align:center;margin:24px 0;">
+            <a href="${loginUrl}" style="background:#1B5E20;color:#fff;padding:14px 28px;text-decoration:none;border-radius:8px;font-weight:bold;display:inline-block;">
+                Accéder à mon espace client →
+            </a>
+        </p>
+
+        <div style="background:#E3F2FD;padding:16px;border-radius:8px;margin:16px 0;">
+            <p style="margin:0;font-weight:bold;color:#1565C0;">📄 Contrat en pièce jointe</p>
+            <p style="margin:6px 0 0;font-size:13px;">Veuillez <strong>signer le contrat ci-joint</strong> et le retourner via votre espace client (section Documents), ou par email à cette adresse.</p>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #eee;margin:20px 0;">
+        <p style="font-size:13px;color:#666;">
+            Vous pouvez commencer vos versements dès maintenant via Orange Money, MTN MoMo ou carte bancaire.
+        </p>
+        <p style="font-size:12px;color:#999;text-align:center;margin-top:20px;">
+            TERRASOCIAL — Mano Verde Inc SA<br>La propriété foncière accessible à tous
+        </p>
+    </div>
+</div>`;
+
+        const text = `Bonjour ${reservation.full_name},\n\nVotre réservation TERRASOCIAL a été validée !\n\nContrat : ${contractNumber}\nLot : ${lotType} — ${surface} m²\nPrix : ${lotPrice.toLocaleString('fr-FR')} FCFA\nVersement min : ${dailyAmount.toLocaleString('fr-FR')} FCFA/jour\n${insurancePersons > 0 ? `Assurance : ${insurancePersons} pers. — ${(insurancePersons * 350).toLocaleString('fr-FR')} FCFA/jour\n` : ''}\nConnexion : ${loginUrl}\nEmail : ${clientEmail}\n\nLe contrat est en pièce jointe. Veuillez le signer et le retourner via votre espace client.\n\nMerci !\nTERRASOCIAL — Mano Verde Inc SA`;
+
+        // Utiliser nodemailer directement pour les pièces jointes
+        const smtpUser = process.env.SMTP_USER;
+        const smtpPass = process.env.SMTP_PASS;
+        const smtpFrom = process.env.SMTP_FROM || smtpUser;
+
+        if (!smtpUser || !smtpPass) {
+            return res.json({ email_sent: false, error: 'SMTP non configuré', contract_number: contractNumber });
+        }
+
+        const transport = nodemailer.createTransport({
+            host: process.env.SMTP_HOST || 'smtp.gmail.com',
+            port: Number(process.env.SMTP_PORT || 587),
+            secure: false,
+            auth: { user: smtpUser, pass: smtpPass },
+            tls: { rejectUnauthorized: false }
+        });
+
+        const info = await transport.sendMail({
+            from: smtpFrom,
+            to: clientEmail,
+            subject,
+            text,
+            html,
+            attachments: [{
+                filename: `contrat-${contractNumber}.pdf`,
+                content: pdfBuffer,
+                contentType: 'application/pdf'
+            }]
+        });
+
+        // Mettre à jour le statut du contrat
+        if (contract) {
+            await run('UPDATE contracts SET status = ? WHERE id = ?', ['sent', contract.id]);
+        }
+
+        await req.audit?.('super_admin.welcome_email_sent', { actor_id: req.user.id, reservation_id: id, recipient: clientEmail, contract: contractNumber });
+
+        return res.json({
+            email_sent: true,
+            recipient: clientEmail,
+            contract_number: contractNumber,
+            message_id: info.messageId
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur envoi email: ' + error.message });
+    }
+});
+
 module.exports = router;
