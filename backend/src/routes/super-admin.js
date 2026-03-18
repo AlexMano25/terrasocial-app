@@ -265,7 +265,7 @@ router.post('/messages', async (req, res) => {
         await req.audit?.('super_admin.message_broadcast', { actor_id: req.user.id, message_id: result.id, target_scope: targetScope });
         return res.status(201).json({ id: result.id, status: 'queued' });
     } catch (error) {
-        return res.status(500).json({ error: 'Erreur envoi message' });
+        return res.status(500).json({ error: 'Erreur envoi message: ' + (error.message || 'Vérifiez que l\'ID utilisateur existe') });
     }
 });
 
@@ -659,13 +659,25 @@ router.post('/reservations/:id/validate', async (req, res) => {
 
         await req.audit?.('super_admin.reservation_validated', { actor_id: req.user.id, reservation_id: id, user_id: userId });
 
+        // Notification automatique au client
+        const notifContent = `Bonjour ${safeName},\n\nVotre réservation TERRASOCIAL a été validée !\n\nLot : ${(reservation.lot_type || '').toUpperCase()}\nPrix : ${Number(reservation.lot_price || 0).toLocaleString('fr-FR')} FCFA\nContrat : ${contractNumber}\n\n${res.locals.tempPassword ? 'Vos accès :\nEmail : ' + (safeEmail || 'voir avec votre conseiller') + '\nMot de passe : ' + res.locals.tempPassword + '\nConnectez-vous sur https://social.manovende.com/login.html\n\n' : ''}Merci de votre confiance !\nL\'équipe TERRASOCIAL — Mano Verde Inc SA`;
+
+        try {
+            await run(
+                `INSERT INTO admin_messages(sender_user_id, target_scope, target_role, target_user_id, content, channels, status)
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+                [req.user.id, 'user', null, userId, notifContent, 'in_app,email', 'queued']
+            );
+        } catch (msgErr) { /* notification non-bloquante */ }
+
         const user = await get('SELECT id, full_name, email, phone FROM users WHERE id = ?', [userId]);
         return res.json({
             ok: true,
-            message: 'Réservation validée et compte client créé',
+            message: 'Réservation validée, compte créé et notification envoyée',
             user,
             contract_number: contractNumber,
-            temp_password: res.locals.tempPassword || null
+            temp_password: res.locals.tempPassword || null,
+            notification_sent: true
         });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur validation réservation: ' + error.message });
