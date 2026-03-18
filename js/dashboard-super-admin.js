@@ -16,14 +16,12 @@
     lots: [],
     documents: [],
     messages: [],
-    reservations: [],
     charts: { users: null, revenue: null }
   };
 
   const sections = {
     overview: document.getElementById('panel-overview'),
     users: document.getElementById('panel-users'),
-    reservations: document.getElementById('panel-reservations'),
     messages: document.getElementById('panel-messages'),
     lots: document.getElementById('panel-lots'),
     documents: document.getElementById('panel-documents'),
@@ -214,156 +212,10 @@
     renderLots();
   }
 
-  // ── Réservations / Leads ──────────────────────────────────────────────────
-  async function loadReservations(status) {
-    const qs = status ? '?status=' + encodeURIComponent(status) : '';
-    const data = await TSApi.request('/api/super-admin/reservations' + qs);
-    state.reservations = data.reservations || [];
-    renderReservations();
-  }
-
-  function resStatusBadge(s) {
-    var map = {
-      lead: '<span style="background:#FFF3E0;color:#E65100;padding:3px 8px;border-radius:6px;font-size:12px;">🟡 Lead</span>',
-      pending: '<span style="background:#FFF8E1;color:#F57F17;padding:3px 8px;border-radius:6px;font-size:12px;">🟠 En attente</span>',
-      active: '<span style="background:#E8F5E9;color:#1B5E20;padding:3px 8px;border-radius:6px;font-size:12px;">🟢 Active</span>',
-      completed: '<span style="background:#E0F7FA;color:#006064;padding:3px 8px;border-radius:6px;font-size:12px;">✅ Complétée</span>',
-      cancelled: '<span style="background:#FFEBEE;color:#B71C1C;padding:3px 8px;border-radius:6px;font-size:12px;">❌ Annulée</span>'
-    };
-    return map[s] || s;
-  }
-
-  function renderReservations() {
-    var tbody = document.getElementById('res-tbody');
-    var countEl = document.getElementById('res-count');
-    countEl.textContent = state.reservations.length + ' réservation(s)';
-
-    tbody.innerHTML = state.reservations.map(function(r) {
-      var clientName = r.client_name || r.lead_name || r.source || 'Lead anonyme';
-      var leadPhone = r.client_phone || r.lead_phone || '';
-      var leadEmail = r.client_email || r.lead_email || '';
-      var contact = leadPhone || leadEmail || '-';
-      if (leadPhone && leadEmail) contact = leadPhone + '<br><span style="color:#888;">' + leadEmail + '</span>';
-      var leadCity = r.lead_city || '';
-      var price = Number(r.lot_price || 0).toLocaleString('fr-FR') + ' FCFA';
-      var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '-';
-      var lotLabel = (r.lot_type || '-').toUpperCase();
-
-      var actions = '';
-      if (r.status === 'lead' || r.status === 'pending') {
-        actions += '<button data-action="validate" data-id="' + r.id + '" data-name="' + (r.client_name || r.lead_name || '') + '" data-phone="' + (r.client_phone || r.lead_phone || '') + '" data-email="' + (r.client_email || r.lead_email || '') + '" data-city="' + leadCity + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Valider</button>';
-        actions += '<button data-action="reject" data-id="' + r.id + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
-      }
-      if (r.status === 'active' || r.status === 'completed') {
-        actions += '<button data-action="contract" data-id="' + r.id + '" style="background:#1565C0;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📄 Contrat</button>';
-      }
-      actions += '<button data-action="details" data-id="' + r.id + '" style="background:#eee;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Détails</button>';
-
-      return '<tr><td>' + r.id + '</td><td>' + clientName + '</td><td style="font-size:12px;">' + contact + '</td><td>' + lotLabel + '</td><td>' + price + '</td><td>' + resStatusBadge(r.status) + '</td><td style="font-size:12px;">' + date + '</td><td>' + actions + '</td></tr>';
-    }).join('');
-  }
-
-  // Event delegation pour les actions réservations
-  document.getElementById('res-tbody').addEventListener('click', async function(e) {
-    var btn = e.target.closest('button');
-    if (!btn) return;
-    var action = btn.dataset.action;
-    var id = btn.dataset.id;
-
-    if (action === 'validate') {
-      var modal = document.getElementById('validate-modal');
-      document.getElementById('val-res-id').value = id;
-      document.getElementById('val-name').value = btn.dataset.name || '';
-      document.getElementById('val-phone').value = btn.dataset.phone || '';
-      document.getElementById('val-email').value = btn.dataset.email || '';
-      document.getElementById('val-city').value = btn.dataset.city || '';
-      document.getElementById('val-result').innerHTML = '';
-      modal.style.display = 'flex';
-    }
-
-    if (action === 'reject') {
-      if (!confirm('Rejeter cette réservation #' + id + ' ?')) return;
-      try {
-        await TSApi.request('/api/super-admin/reservations/' + id + '/reject', { method: 'POST', body: JSON.stringify({ reason: 'Rejeté par admin' }) });
-        flash('Réservation #' + id + ' rejetée', 'ok');
-        await loadReservations();
-      } catch (err) { flash(err.message, 'err'); }
-    }
-
-    if (action === 'contract') {
-      window.open(TSApi.API_BASE + '/api/super-admin/reservations/' + id + '/contract-pdf?token=' + encodeURIComponent(TSApi.getToken()), '_blank');
-    }
-
-    if (action === 'details') {
-      try {
-        var data = await TSApi.request('/api/super-admin/reservations/' + id);
-        var r = data.reservation;
-        var payments = data.payments || [];
-        var contract = data.contract;
-        var msg = 'RÉSERVATION #' + r.id + '\n';
-        msg += 'Client: ' + (r.client_name || 'Non lié') + '\n';
-        msg += 'Email: ' + (r.client_email || '-') + '\n';
-        msg += 'Tél: ' + (r.client_phone || '-') + '\n';
-        msg += 'Lot: ' + (r.lot_type || '-').toUpperCase() + ' — ' + Number(r.lot_price || 0).toLocaleString('fr-FR') + ' FCFA\n';
-        msg += 'Surface: ' + (r.lot_size_m2 || 200) + ' m²\n';
-        msg += 'Durée: ' + (r.duration_months || '-') + ' mois\n';
-        msg += 'Statut: ' + r.status + '\n';
-        msg += 'Paiements: ' + payments.length + '\n';
-        if (contract) msg += 'Contrat: ' + contract.contract_number + ' (' + contract.status + ')\n';
-        alert(msg);
-      } catch (err) { flash(err.message, 'err'); }
-    }
-  });
-
-  // Validation modal
-  document.getElementById('val-confirm-btn').addEventListener('click', async function() {
-    var resId = document.getElementById('val-res-id').value;
-    var resultEl = document.getElementById('val-result');
-    resultEl.innerHTML = '<span style="color:#666;">Validation en cours...</span>';
-
-    try {
-      var data = await TSApi.request('/api/super-admin/reservations/' + resId + '/validate', {
-        method: 'POST',
-        body: JSON.stringify({
-          full_name: document.getElementById('val-name').value,
-          phone: document.getElementById('val-phone').value,
-          email: document.getElementById('val-email').value,
-          city: document.getElementById('val-city').value
-        })
-      });
-
-      var html = '<div style="background:#E8F5E9;padding:12px;border-radius:8px;">';
-      html += '<strong>✅ Réservation validée !</strong><br>';
-      html += 'Client: ' + data.user.full_name + '<br>';
-      html += 'Email: ' + data.user.email + '<br>';
-      html += 'Contrat: ' + data.contract_number + '<br>';
-      if (data.temp_password) {
-        html += '<br><strong style="color:#C62828;">⚠️ Mot de passe temporaire : ' + data.temp_password + '</strong><br>';
-        html += '<span style="font-size:12px;">Communiquez-le au client pour qu\'il puisse se connecter.</span>';
-      }
-      html += '</div>';
-      resultEl.innerHTML = html;
-
-      await loadReservations();
-      try { await loadOverview(); } catch (e) { /* Chart.js may not be ready */ }
-    } catch (err) {
-      resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + err.message + '</span>';
-    }
-  });
-
-  document.getElementById('val-cancel-btn').addEventListener('click', function() {
-    document.getElementById('validate-modal').style.display = 'none';
-  });
-
-  document.getElementById('res-filter-btn').addEventListener('click', function() {
-    var status = document.getElementById('res-status-filter').value;
-    loadReservations(status).catch(function(e) { flash(e.message, 'err'); });
-  });
-
   async function loadAll() {
     try {
-      await Promise.all([loadOverview(), loadUsers(), loadMessages(), loadLots(), loadDocuments(), loadReservations()]);
-      document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`;
+      await Promise.all([loadOverview(), loadUsers(), loadMessages(), loadLots(), loadDocuments()]);
+      document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`; 
     } catch (error) {
       flash(error.message, 'err');
     }

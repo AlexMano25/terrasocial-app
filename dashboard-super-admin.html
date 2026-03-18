@@ -15,7 +15,6 @@
       <nav class="side-nav">
         <button class="active" data-panel="overview">Overview</button>
         <button data-panel="users">Utilisateurs</button>
-        <button data-panel="reservations">Réservations</button>
         <button data-panel="messages">Messagerie</button>
         <button data-panel="lots">Lots Disponibles</button>
         <button data-panel="documents">Documents</button>
@@ -71,60 +70,6 @@
             <thead><tr><th>ID</th><th>Nom</th><th>Rôle</th><th>Email</th><th>Fiabilité</th><th>Actions</th></tr></thead>
             <tbody id="users-tbody"></tbody>
           </table>
-        </div>
-      </section>
-
-      <!-- ═══ RÉSERVATIONS / LEADS ═══ -->
-      <section id="panel-reservations" class="panel">
-        <div class="card">
-          <h3>Gestion des Réservations & Leads</h3>
-          <div class="toolbar" style="margin-bottom:16px;">
-            <select id="res-status-filter">
-              <option value="">Tous statuts</option>
-              <option value="lead">🟡 Leads (demandes)</option>
-              <option value="pending">🟠 En attente</option>
-              <option value="active">🟢 Actives</option>
-              <option value="completed">✅ Complétées</option>
-              <option value="cancelled">❌ Annulées</option>
-            </select>
-            <button id="res-filter-btn" class="btn-sm">Filtrer</button>
-            <span id="res-count" style="margin-left:12px; font-size:13px; color:#666;"></span>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Client</th>
-                  <th>Contact</th>
-                  <th>Lot</th>
-                  <th>Prix</th>
-                  <th>Statut</th>
-                  <th>Date</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="res-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Modal de validation -->
-        <div id="validate-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:999; align-items:center; justify-content:center;">
-          <div style="background:#fff; border-radius:12px; padding:28px; max-width:500px; width:90%; margin:auto; margin-top:10vh;">
-            <h3 style="margin-top:0;">✅ Valider la réservation</h3>
-            <p style="font-size:13px; color:#666;">Cela va créer un compte client et activer la réservation. Un contrat sera généré automatiquement.</p>
-            <input id="val-name" type="text" placeholder="Nom complet du client *" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px;">
-            <input id="val-phone" type="tel" placeholder="Téléphone *" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px;">
-            <input id="val-email" type="email" placeholder="Email" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px;">
-            <input id="val-city" type="text" placeholder="Ville" style="width:100%; padding:10px; margin:6px 0; border:1px solid #ddd; border-radius:8px;">
-            <input id="val-res-id" type="hidden">
-            <div style="display:flex; gap:10px; margin-top:16px;">
-              <button id="val-confirm-btn" style="flex:1; padding:12px; background:#1B5E20; color:#fff; border:none; border-radius:8px; font-weight:600; cursor:pointer;">Valider & Créer compte</button>
-              <button id="val-cancel-btn" style="flex:1; padding:12px; background:#eee; border:none; border-radius:8px; cursor:pointer;">Annuler</button>
-            </div>
-            <div id="val-result" style="margin-top:12px; font-size:13px;"></div>
-          </div>
         </div>
       </section>
 
