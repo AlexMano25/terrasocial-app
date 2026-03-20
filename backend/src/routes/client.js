@@ -653,4 +653,48 @@ router.get('/insurance-policy', async (req, res) => {
     }
 });
 
+// ── Profil client ───────────────────────────────────────────────────────────
+router.get('/profile', async (req, res) => {
+    try {
+        const user = await get('SELECT id, full_name, email, phone, city, reliability_score, created_at FROM users WHERE id = ?', [req.user.id]);
+        return res.json({ profile: user });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture profil' });
+    }
+});
+
+router.put('/profile', async (req, res) => {
+    try {
+        const { full_name, phone, city } = req.body;
+        const safeName = full_name ? full_name.trim().slice(0, 120) : null;
+        const safePhone = phone ? phone.trim().slice(0, 30) : null;
+        const safeCity = city ? city.trim().slice(0, 80) : null;
+
+        const updates = [];
+        const params = [];
+        if (safeName) { updates.push('full_name = ?'); params.push(safeName); }
+        if (safePhone) { updates.push('phone = ?'); params.push(safePhone); }
+        if (safeCity !== null) { updates.push('city = ?'); params.push(safeCity); }
+
+        if (!updates.length) return res.status(400).json({ error: 'Aucune donnée à mettre à jour' });
+
+        params.push(req.user.id);
+        await run('UPDATE users SET ' + updates.join(', ') + ' WHERE id = ?', params);
+
+        // Mettre à jour le mot de passe si fourni
+        if (req.body.new_password) {
+            const bcrypt = require('bcryptjs');
+            const pw = req.body.new_password;
+            if (pw.length < 8) return res.status(400).json({ error: 'Mot de passe trop court (min 8 caractères)' });
+            const hash = await bcrypt.hash(pw, 10);
+            await run('UPDATE users SET password_hash = ? WHERE id = ?', [hash, req.user.id]);
+        }
+
+        const updated = await get('SELECT id, full_name, email, phone, city FROM users WHERE id = ?', [req.user.id]);
+        return res.json({ ok: true, profile: updated });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur mise à jour profil' });
+    }
+});
+
 module.exports = router;

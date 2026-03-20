@@ -304,6 +304,42 @@
       <article class="card"><h2>Contrats</h2><ul id="contracts-list"></ul></article>
       <article class="card"><h2>PV de jouissance provisoire</h2><ul id="pv-list"></ul></article>
     </section>
+
+    <!-- Mon profil -->
+    <section class="card" style="margin-top:16px;" id="profile-section">
+      <h2 style="color:#1B5E20;">👤 Mon profil</h2>
+      <p class="small" style="color:#666;margin-bottom:16px;">Complétez vos informations personnelles</p>
+      <form id="profile-form">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+          <div>
+            <label style="font-weight:600;font-size:13px;">Nom complet</label>
+            <input id="prof-name" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Téléphone</label>
+            <input id="prof-phone" type="tel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Email</label>
+            <input id="prof-email" type="email" disabled style="width:100%;padding:10px;border:1px solid #eee;border-radius:8px;margin-top:4px;background:#f9f9f9;color:#666;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Ville</label>
+            <input id="prof-city" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+        </div>
+        <details style="margin-top:16px;">
+          <summary style="cursor:pointer;font-weight:600;color:#1B5E20;font-size:14px;">🔐 Changer mon mot de passe</summary>
+          <div style="margin-top:8px;">
+            <input id="prof-new-pw" type="password" placeholder="Nouveau mot de passe (min 8 car.)" style="width:100%;max-width:400px;padding:10px;border:1px solid #ddd;border-radius:8px;">
+          </div>
+        </details>
+        <div style="margin-top:16px;">
+          <button type="submit" style="background:#1B5E20;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:700;cursor:pointer;">Enregistrer</button>
+          <span id="profile-result" style="margin-left:12px;font-size:13px;"></span>
+        </div>
+      </form>
+    </section>
   </main>
 
   <script src="js/runtime-config.js"></script>

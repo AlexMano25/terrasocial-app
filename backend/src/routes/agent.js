@@ -174,4 +174,66 @@ router.get('/verify-ref/:agentCode', async (req, res) => {
     }
 });
 
+// ── Profil agent ────────────────────────────────────────────────────────────
+router.get('/profile', requireAuth, requireAgent, async (req, res) => {
+    try {
+        const user = await get('SELECT id, full_name, email, phone, city, created_at FROM users WHERE id = ?', [req.user.id]);
+        return res.json({
+            profile: user,
+            agent: {
+                agent_code: req.agent.agent_code,
+                company_name: req.agent.company_name,
+                orange_money: req.agent.orange_money,
+                mtn_momo: req.agent.mtn_momo,
+                bank_name: req.agent.bank_name,
+                bank_account: req.agent.bank_account
+            }
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur lecture profil agent' });
+    }
+});
+
+router.put('/profile', requireAuth, requireAgent, async (req, res) => {
+    try {
+        const { full_name, phone, city, company_name, orange_money, mtn_momo, bank_name, bank_account, new_password } = req.body;
+
+        // Mise à jour user
+        const userUpdates = [];
+        const userParams = [];
+        if (full_name) { userUpdates.push('full_name = ?'); userParams.push(full_name.trim().slice(0, 120)); }
+        if (phone) { userUpdates.push('phone = ?'); userParams.push(phone.trim().slice(0, 30)); }
+        if (city !== undefined) { userUpdates.push('city = ?'); userParams.push((city || '').trim().slice(0, 80)); }
+        if (userUpdates.length) {
+            userParams.push(req.user.id);
+            await run('UPDATE users SET ' + userUpdates.join(', ') + ' WHERE id = ?', userParams);
+        }
+
+        // Mise à jour agent
+        const agentUpdates = [];
+        const agentParams = [];
+        if (company_name !== undefined) { agentUpdates.push('company_name = ?'); agentParams.push((company_name || '').trim().slice(0, 120)); }
+        if (orange_money !== undefined) { agentUpdates.push('orange_money = ?'); agentParams.push((orange_money || '').trim().slice(0, 30)); }
+        if (mtn_momo !== undefined) { agentUpdates.push('mtn_momo = ?'); agentParams.push((mtn_momo || '').trim().slice(0, 30)); }
+        if (bank_name !== undefined) { agentUpdates.push('bank_name = ?'); agentParams.push((bank_name || '').trim().slice(0, 100)); }
+        if (bank_account !== undefined) { agentUpdates.push('bank_account = ?'); agentParams.push((bank_account || '').trim().slice(0, 50)); }
+        if (agentUpdates.length) {
+            agentParams.push(req.agent.id);
+            await run('UPDATE agents SET ' + agentUpdates.join(', ') + ' WHERE id = ?', agentParams);
+        }
+
+        // Changement mot de passe
+        if (new_password) {
+            const bcrypt = require('bcryptjs');
+            if (new_password.length < 8) return res.status(400).json({ error: 'Mot de passe trop court (min 8 caractères)' });
+            const hash = await bcrypt.hash(new_password, 10);
+            await run('UPDATE users SET password_hash = ? WHERE id = ?', [hash, req.user.id]);
+        }
+
+        return res.json({ ok: true, message: 'Profil mis à jour' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur mise à jour profil agent' });
+    }
+});
+
 module.exports = router;

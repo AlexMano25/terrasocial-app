@@ -525,6 +525,50 @@
     }
   })();
 
+  // ── Profil ──────────────────────────────────────────────────────────────
+  async function loadProfile() {
+    try {
+      var data = await TSApi.request('/api/client/profile');
+      var p = data.profile;
+      if (p) {
+        document.getElementById('prof-name').value = p.full_name || '';
+        document.getElementById('prof-phone').value = p.phone || '';
+        document.getElementById('prof-email').value = p.email || '';
+        document.getElementById('prof-city').value = p.city || '';
+      }
+    } catch (e) { /* silencieux */ }
+  }
+  loadProfile();
+
+  document.getElementById('profile-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var resultEl = document.getElementById('profile-result');
+    resultEl.innerHTML = '<span style="color:#666;">Enregistrement...</span>';
+    try {
+      var body = {
+        full_name: document.getElementById('prof-name').value,
+        phone: document.getElementById('prof-phone').value,
+        city: document.getElementById('prof-city').value
+      };
+      var newPw = document.getElementById('prof-new-pw').value;
+      if (newPw) body.new_password = newPw;
+
+      await TSApi.request('/api/client/profile', {
+        method: 'PUT',
+        body: JSON.stringify(body)
+      });
+      resultEl.innerHTML = '<span style="color:#1B5E20;font-weight:600;">✅ Profil mis à jour</span>';
+      document.getElementById('prof-new-pw').value = '';
+      // Mettre à jour le localStorage
+      var u = JSON.parse(localStorage.getItem('ts_user') || '{}');
+      if (body.full_name) u.full_name = body.full_name;
+      if (body.phone) u.phone = body.phone;
+      localStorage.setItem('ts_user', JSON.stringify(u));
+    } catch (err) {
+      resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + err.message + '</span>';
+    }
+  });
+
   // ── Événements ───────────────────────────────────────────────────────────
   document.getElementById('logout-btn').addEventListener('click', function() { TSApi.clearSession(); window.location.href = 'login.html'; });
 

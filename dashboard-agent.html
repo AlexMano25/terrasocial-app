@@ -149,6 +149,65 @@
         </div>
       </div>
     </div>
+
+    <!-- Mon profil agent -->
+    <div class="card">
+      <h3>👤 Mon profil</h3>
+      <p style="font-size:13px; color:#666; margin-bottom:16px;">Complétez vos informations pour recevoir vos commissions</p>
+      <form id="agent-profile-form">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div>
+            <label style="font-weight:600;font-size:13px;">Nom complet</label>
+            <input id="ap-name" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Téléphone</label>
+            <input id="ap-phone" type="tel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Email</label>
+            <input id="ap-email" type="email" disabled style="width:100%;padding:10px;border:1px solid #eee;border-radius:8px;margin-top:4px;background:#f9f9f9;color:#666;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Ville</label>
+            <input id="ap-city" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Société / Agence</label>
+            <input id="ap-company" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+        </div>
+        <h4 style="margin-top:20px; color:#E65100;">💳 Coordonnées de paiement (pour recevoir vos commissions)</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:8px;">
+          <div>
+            <label style="font-weight:600;font-size:13px;">Orange Money</label>
+            <input id="ap-om" type="tel" placeholder="6XX XX XX XX" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">MTN MoMo</label>
+            <input id="ap-momo" type="tel" placeholder="6XX XX XX XX" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">Banque</label>
+            <input id="ap-bank" type="text" placeholder="Nom de la banque" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+          <div>
+            <label style="font-weight:600;font-size:13px;">N° de compte</label>
+            <input id="ap-account" type="text" placeholder="Numéro de compte" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+          </div>
+        </div>
+        <details style="margin-top:16px;">
+          <summary style="cursor:pointer;font-weight:600;color:#1B5E20;font-size:14px;">🔐 Changer mon mot de passe</summary>
+          <div style="margin-top:8px;">
+            <input id="ap-new-pw" type="password" placeholder="Nouveau mot de passe (min 8 car.)" style="width:100%;max-width:400px;padding:10px;border:1px solid #ddd;border-radius:8px;">
+          </div>
+        </details>
+        <div style="margin-top:16px;">
+          <button type="submit" style="background:#1B5E20;color:#fff;border:none;padding:12px 28px;border-radius:8px;font-weight:700;cursor:pointer;">Enregistrer mon profil</button>
+          <span id="ap-result" style="margin-left:12px;font-size:13px;"></span>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="js/runtime-config.js"></script>
@@ -265,7 +324,56 @@
       window.location.href = 'login.html';
     });
 
+    // Charger profil agent
+    async function loadAgentProfile() {
+      try {
+        var data = await TSApi.request('/api/agent/profile');
+        var p = data.profile;
+        var a = data.agent;
+        if (p) {
+          document.getElementById('ap-name').value = p.full_name || '';
+          document.getElementById('ap-phone').value = p.phone || '';
+          document.getElementById('ap-email').value = p.email || '';
+          document.getElementById('ap-city').value = p.city || '';
+        }
+        if (a) {
+          document.getElementById('ap-company').value = a.company_name || '';
+          document.getElementById('ap-om').value = a.orange_money || '';
+          document.getElementById('ap-momo').value = a.mtn_momo || '';
+          document.getElementById('ap-bank').value = a.bank_name || '';
+          document.getElementById('ap-account').value = a.bank_account || '';
+        }
+      } catch (e) { /* silencieux */ }
+    }
+
+    document.getElementById('agent-profile-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var resultEl = document.getElementById('ap-result');
+      resultEl.innerHTML = '<span style="color:#666;">Enregistrement...</span>';
+      try {
+        var body = {
+          full_name: document.getElementById('ap-name').value,
+          phone: document.getElementById('ap-phone').value,
+          city: document.getElementById('ap-city').value,
+          company_name: document.getElementById('ap-company').value,
+          orange_money: document.getElementById('ap-om').value,
+          mtn_momo: document.getElementById('ap-momo').value,
+          bank_name: document.getElementById('ap-bank').value,
+          bank_account: document.getElementById('ap-account').value
+        };
+        var newPw = document.getElementById('ap-new-pw').value;
+        if (newPw) body.new_password = newPw;
+
+        await TSApi.request('/api/agent/profile', { method: 'PUT', body: JSON.stringify(body) });
+        resultEl.innerHTML = '<span style="color:#1B5E20;font-weight:600;">✅ Profil mis à jour</span>';
+        document.getElementById('ap-new-pw').value = '';
+      } catch (err) {
+        resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + err.message + '</span>';
+      }
+    });
+
     loadDashboard();
+    loadAgentProfile();
   })();
   </script>
   <script src="js/pwa-install.js"></script>
