@@ -102,6 +102,7 @@ function buildApp() {
             await ensureInitialized();
             next();
         } catch (error) {
+            console.error('[INIT] Database initialization failed:', error.message, error.stack);
             next(error);
         }
     });
@@ -139,6 +140,7 @@ function buildApp() {
         if (err?.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({ error: 'Fichier trop volumineux (max 8MB)' });
         }
+        console.error('[ERROR]', err.message, err.stack);
         return res.status(500).json({ error: 'Erreur interne serveur' });
     });
 
