@@ -140,7 +140,7 @@ function buildApp() {
             return res.status(400).json({ error: 'Fichier trop volumineux (max 8MB)' });
         }
         console.error('[ERROR]', err.message, err.stack);
-        return res.status(500).json({ error: 'Erreur interne serveur', _debug: err.message });
+        return res.status(500).json({ error: 'Erreur interne serveur' });
     });
 
     return app;
