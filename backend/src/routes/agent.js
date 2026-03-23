@@ -1,4 +1,5 @@
 const express = require('express');
+const crypto = require('crypto');
 const { all, get, run } = require('../db/connection');
 const { requireAuth } = require('../middleware/auth');
 const { sanitizeText, sanitizeOptionalText } = require('../utils/validation');
@@ -68,7 +69,7 @@ router.post('/promo-codes', requireAuth, requireAgent, async (req, res) => {
         const expiresAt = req.body.expires_at || null;
 
         // Générer un code unique basé sur le code agent
-        const suffix = Math.random().toString(36).slice(2, 6).toUpperCase();
+        const suffix = crypto.randomBytes(3).toString('hex').toUpperCase();
         const code = req.agent.agent_code + '-' + suffix;
 
         await run(

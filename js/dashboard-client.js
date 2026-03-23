@@ -9,7 +9,7 @@
 
   // ── Utilitaires ──────────────────────────────────────────────────────────
   function xaf(v) { return Number(v || 0).toLocaleString('fr-FR') + ' FCFA'; }
-  function flash(msg, type) { document.getElementById('flash').innerHTML = '<div class="flash ' + type + '">' + msg + '</div>'; }
+  function flash(msg, type) { document.getElementById('flash').innerHTML = '<div class="flash ' + type + '">' + TSUtils.escapeHtml(msg) + '</div>'; }
   function setList(id, items, fn) {
     var el = document.getElementById(id);
     el.innerHTML = items.length ? items.map(fn).join('') : '<li class="small">Aucune donn\u00e9e</li>';
@@ -17,9 +17,9 @@
   function statusBadge(s) {
     var c = s === 'paid' ? 'badge-ok' : s === 'late' ? 'badge-late' : 'badge-pending';
     var l = s === 'paid' ? 'Pay\u00e9' : s === 'late' ? 'En retard' : s === 'pending' ? 'En attente' : '\u00c0 venir';
-    return '<span class="' + c + '">' + l + '</span>';
+    return '<span class="' + c + '">' + TSUtils.escapeHtml(l) + '</span>';
   }
-  function fmtMethod(m) { return {orange_money:'Orange Money',mtn_momo:'MTN MoMo',virement:'Virement',carte:'Carte'}[m]||m; }
+  function fmtMethod(m) { return {orange_money:'Orange Money',mtn_momo:'MTN MoMo',virement:'Virement',carte:'Carte'}[m]||TSUtils.escapeHtml(m); }
   function fmtDate(d) { if(!d) return '-'; try{return new Date(d).toLocaleDateString('fr-FR');}catch(e){return d;} }
 
   // ── State ────────────────────────────────────────────────────────────────
@@ -49,7 +49,7 @@
 
       var lateEl = document.getElementById('m-late');
       if (data.metrics.late_amount > 0) {
-        lateEl.innerHTML = '<span class="badge-late">\u26A0 ' + data.metrics.late_months_count + ' mois en retard (' + xaf(data.metrics.late_amount) + ')</span>';
+        lateEl.innerHTML = '<span class="badge-late">\u26A0 ' + TSUtils.escapeHtml(String(data.metrics.late_months_count)) + ' mois en retard (' + TSUtils.escapeHtml(xaf(data.metrics.late_amount)) + ')</span>';
         document.getElementById('card-remaining').style.borderLeft = '4px solid #C62828';
       } else {
         lateEl.innerHTML = '<span class="badge-ok">\u2713 \u00c0 jour</span>';
@@ -103,18 +103,18 @@
         ? filteredPayments.map(function(p) {
           var lotLabel = '-';
           var matchRes = data.reservations.find(function(r) { return r.reservation_id === p.reservation_id; });
-          if (matchRes) lotLabel = matchRes.lot_type.toUpperCase() + ' ' + (matchRes.lot_size_m2 || 200) + 'm\u00b2';
-          return '<tr><td>' + (p.reference||'-') + '</td><td>' + lotLabel + '</td><td>' + xaf(p.amount) + '</td><td>' + fmtMethod(p.method) + '</td><td>' + fmtDate(p.paid_at) + '</td><td>' + statusBadge(p.status) + '</td></tr>';
+          if (matchRes) lotLabel = TSUtils.escapeHtml(matchRes.lot_type.toUpperCase()) + ' ' + (matchRes.lot_size_m2 || 200) + 'm\u00b2';
+          return '<tr><td>' + TSUtils.escapeHtml(p.reference||'-') + '</td><td>' + lotLabel + '</td><td>' + xaf(p.amount) + '</td><td>' + fmtMethod(p.method) + '</td><td>' + fmtDate(p.paid_at) + '</td><td>' + statusBadge(p.status) + '</td></tr>';
         }).join('')
         : '<tr><td colspan="6" class="small">Aucun versement</td></tr>';
 
-      setList('contracts-list', data.contracts, function(c) { return '<li>' + c.contract_number + ' \u2014 ' + statusBadge(c.status) + '</li>'; });
-      setList('pv-list', data.possession, function(p) { return '<li>' + p.pv_number + ' \u2014 ' + statusBadge(p.status) + '</li>'; });
+      setList('contracts-list', data.contracts, function(c) { return '<li>' + TSUtils.escapeHtml(c.contract_number) + ' \u2014 ' + statusBadge(c.status) + '</li>'; });
+      setList('pv-list', data.possession, function(p) { return '<li>' + TSUtils.escapeHtml(p.pv_number) + ' \u2014 ' + statusBadge(p.status) + '</li>'; });
 
       var docs = await TSApi.request('/api/documents');
       setList('documents-list', docs.documents, function(d) {
-        var lnk = d.public_url ? ' \u2014 <a href="' + d.public_url + '" target="_blank">ouvrir</a>' : '';
-        return '<li>' + d.document_type + ' \u2014 ' + d.file_name + lnk + '</li>';
+        var lnk = d.public_url ? ' \u2014 <a href="' + TSUtils.escapeHtml(d.public_url) + '" target="_blank">ouvrir</a>' : '';
+        return '<li>' + TSUtils.escapeHtml(d.document_type) + ' \u2014 ' + TSUtils.escapeHtml(d.file_name) + lnk + '</li>';
       });
     } catch (e) { flash(e.message, 'err'); }
   }
@@ -128,7 +128,7 @@
     var breakdown = document.getElementById('daily-breakdown');
     var h = '';
     reservations.forEach(function(r) {
-      h += '<div class="daily-row"><span>' + r.lot_type.toUpperCase() + ' ' + (r.lot_size_m2 || 200) + 'm\u00b2</span><span>' + xaf(r.daily_amount) + '/jour</span></div>';
+      h += '<div class="daily-row"><span>' + TSUtils.escapeHtml(r.lot_type.toUpperCase()) + ' ' + (r.lot_size_m2 || 200) + 'm\u00b2</span><span>' + xaf(r.daily_amount) + '/jour</span></div>';
       if (r.insurance_persons > 0) {
         h += '<div class="daily-row"><span>\u00a0\u00a0\u00a0+ Assurance (' + r.insurance_persons + ' pers.)</span><span>' + xaf(r.daily_insurance) + '/jour</span></div>';
       }
@@ -335,7 +335,7 @@
     if (!reservations || !reservations.length) { c.innerHTML = '<p class="small">Aucune r\u00e9servation active.</p>'; return; }
     var h = '';
     reservations.forEach(function(r) {
-      h += '<div style="margin-bottom:20px"><h3>' + r.lot_type.toUpperCase() + ' ' + (r.lot_size_m2 || 200) + 'm\u00b2 \u2014 ' + xaf(r.lot_price) + '</h3>';
+      h += '<div style="margin-bottom:20px"><h3>' + TSUtils.escapeHtml(r.lot_type.toUpperCase()) + ' ' + (r.lot_size_m2 || 200) + 'm\u00b2 \u2014 ' + xaf(r.lot_price) + '</h3>';
       h += '<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px">';
       h += '<span class="small">Journalier: <strong>' + xaf(r.daily_total) + '</strong></span>';
       if (r.insurance_persons > 0) h += '<span class="small">(dont assurance: ' + xaf(r.daily_insurance) + ')</span>';
@@ -508,7 +508,7 @@
           method: 'POST',
           body: JSON.stringify({ campay_reference: params.get('ref') || pd.reference })
         }).then(function() {
-          flash('Paiement par carte confirm\u00e9 ! R\u00e9f: ' + pd.reference, 'ok');
+          flash('Paiement par carte confirm\u00e9 ! R\u00e9f: ' + TSUtils.escapeHtml(pd.reference), 'ok');
           load();
         });
       } catch (e) {}
@@ -565,7 +565,7 @@
       if (body.phone) u.phone = body.phone;
       localStorage.setItem('ts_user', JSON.stringify(u));
     } catch (err) {
-      resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + err.message + '</span>';
+      resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + TSUtils.escapeHtml(err.message) + '</span>';
     }
   });
 
@@ -574,7 +574,19 @@
 
   document.getElementById('btn-insurance').addEventListener('click', function() {
     var apiBase = window.TERRASOCIAL_API_BASE || '';
-    window.open(apiBase + '/api/client/insurance-policy?token=' + encodeURIComponent(TSApi.getToken()), '_blank');
+    fetch(apiBase + '/api/client/insurance-policy', {
+      headers: { 'Authorization': 'Bearer ' + TSApi.getToken() }
+    }).then(function(resp) {
+      if (!resp.ok) throw new Error('Erreur téléchargement');
+      return resp.blob();
+    }).then(function(blob) {
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'police-assurance-fonciere.pdf';
+      a.click();
+      URL.revokeObjectURL(url);
+    }).catch(function(err) { flash(err.message, 'err'); });
   });
 
   document.getElementById('campay-close').addEventListener('click', function() { hideModal(); load(); });

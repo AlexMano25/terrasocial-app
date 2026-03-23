@@ -10,8 +10,11 @@ dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 const { initializeDatabase } = require('./db/init');
 const { dbClient } = require('./db/connection');
+const compression = require('compression');
+const cookieParser = require('cookie-parser');
 const { createAuditMiddleware } = require('./middleware/audit');
 const { authLimiter, globalLimiter, uploadLimiter } = require('./middleware/rateLimiters');
+const { csrfProtection } = require('./middleware/csrf');
 const { isSupabaseStorageEnabled } = require('./services/storage');
 
 const uploadsPath = process.env.VERCEL
@@ -27,6 +30,19 @@ const allowedOrigins = (process.env.CORS_ORIGIN || '')
     .map((v) => v.trim())
     .filter(Boolean);
 
+// ── Security startup checks ─────────────────────────────────────────────
+const jwtSecret = process.env.JWT_SECRET || '';
+if (jwtSecret.length < 32) {
+    console.error('[SECURITY] JWT_SECRET is too short (< 32 chars). Generate with: openssl rand -hex 32');
+    if (process.env.NODE_ENV === 'production') process.exit(1);
+}
+if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jwtSecret)) {
+    console.warn('[SECURITY] JWT_SECRET looks like a UUID — use a stronger random secret.');
+}
+if (allowedOrigins.length === 0) {
+    console.warn('[SECURITY] CORS_ORIGIN is not set — all cross-origin requests will be rejected.');
+}
+
 let initPromise = null;
 function ensureInitialized() {
     if (!initPromise) {
@@ -39,13 +55,35 @@ function buildApp() {
     const app = express();
 
     // Important derriere Vercel/proxy pour express-rate-limit
-    app.set('trust proxy', true);
+    if (process.env.NODE_ENV !== 'test') {
+        app.set('trust proxy', true);
+    }
 
-    app.use(helmet({ crossOriginResourcePolicy: false }));
+    app.use(helmet({
+        crossOriginResourcePolicy: false,
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+                styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net"],
+                imgSrc: ["'self'", "data:", "https:"],
+                connectSrc: ["'self'", process.env.SUPABASE_URL, "https://demo.campay.net"].filter(Boolean),
+                fontSrc: ["'self'", "https://cdn.jsdelivr.net"],
+                objectSrc: ["'none'"],
+                frameAncestors: ["'none'"]
+            }
+        }
+    }));
+    app.use(compression());
     app.use(globalLimiter);
     app.use(cors({
         origin(origin, callback) {
-            if (!origin || allowedOrigins.length === 0 || allowedOrigins.includes(origin)) {
+            // Allow same-origin requests (no Origin header)
+            if (!origin) {
+                callback(null, true);
+                return;
+            }
+            if (allowedOrigins.includes(origin)) {
                 callback(null, true);
                 return;
             }
@@ -54,8 +92,10 @@ function buildApp() {
     }));
     app.use(express.json({ limit: '2mb' }));
     app.use(express.urlencoded({ extended: true }));
+    app.use(cookieParser());
     app.use(morgan('dev'));
     app.use(createAuditMiddleware());
+    app.use(csrfProtection());
 
     app.use(async (req, res, next) => {
         try {
@@ -66,7 +106,8 @@ function buildApp() {
         }
     });
 
-    app.use('/uploads', express.static(uploadsPath));
+    const { requireAuth } = require('./middleware/auth');
+    app.use('/uploads', requireAuth, express.static(uploadsPath));
     app.use('/api/auth', authLimiter, require('./routes/auth'));
     app.use('/api/public', require('./routes/public'));
     app.use('/api/client', require('./routes/client'));
@@ -77,6 +118,7 @@ function buildApp() {
     app.use('/api/manager', require('./routes/manager'));
     app.use('/api/super-admin', require('./routes/super-admin'));
     app.use('/api/agent', require('./routes/agent'));
+    app.use('/api/webhooks', require('./routes/webhooks'));
 
     app.get('/api/health', (req, res) => {
         res.json({

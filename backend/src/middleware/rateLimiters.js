@@ -2,10 +2,7 @@ const rateLimit = require('express-rate-limit');
 
 const limiterBase = {
     standardHeaders: true,
-    legacyHeaders: false,
-    validate: {
-        xForwardedForHeader: false
-    }
+    legacyHeaders: false
 };
 
 const globalLimiter = rateLimit({
@@ -30,8 +27,16 @@ const uploadLimiter = rateLimit({
     message: { error: "Trop d'uploads, reessayez plus tard." }
 });
 
+const resetLimiter = rateLimit({
+    ...limiterBase,
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { error: 'Trop de demandes de reinitialisation.' }
+});
+
 module.exports = {
     globalLimiter,
     authLimiter,
-    uploadLimiter
+    uploadLimiter,
+    resetLimiter
 };

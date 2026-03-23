@@ -34,7 +34,7 @@
 
   function flash(message, type) {
     const el = document.getElementById('flash');
-    el.innerHTML = `<div class="flash ${type}">${message}</div>`;
+    el.innerHTML = `<div class="flash ${type}">${TSUtils.escapeHtml(message)}</div>`;
     setTimeout(() => { el.innerHTML = ''; }, 3500);
   }
 
@@ -53,14 +53,14 @@
     const tbody = document.getElementById('users-tbody');
     tbody.innerHTML = state.users.length ? state.users.map((u) => `
       <tr>
-        <td>${u.id}</td>
-        <td>${u.full_name || '-'}</td>
-        <td><span class="status-pill">${u.role}</span></td>
-        <td>${u.email || '-'}</td>
-        <td>${u.phone || '-'}</td>
-        <td>${u.city || '-'}</td>
+        <td>${TSUtils.escapeHtml(String(u.id))}</td>
+        <td>${TSUtils.escapeHtml(u.full_name || '-')}</td>
+        <td><span class="status-pill">${TSUtils.escapeHtml(u.role)}</span></td>
+        <td>${TSUtils.escapeHtml(u.email || '-')}</td>
+        <td>${TSUtils.escapeHtml(u.phone || '-')}</td>
+        <td>${TSUtils.escapeHtml(u.city || '-')}</td>
         <td>
-          <button class="btn" data-action="edit-user" data-id="${u.id}">Modifier</button>
+          <button class="btn" data-action="edit-user" data-id="${TSUtils.escapeHtml(String(u.id))}">Modifier</button>
         </td>
       </tr>
     `).join('') : '<tr><td colspan="7">Aucun utilisateur</td></tr>';
@@ -70,14 +70,14 @@
     const tbody = document.getElementById('reservations-tbody');
     tbody.innerHTML = state.reservations.length ? state.reservations.map((r) => `
       <tr>
-        <td>${r.id}</td>
-        <td>${r.client_name || r.user_id}</td>
-        <td>${r.lot_title || r.lot_id}</td>
-        <td><span class="status-pill">${r.status}</span></td>
-        <td>${r.monthly_amount ? Number(r.monthly_amount).toLocaleString('fr-FR') + ' FCFA' : '-'}</td>
-        <td>${r.created_at ? r.created_at.substring(0, 10) : '-'}</td>
+        <td>${TSUtils.escapeHtml(String(r.id))}</td>
+        <td>${TSUtils.escapeHtml(String(r.client_name || r.user_id))}</td>
+        <td>${TSUtils.escapeHtml(String(r.lot_title || r.lot_id))}</td>
+        <td><span class="status-pill">${TSUtils.escapeHtml(r.status)}</span></td>
+        <td>${r.monthly_amount ? TSUtils.escapeHtml(Number(r.monthly_amount).toLocaleString('fr-FR') + ' FCFA') : '-'}</td>
+        <td>${r.created_at ? TSUtils.escapeHtml(r.created_at.substring(0, 10)) : '-'}</td>
         <td>
-          <button class="btn" data-action="view-res" data-id="${r.id}">Voir</button>
+          <button class="btn" data-action="view-res" data-id="${TSUtils.escapeHtml(String(r.id))}">Voir</button>
         </td>
       </tr>
     `).join('') : '<tr><td colspan="7">Aucune réservation</td></tr>';
@@ -87,13 +87,13 @@
     const tbody = document.getElementById('docs-tbody');
     tbody.innerHTML = state.documents.length ? state.documents.map((d) => `
       <tr>
-        <td>${d.id}</td>
-        <td>${d.document_type}</td>
-        <td>${d.file_name}</td>
-        <td>${d.user_id}</td>
-        <td>${d.created_at ? d.created_at.substring(0, 10) : '-'}</td>
+        <td>${TSUtils.escapeHtml(String(d.id))}</td>
+        <td>${TSUtils.escapeHtml(d.document_type)}</td>
+        <td>${TSUtils.escapeHtml(d.file_name)}</td>
+        <td>${TSUtils.escapeHtml(String(d.user_id))}</td>
+        <td>${d.created_at ? TSUtils.escapeHtml(d.created_at.substring(0, 10)) : '-'}</td>
         <td>
-          <button class="btn" data-action="download-doc" data-id="${d.id}" data-name="${d.file_name}">Télécharger</button>
+          <button class="btn" data-action="download-doc" data-id="${TSUtils.escapeHtml(String(d.id))}" data-name="${TSUtils.escapeHtml(d.file_name)}">Télécharger</button>
         </td>
       </tr>
     `).join('') : '<tr><td colspan="6">Aucun document</td></tr>';
@@ -103,10 +103,10 @@
     const tbody = document.getElementById('messages-tbody');
     tbody.innerHTML = state.messages.length ? state.messages.map((m) => `
       <tr>
-        <td>${m.target_scope}${m.target_role ? ` (${m.target_role})` : ''}</td>
-        <td>${m.channels}</td>
-        <td>${m.status}</td>
-        <td>${m.created_at ? m.created_at.substring(0, 10) : '-'}</td>
+        <td>${TSUtils.escapeHtml(m.target_scope)}${m.target_role ? ` (${TSUtils.escapeHtml(m.target_role)})` : ''}</td>
+        <td>${TSUtils.escapeHtml(m.channels)}</td>
+        <td>${TSUtils.escapeHtml(m.status)}</td>
+        <td>${m.created_at ? TSUtils.escapeHtml(m.created_at.substring(0, 10)) : '-'}</td>
       </tr>
     `).join('') : '<tr><td colspan="4">Aucun message</td></tr>';
   }
@@ -125,9 +125,9 @@
     const tbody = document.getElementById('activity-tbody');
     tbody.innerHTML = items.length ? items.slice(0, 10).map((i) => `
       <tr>
-        <td><span class="status-pill">${i.type}</span></td>
-        <td>${i.desc}</td>
-        <td>${i.date ? i.date.substring(0, 10) : '-'}</td>
+        <td><span class="status-pill">${TSUtils.escapeHtml(i.type)}</span></td>
+        <td>${TSUtils.escapeHtml(i.desc)}</td>
+        <td>${i.date ? TSUtils.escapeHtml(i.date.substring(0, 10)) : '-'}</td>
       </tr>
     `).join('') : '<tr><td colspan="3" style="color:var(--muted)">Aucune activité récente</td></tr>';
   }

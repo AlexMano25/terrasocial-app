@@ -37,7 +37,7 @@
   }
 
   function flash(message, type) {
-    document.getElementById('flash').innerHTML = `<div class="flash ${type}">${message}</div>`;
+    document.getElementById('flash').innerHTML = `<div class="flash ${type}">${TSUtils.escapeHtml(message)}</div>`;
     setTimeout(() => {
       document.getElementById('flash').innerHTML = '';
     }, 3500);
@@ -80,14 +80,14 @@
     const tbody = document.getElementById('users-tbody');
     tbody.innerHTML = state.users.length ? state.users.map((u) => `
       <tr>
-        <td>${u.id}</td>
-        <td>${u.full_name}</td>
-        <td><span class="status-pill">${u.role}</span></td>
-        <td>${u.email}</td>
-        <td>${u.reliability_score}</td>
+        <td>${TSUtils.escapeHtml(String(u.id))}</td>
+        <td>${TSUtils.escapeHtml(u.full_name)}</td>
+        <td><span class="status-pill">${TSUtils.escapeHtml(u.role)}</span></td>
+        <td>${TSUtils.escapeHtml(u.email)}</td>
+        <td>${TSUtils.escapeHtml(String(u.reliability_score))}</td>
         <td>
-          <button class="btn" data-action="history" data-id="${u.id}">Historique</button>
-          <button class="btn" data-action="delete-user" data-id="${u.id}">Supprimer</button>
+          <button class="btn" data-action="history" data-id="${TSUtils.escapeHtml(String(u.id))}">Historique</button>
+          <button class="btn" data-action="delete-user" data-id="${TSUtils.escapeHtml(String(u.id))}">Supprimer</button>
         </td>
       </tr>
     `).join('') : '<tr><td colspan="6">Aucun utilisateur</td></tr>';
@@ -98,7 +98,7 @@
       var current = userSelect.value;
       userSelect.innerHTML = '<option value="">-- Choisir un utilisateur --</option>' +
         state.users.map(function(u) {
-          return '<option value="' + u.id + '">#' + u.id + ' — ' + u.full_name + ' (' + u.email + ')</option>';
+          return '<option value="' + TSUtils.escapeHtml(String(u.id)) + '">#' + TSUtils.escapeHtml(String(u.id)) + ' — ' + TSUtils.escapeHtml(u.full_name) + ' (' + TSUtils.escapeHtml(u.email) + ')</option>';
         }).join('');
       if (current) userSelect.value = current;
     }
@@ -108,10 +108,10 @@
     const tbody = document.getElementById('messages-tbody');
     tbody.innerHTML = state.messages.length ? state.messages.map((m) => `
       <tr>
-        <td>${m.target_scope}${m.target_role ? ` (${m.target_role})` : ''}</td>
-        <td>${m.channels}</td>
-        <td>${m.status}</td>
-        <td>${m.created_at || '-'}</td>
+        <td>${TSUtils.escapeHtml(m.target_scope)}${m.target_role ? ` (${TSUtils.escapeHtml(m.target_role)})` : ''}</td>
+        <td>${TSUtils.escapeHtml(m.channels)}</td>
+        <td>${TSUtils.escapeHtml(m.status)}</td>
+        <td>${TSUtils.escapeHtml(m.created_at || '-')}</td>
       </tr>
     `).join('') : '<tr><td colspan="4">Aucun message</td></tr>';
   }
@@ -124,7 +124,7 @@
     var typeBadge = function(t) {
       var colors = { contrat_signe: '#1B5E20', titre_foncier: '#1565C0', pv_jouissance: '#6A1B9A', cni: '#E65100', facture: '#00695C', autre: '#555' };
       var c = colors[t] || '#555';
-      return '<span style="background:' + c + ';color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;">' + (t || '-') + '</span>';
+      return '<span style="background:' + c + ';color:#fff;padding:2px 8px;border-radius:6px;font-size:11px;">' + TSUtils.escapeHtml(t || '-') + '</span>';
     };
 
     var fmtDate = function(d) {
@@ -133,25 +133,25 @@
     };
 
     tbody.innerHTML = state.documents.length ? state.documents.map(function(d) {
-      var userName = d.user_name || ('User #' + d.user_id);
-      var userContact = d.user_email || d.user_phone || '-';
-      var userRole = d.user_role ? '<span style="font-size:10px;color:#888;">(' + d.user_role + ')</span>' : '';
+      var userName = TSUtils.escapeHtml(d.user_name || ('User #' + d.user_id));
+      var userContact = TSUtils.escapeHtml(d.user_email || d.user_phone || '-');
+      var userRole = d.user_role ? '<span style="font-size:10px;color:#888;">(' + TSUtils.escapeHtml(d.user_role) + ')</span>' : '';
       var storageBadge = d.storage_mode === 'supabase'
         ? '<span style="background:#1565C0;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;">cloud</span>'
         : '<span style="background:#888;color:#fff;padding:2px 6px;border-radius:4px;font-size:10px;">local</span>';
 
       return '<tr>' +
-        '<td>' + d.id + '</td>' +
+        '<td>' + TSUtils.escapeHtml(String(d.id)) + '</td>' +
         '<td>' + typeBadge(d.document_type) + '</td>' +
-        '<td style="font-size:12px;">' + d.file_name + '</td>' +
+        '<td style="font-size:12px;">' + TSUtils.escapeHtml(d.file_name) + '</td>' +
         '<td><strong>' + userName + '</strong> ' + userRole + '</td>' +
         '<td style="font-size:12px;">' + userContact + '</td>' +
         '<td style="font-size:12px;">' + fmtDate(d.uploaded_at) + '</td>' +
         '<td>' + storageBadge + '</td>' +
         '<td>' +
-          '<button class="btn" data-action="download-doc" data-id="' + d.id + '" data-name="' + d.file_name + '">Télécharger</button>' +
-          '<button class="btn" data-action="edit-doc" data-id="' + d.id + '">Renommer</button>' +
-          '<button class="btn" data-action="delete-doc" data-id="' + d.id + '">Supprimer</button>' +
+          '<button class="btn" data-action="download-doc" data-id="' + TSUtils.escapeHtml(String(d.id)) + '" data-name="' + TSUtils.escapeHtml(d.file_name) + '">Télécharger</button>' +
+          '<button class="btn" data-action="edit-doc" data-id="' + TSUtils.escapeHtml(String(d.id)) + '">Renommer</button>' +
+          '<button class="btn" data-action="delete-doc" data-id="' + TSUtils.escapeHtml(String(d.id)) + '">Supprimer</button>' +
         '</td></tr>';
     }).join('') : '<tr><td colspan="8">Aucun document</td></tr>';
   }
@@ -188,13 +188,13 @@
     const tbody = document.getElementById('lots-tbody');
     tbody.innerHTML = state.lots.length ? state.lots.map((lot) => `
       <tr>
-        <td>${lot.id}</td>
-        <td>${lot.title}</td>
+        <td>${TSUtils.escapeHtml(String(lot.id))}</td>
+        <td>${TSUtils.escapeHtml(lot.title)}</td>
         <td>${formatMoney(lot.price)}/m²</td>
-        <td><span class="status-pill">${lot.status}</span></td>
+        <td><span class="status-pill">${TSUtils.escapeHtml(lot.status)}</span></td>
         <td>
-          <button class="btn" data-action="edit-lot" data-id="${lot.id}">Éditer</button>
-          <button class="btn" data-action="delete-lot" data-id="${lot.id}">Supprimer</button>
+          <button class="btn" data-action="edit-lot" data-id="${TSUtils.escapeHtml(String(lot.id))}">Éditer</button>
+          <button class="btn" data-action="delete-lot" data-id="${TSUtils.escapeHtml(String(lot.id))}">Supprimer</button>
         </td>
       </tr>
     `).join('') : '<tr><td colspan="5">Aucun lot</td></tr>';
@@ -292,28 +292,28 @@
     countEl.textContent = state.reservations.length + ' réservation(s)';
 
     tbody.innerHTML = state.reservations.map(function(r) {
-      var clientName = r.client_name || r.lead_name || r.source || 'Lead anonyme';
+      var clientName = TSUtils.escapeHtml(r.client_name || r.lead_name || r.source || 'Lead anonyme');
       var leadPhone = r.client_phone || r.lead_phone || '';
       var leadEmail = r.client_email || r.lead_email || '';
-      var contact = leadPhone || leadEmail || '-';
-      if (leadPhone && leadEmail) contact = leadPhone + '<br><span style="color:#888;">' + leadEmail + '</span>';
+      var contact = TSUtils.escapeHtml(leadPhone || leadEmail || '-');
+      if (leadPhone && leadEmail) contact = TSUtils.escapeHtml(leadPhone) + '<br><span style="color:#888;">' + TSUtils.escapeHtml(leadEmail) + '</span>';
       var leadCity = r.lead_city || '';
-      var price = Number(r.lot_price || 0).toLocaleString('fr-FR') + ' FCFA';
-      var date = r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '-';
-      var lotLabel = (r.lot_type || '-').toUpperCase();
+      var price = TSUtils.escapeHtml(Number(r.lot_price || 0).toLocaleString('fr-FR') + ' FCFA');
+      var date = r.created_at ? TSUtils.escapeHtml(new Date(r.created_at).toLocaleDateString('fr-FR')) : '-';
+      var lotLabel = TSUtils.escapeHtml((r.lot_type || '-').toUpperCase());
 
       var actions = '';
       if (r.status === 'lead' || r.status === 'pending') {
-        actions += '<button data-action="validate" data-id="' + r.id + '" data-name="' + (r.client_name || r.lead_name || '') + '" data-phone="' + (r.client_phone || r.lead_phone || '') + '" data-email="' + (r.client_email || r.lead_email || '') + '" data-city="' + leadCity + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Valider</button>';
-        actions += '<button data-action="reject" data-id="' + r.id + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
+        actions += '<button data-action="validate" data-id="' + TSUtils.escapeHtml(String(r.id)) + '" data-name="' + TSUtils.escapeHtml(r.client_name || r.lead_name || '') + '" data-phone="' + TSUtils.escapeHtml(r.client_phone || r.lead_phone || '') + '" data-email="' + TSUtils.escapeHtml(r.client_email || r.lead_email || '') + '" data-city="' + TSUtils.escapeHtml(leadCity) + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Valider</button>';
+        actions += '<button data-action="reject" data-id="' + TSUtils.escapeHtml(String(r.id)) + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
       }
       if (r.status === 'active' || r.status === 'completed') {
-        actions += '<button data-action="contract" data-id="' + r.id + '" style="background:#1565C0;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📄 Contrat</button>';
-        actions += '<button data-action="send-welcome" data-id="' + r.id + '" style="background:#FF8F00;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📧 Envoyer</button>';
+        actions += '<button data-action="contract" data-id="' + TSUtils.escapeHtml(String(r.id)) + '" style="background:#1565C0;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📄 Contrat</button>';
+        actions += '<button data-action="send-welcome" data-id="' + TSUtils.escapeHtml(String(r.id)) + '" style="background:#FF8F00;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">📧 Envoyer</button>';
       }
-      actions += '<button data-action="details" data-id="' + r.id + '" style="background:#eee;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Détails</button>';
+      actions += '<button data-action="details" data-id="' + TSUtils.escapeHtml(String(r.id)) + '" style="background:#eee;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Détails</button>';
 
-      return '<tr><td>' + r.id + '</td><td>' + clientName + '</td><td style="font-size:12px;">' + contact + '</td><td>' + lotLabel + '</td><td>' + price + '</td><td>' + resStatusBadge(r.status) + '</td><td style="font-size:12px;">' + date + '</td><td>' + actions + '</td></tr>';
+      return '<tr><td>' + TSUtils.escapeHtml(String(r.id)) + '</td><td>' + clientName + '</td><td style="font-size:12px;">' + contact + '</td><td>' + lotLabel + '</td><td>' + price + '</td><td>' + resStatusBadge(r.status) + '</td><td style="font-size:12px;">' + date + '</td><td>' + actions + '</td></tr>';
     }).join('');
   }
 
@@ -345,7 +345,19 @@
     }
 
     if (action === 'contract') {
-      window.open(TSApi.API_BASE + '/api/super-admin/reservations/' + id + '/contract-pdf?token=' + encodeURIComponent(TSApi.getToken()), '_blank');
+      fetch(TSApi.API_BASE + '/api/super-admin/reservations/' + id + '/contract-pdf', {
+        headers: { 'Authorization': 'Bearer ' + TSApi.getToken() }
+      }).then(function(resp) {
+        if (!resp.ok) throw new Error('Erreur téléchargement');
+        return resp.blob();
+      }).then(function(blob) {
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'contrat-reservation-' + id + '.pdf';
+        a.click();
+        URL.revokeObjectURL(url);
+      }).catch(function(err) { flash(err.message, 'err'); });
     }
 
     if (action === 'send-welcome') {
@@ -407,11 +419,11 @@
 
       var html = '<div style="background:#E8F5E9;padding:12px;border-radius:8px;">';
       html += '<strong>✅ Réservation validée !</strong><br>';
-      html += 'Client: ' + data.user.full_name + '<br>';
-      html += 'Email: ' + data.user.email + '<br>';
-      html += 'Contrat: ' + data.contract_number + '<br>';
+      html += 'Client: ' + TSUtils.escapeHtml(data.user.full_name) + '<br>';
+      html += 'Email: ' + TSUtils.escapeHtml(data.user.email) + '<br>';
+      html += 'Contrat: ' + TSUtils.escapeHtml(data.contract_number) + '<br>';
       if (data.temp_password) {
-        html += '<br><strong style="color:#C62828;">⚠️ Mot de passe temporaire : ' + data.temp_password + '</strong><br>';
+        html += '<br><strong style="color:#C62828;">⚠️ Mot de passe temporaire : ' + TSUtils.escapeHtml(data.temp_password) + '</strong><br>';
         html += '<span style="font-size:12px;">Communiquez-le au client pour qu\'il puisse se connecter.</span>';
       }
       html += '</div>';
@@ -420,7 +432,7 @@
       await loadReservations();
       try { await loadOverview(); } catch (e) { /* Chart.js may not be ready */ }
     } catch (err) {
-      resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + err.message + '</span>';
+      resultEl.innerHTML = '<span style="color:#C62828;">❌ ' + TSUtils.escapeHtml(err.message) + '</span>';
     }
   });
 
@@ -457,23 +469,23 @@
     if (countEl) countEl.textContent = state.agents.length + ' agent(s)';
 
     tbody.innerHTML = state.agents.length ? state.agents.map(function(a) {
-      var name = a.full_name || '-';
-      var contact = (a.email || '') + (a.phone ? '<br>' + a.phone : '');
-      var company = a.company_name || '-';
+      var name = TSUtils.escapeHtml(a.full_name || '-');
+      var contact = TSUtils.escapeHtml(a.email || '') + (a.phone ? '<br>' + TSUtils.escapeHtml(a.phone) : '');
+      var company = TSUtils.escapeHtml(a.company_name || '-');
       var status = a.status || (a.is_active ? 'active' : 'pending');
-      var date = a.created_at ? new Date(a.created_at).toLocaleDateString('fr-FR') : '-';
+      var date = a.created_at ? TSUtils.escapeHtml(new Date(a.created_at).toLocaleDateString('fr-FR')) : '-';
 
       var actions = '';
       if (status === 'pending') {
-        actions += '<button data-action="approve-agent" data-id="' + a.id + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Approuver</button>';
-        actions += '<button data-action="reject-agent" data-id="' + a.id + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
+        actions += '<button data-action="approve-agent" data-id="' + TSUtils.escapeHtml(String(a.id)) + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Approuver</button>';
+        actions += '<button data-action="reject-agent" data-id="' + TSUtils.escapeHtml(String(a.id)) + '" style="background:#C62828;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Rejeter</button>';
       } else if (status === 'active') {
-        actions += '<button data-action="suspend-agent" data-id="' + a.id + '" style="background:#F57F17;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Suspendre</button>';
+        actions += '<button data-action="suspend-agent" data-id="' + TSUtils.escapeHtml(String(a.id)) + '" style="background:#F57F17;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Suspendre</button>';
       } else if (status === 'suspended' || status === 'rejected') {
-        actions += '<button data-action="approve-agent" data-id="' + a.id + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Réactiver</button>';
+        actions += '<button data-action="approve-agent" data-id="' + TSUtils.escapeHtml(String(a.id)) + '" style="background:#1B5E20;color:#fff;border:none;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin:2px;">Réactiver</button>';
       }
 
-      return '<tr><td style="font-weight:600;">' + (a.agent_code || '-') + '</td><td>' + name + '</td><td style="font-size:12px;">' + contact + '</td><td>' + company + '</td><td>' + agentStatusBadge(status) + '</td><td style="font-size:12px;">' + date + '</td><td>' + actions + '</td></tr>';
+      return '<tr><td style="font-weight:600;">' + TSUtils.escapeHtml(a.agent_code || '-') + '</td><td>' + name + '</td><td style="font-size:12px;">' + contact + '</td><td>' + company + '</td><td>' + agentStatusBadge(status) + '</td><td style="font-size:12px;">' + date + '</td><td>' + actions + '</td></tr>';
     }).join('') : '<tr><td colspan="7">Aucun agent</td></tr>';
   }
 
@@ -795,7 +807,7 @@
 
     const merged = [...userMatches, ...docMatches, ...lotMatches, ...staticItems];
     results.innerHTML = merged.length ? merged.map((r, idx) =>
-      `<div class="search-item" data-idx="${idx}">${r.type.toUpperCase()} - ${r.label}</div>`
+      `<div class="search-item" data-idx="${idx}">${TSUtils.escapeHtml(r.type.toUpperCase())} - ${TSUtils.escapeHtml(r.label)}</div>`
     ).join('') : '<div class="search-item">Aucun résultat</div>';
 
     results.querySelectorAll('.search-item').forEach((el) => {

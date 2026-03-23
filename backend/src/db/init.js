@@ -343,6 +343,36 @@ async function initializeDatabase() {
         // Colonne déjà présente.
     }
 
+    // v1.2b — Table agents (referenced by auth /me and agent routes)
+    if (dbClient === 'postgres') {
+        await run(`CREATE TABLE IF NOT EXISTS agents (
+            id BIGSERIAL PRIMARY KEY,
+            user_id BIGINT NOT NULL UNIQUE REFERENCES users(id),
+            agent_code VARCHAR(20) UNIQUE,
+            company_name VARCHAR(255),
+            phone VARCHAR(50),
+            email VARCHAR(255),
+            status VARCHAR(20) DEFAULT 'active',
+            is_active BOOLEAN DEFAULT TRUE,
+            commission_rate NUMERIC(5,2) DEFAULT 5.00,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+    } else {
+        await run(`CREATE TABLE IF NOT EXISTS agents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            agent_code TEXT UNIQUE,
+            company_name TEXT,
+            phone TEXT,
+            email TEXT,
+            status TEXT DEFAULT 'active',
+            is_active INTEGER DEFAULT 1,
+            commission_rate REAL DEFAULT 5.00,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )`);
+    }
+
     // v1.3 — Table manager_admins pour le rôle Administrateur Limité.
     if (dbClient === 'postgres') {
         await run(`CREATE TABLE IF NOT EXISTS manager_admins (

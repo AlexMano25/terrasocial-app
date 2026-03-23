@@ -9,12 +9,7 @@ async function isSuperAdminUser(userId) {
 async function requireAuth(req, res, next) {
     try {
         const authHeader = req.headers.authorization || '';
-        let token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-
-        // Supporter aussi ?token= en query param (pour ouverture de PDF dans un nouvel onglet)
-        if (!token && req.query && req.query.token) {
-            token = req.query.token;
-        }
+        const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
 
         if (!token) {
             return res.status(401).json({ error: 'Authentification requise' });

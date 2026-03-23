@@ -5,7 +5,7 @@ const PDFDocument = require('pdfkit');
 const { all, get, run } = require('../db/connection');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
-const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt, isValidPhone } = require('../utils/validation');
+const { sanitizeOptionalText, sanitizeText, normalizeEmail, parsePositiveInt, isValidPhone, generateTempPassword } = require('../utils/validation');
 const { sendWelcomeEmail, isSmtpConfigured } = require('../services/email');
 
 const uploadsPath = process.env.VERCEL
@@ -692,7 +692,7 @@ router.post('/reservations/:id/validate', async (req, res) => {
                     userId = existing.id;
                 } else {
                     // Créer nouveau compte
-                    const tempPassword = 'TS' + Date.now().toString(36) + '!' + Math.random().toString(36).slice(2, 6).toUpperCase();
+                    const tempPassword = generateTempPassword();
                     const passwordHash = await bcrypt.hash(tempPassword, 10);
                     const created = await run(
                         'INSERT INTO users(role, full_name, email, phone, city, password_hash) VALUES (?, ?, ?, ?, ?, ?)',
@@ -705,7 +705,7 @@ router.post('/reservations/:id/validate', async (req, res) => {
                 }
             } else {
                 // Pas d'email → créer avec email généré
-                const tempPassword = 'TS' + Date.now().toString(36) + '!' + Math.random().toString(36).slice(2, 6).toUpperCase();
+                const tempPassword = generateTempPassword();
                 const passwordHash = await bcrypt.hash(tempPassword, 10);
                 const generatedEmail = `client.${id}.${Date.now()}@terrasocial.cm`;
                 const created = await run(
@@ -973,7 +973,7 @@ router.post('/reservations/:id/send-welcome', async (req, res) => {
         }
 
         // Générer un nouveau mot de passe temporaire et mettre à jour le compte
-        const tempPassword = 'TS-' + Math.random().toString(36).slice(2, 6).toUpperCase() + '-' + Date.now().toString(36).slice(-4).toUpperCase();
+        const tempPassword = generateTempPassword();
         const passwordHash = await bcrypt.hash(tempPassword, 10);
         await run('UPDATE users SET password_hash = ? WHERE id = ?', [passwordHash, reservation.user_id]);
 

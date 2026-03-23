@@ -1,3 +1,15 @@
+const crypto = require('crypto');
+
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
 function normalizeEmail(value) {
     if (typeof value !== 'string') return '';
     return value.trim().toLowerCase();
@@ -5,12 +17,21 @@ function normalizeEmail(value) {
 
 function sanitizeText(value, maxLen = 255) {
     if (typeof value !== 'string') return '';
+    return escapeHtml(value.trim().slice(0, maxLen));
+}
+
+function sanitizeRawText(value, maxLen = 255) {
+    if (typeof value !== 'string') return '';
     return value.trim().slice(0, maxLen);
 }
 
 function sanitizeOptionalText(value, maxLen = 255) {
     const text = sanitizeText(value, maxLen);
     return text.length ? text : null;
+}
+
+function generateTempPassword() {
+    return 'TS-' + crypto.randomBytes(12).toString('base64url');
 }
 
 function parsePositiveInt(value) {
@@ -63,11 +84,14 @@ function validateReservationPayload(payload) {
 }
 
 module.exports = {
+    escapeHtml,
     normalizeEmail,
     sanitizeText,
+    sanitizeRawText,
     sanitizeOptionalText,
     parsePositiveInt,
     isValidPhone,
     isStrongPassword,
+    generateTempPassword,
     validateReservationPayload
 };

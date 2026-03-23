@@ -16,7 +16,7 @@
   }
 
   function flash(message, type) {
-    document.getElementById('flash').innerHTML = `<div class="flash ${type}">${message}</div>`;
+    document.getElementById('flash').innerHTML = `<div class="flash ${type}">${TSUtils.escapeHtml(message)}</div>`;
   }
 
   function setDocs(docs) {
@@ -24,9 +24,9 @@
     el.innerHTML = docs.length
       ? docs.map((d) => {
         const link = d.public_url
-          ? ` - <a href=\"${d.public_url}\" target=\"_blank\" rel=\"noopener noreferrer\">ouvrir</a>`
+          ? ` - <a href="${TSUtils.escapeHtml(d.public_url)}" target="_blank" rel="noopener noreferrer">ouvrir</a>`
           : '';
-        return `<li>${d.document_type} - ${d.file_name}${link}</li>`;
+        return `<li>${TSUtils.escapeHtml(d.document_type)} - ${TSUtils.escapeHtml(d.file_name)}${link}</li>`;
       }).join('')
       : '<li class="small">Aucun document</li>';
   }
@@ -36,16 +36,16 @@
       const data = await TSApi.request('/api/owner/dashboard');
       const propertySelect = document.getElementById('owner-payment-property');
       propertySelect.innerHTML = data.properties.length
-        ? data.properties.map((p) => `<option value="${p.id}">${p.property_title} (${p.location})</option>`).join('')
+        ? data.properties.map((p) => `<option value="${TSUtils.escapeHtml(String(p.id))}">${TSUtils.escapeHtml(p.property_title)} (${TSUtils.escapeHtml(p.location)})</option>`).join('')
         : '<option value="">Aucun terrain</option>';
 
       document.getElementById('properties-body').innerHTML = data.properties.length
         ? data.properties.map((p) => `
           <tr>
-            <td>${p.property_title}</td>
-            <td>${p.location}</td>
+            <td>${TSUtils.escapeHtml(p.property_title)}</td>
+            <td>${TSUtils.escapeHtml(p.location)}</td>
             <td>${xaf(p.expected_price)}</td>
-            <td><span class="status ${p.status}">${p.status}</span></td>
+            <td><span class="status ${TSUtils.escapeHtml(p.status)}">${TSUtils.escapeHtml(p.status)}</span></td>
           </tr>
         `).join('')
         : '<tr><td colspan="4" class="small">Aucun terrain déclaré</td></tr>';
@@ -53,11 +53,11 @@
       document.getElementById('payments-body').innerHTML = data.payments.length
         ? data.payments.map((p) => `
           <tr>
-            <td>${p.reference || '-'}</td>
+            <td>${TSUtils.escapeHtml(p.reference || '-')}</td>
             <td>${xaf(p.amount)}</td>
-            <td>${p.method}</td>
-            <td>${p.paid_at || '-'}</td>
-            <td><span class="status ${p.status}">${p.status}</span></td>
+            <td>${TSUtils.escapeHtml(p.method)}</td>
+            <td>${TSUtils.escapeHtml(p.paid_at || '-')}</td>
+            <td><span class="status ${TSUtils.escapeHtml(p.status)}">${TSUtils.escapeHtml(p.status)}</span></td>
           </tr>
         `).join('')
         : '<tr><td colspan="5" class="small">Aucun paiement</td></tr>';

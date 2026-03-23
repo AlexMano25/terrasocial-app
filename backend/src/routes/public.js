@@ -5,7 +5,8 @@ const {
     normalizeEmail,
     sanitizeOptionalText,
     sanitizeText,
-    validateReservationPayload
+    validateReservationPayload,
+    generateTempPassword
 } = require('../utils/validation');
 
 const router = express.Router();
@@ -89,7 +90,7 @@ router.post('/partnership', async (req, res) => {
 
         // Créer un compte utilisateur agent (inactif jusqu'à validation)
         const bcrypt = require('bcryptjs');
-        const tempPassword = 'AG-' + Date.now().toString(36).slice(-4).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+        const tempPassword = generateTempPassword();
         const passwordHash = await bcrypt.hash(tempPassword, 10);
         const agentEmail = safeEmail || `agent.${Date.now()}@terrasocial.cm`;
 

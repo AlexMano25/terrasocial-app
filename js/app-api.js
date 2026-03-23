@@ -49,6 +49,11 @@
     localStorage.removeItem('ts_user');
   }
 
+  function getCsrfToken() {
+    const match = document.cookie.match(/(?:^|;\s*)csrf_token=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : '';
+  }
+
   async function request(path, options) {
     const headers = Object.assign({}, options?.headers || {});
     if (!(options?.body instanceof FormData)) {
@@ -57,6 +62,10 @@
 
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
+
+    // CSRF protection
+    const csrfToken = getCsrfToken();
+    if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
 
     let response;
     try {

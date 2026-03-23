@@ -152,7 +152,9 @@ router.post('/login', async (req, res) => {
     }
 });
 
-router.post('/request-password-reset', async (req, res) => {
+const { resetLimiter } = require('../middleware/rateLimiters');
+
+router.post('/request-password-reset', resetLimiter, async (req, res) => {
     try {
         const rawIdentifier = (req.body?.identifier || req.body?.email || '').trim();
         if (!rawIdentifier) {

@@ -346,7 +346,25 @@ router.post('/versement/:id/confirm', async (req, res) => {
             return res.status(404).json({ error: 'Paiement pending introuvable' });
         }
 
-        // Marquer comme payé
+        // Verify payment with Campay if possible
+        if (campay_reference && process.env.CAMPAY_API_KEY) {
+            try {
+                const campayResp = await fetch('https://demo.campay.net/api/transaction/' + encodeURIComponent(campay_reference) + '/', {
+                    headers: {
+                        'Authorization': 'Token ' + process.env.CAMPAY_API_KEY,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const campayData = await campayResp.json();
+                if (campayData.status !== 'SUCCESSFUL' && campayData.status !== 'success') {
+                    return res.status(400).json({ error: 'Paiement non confirme par Campay (statut: ' + (campayData.status || 'inconnu') + ')' });
+                }
+            } catch (verifyErr) {
+                console.warn('Campay verification failed, proceeding with manual confirm:', verifyErr.message);
+            }
+        }
+
+        // Mark as paid
         await run(
             'UPDATE payments SET status = ?, paid_at = CURRENT_TIMESTAMP, reference = ? WHERE id = ?',
             ['paid', campay_reference || payment.reference, payment.id]
