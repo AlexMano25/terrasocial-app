@@ -87,7 +87,8 @@ function buildApp() {
                 return;
             }
             callback(new Error('Origin non autorisee'));
-        }
+        },
+        credentials: true
     }));
     app.use(express.json({ limit: '2mb' }));
     app.use(express.urlencoded({ extended: true }));

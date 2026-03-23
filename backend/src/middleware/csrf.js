@@ -7,7 +7,7 @@ function csrfProtection() {
             const token = crypto.randomBytes(24).toString('hex');
             res.cookie('csrf_token', token, {
                 httpOnly: false, // Must be readable by JS
-                sameSite: 'strict',
+                sameSite: 'lax',
                 secure: process.env.NODE_ENV === 'production',
                 maxAge: 24 * 60 * 60 * 1000 // 24h
             });
