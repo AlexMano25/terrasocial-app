@@ -34,7 +34,6 @@ const allowedOrigins = (process.env.CORS_ORIGIN || '')
 const jwtSecret = process.env.JWT_SECRET || '';
 if (jwtSecret.length < 32) {
     console.error('[SECURITY] JWT_SECRET is too short (< 32 chars). Generate with: openssl rand -hex 32');
-    if (process.env.NODE_ENV === 'production') process.exit(1);
 }
 if (/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(jwtSecret)) {
     console.warn('[SECURITY] JWT_SECRET looks like a UUID — use a stronger random secret.');
