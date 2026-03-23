@@ -55,6 +55,8 @@
       <button class="btn" data-panel="subscribers" id="nav-subscribers">Souscripteurs</button>
       <button class="btn" data-panel="contracts" id="nav-contracts">Contrats</button>
       <button class="btn" data-panel="insured" id="nav-insured">Assures</button>
+      <button class="btn" data-panel="analytics" id="nav-analytics">Analytics</button>
+      <button class="btn" data-panel="hospitals" id="nav-hospitals">Hopitaux</button>
       <button class="btn" data-panel="profile" id="nav-profile">Profil</button>
       <a href="index.html" class="btn">Site public</a>
       <button class="btn" id="logout-btn">Deconnexion</button>
@@ -169,6 +171,55 @@
           </table>
         </div>
       </div>
+    </div>
+
+    <!-- PANEL: Analytics -->
+    <div id="panel-analytics" class="panel">
+        <h2>Analytics & Primes</h2>
+
+        <!-- Filters -->
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;align-items:end;">
+            <div><label style="font-size:12px;font-weight:600;">Date debut</label><input type="date" id="filter-date-from" style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <div><label style="font-size:12px;font-weight:600;">Date fin</label><input type="date" id="filter-date-to" style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <div><label style="font-size:12px;font-weight:600;">Ville</label><input type="text" id="filter-city" placeholder="Toutes les villes" style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <button id="btn-filter-analytics" class="btn-primary" style="padding:8px 16px;">Filtrer</button>
+        </div>
+
+        <!-- Prime calculations -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px;">
+            <div class="card" style="text-align:center;background:#E8F5E9;"><div style="font-size:11px;color:#666;">Prime journaliere/pers.</div><div id="prime-daily" style="font-size:20px;font-weight:700;color:#1B5E20;">—</div></div>
+            <div class="card" style="text-align:center;background:#E3F2FD;"><div style="font-size:11px;color:#666;">Revenus mensuels</div><div id="prime-monthly" style="font-size:20px;font-weight:700;color:#1565C0;">—</div></div>
+            <div class="card" style="text-align:center;background:#FFF3E0;"><div style="font-size:11px;color:#666;">Revenus annuels</div><div id="prime-annual" style="font-size:20px;font-weight:700;color:#E65100;">—</div></div>
+            <div class="card" style="text-align:center;background:#F3E5F5;"><div style="font-size:11px;color:#666;">Marge Mano Verde/mois</div><div id="prime-margin" style="font-size:20px;font-weight:700;color:#7B1FA2;">—</div></div>
+        </div>
+
+        <!-- Geo stats -->
+        <h3>Repartition geographique</h3>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Ville</th><th>Souscripteurs</th><th>Personnes assurees</th></tr></thead><tbody id="geo-tbody"><tr><td colspan="3">Chargement...</td></tr></tbody></table></div>
+
+        <!-- Monthly stats -->
+        <h3 style="margin-top:20px;">Evolution mensuelle</h3>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Mois</th><th>Nouvelles souscriptions</th></tr></thead><tbody id="monthly-tbody"><tr><td colspan="2">Chargement...</td></tr></tbody></table></div>
+
+        <!-- Filtered subscribers list -->
+        <h3 style="margin-top:20px;">Souscripteurs filtres (<span id="analytics-count">0</span>)</h3>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Nom</th><th>Ville</th><th>Lot</th><th>Personnes</th><th>Prime mensuelle</th><th>Prime annuelle</th><th>Depuis</th></tr></thead><tbody id="analytics-tbody"><tr><td colspan="7">Chargement...</td></tr></tbody></table></div>
+    </div>
+
+    <!-- PANEL: Hospitals -->
+    <div id="panel-hospitals" class="panel">
+        <h2>Hopitaux partenaires</h2>
+
+        <form id="hospital-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;margin-bottom:20px;">
+            <div><label style="font-size:12px;font-weight:600;">Nom *</label><input type="text" id="h-name" required style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <div><label style="font-size:12px;font-weight:600;">Ville *</label><input type="text" id="h-city" required style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <div><label style="font-size:12px;font-weight:600;">Adresse</label><input type="text" id="h-address" style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <div><label style="font-size:12px;font-weight:600;">Telephone</label><input type="tel" id="h-phone" style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <div><label style="font-size:12px;font-weight:600;">Specialite</label><input type="text" id="h-specialty" style="padding:8px;border:1px solid #ddd;border-radius:6px;"></div>
+            <button type="submit" class="btn-primary" style="padding:8px 16px;">Ajouter</button>
+        </form>
+
+        <div style="overflow-x:auto;"><table><thead><tr><th>Nom</th><th>Ville</th><th>Adresse</th><th>Telephone</th><th>Specialite</th><th>Actions</th></tr></thead><tbody id="hospitals-tbody"><tr><td colspan="6">Aucun hopital</td></tr></tbody></table></div>
     </div>
 
     <!-- PANEL: Profile -->

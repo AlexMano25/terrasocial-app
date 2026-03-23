@@ -303,4 +303,164 @@ router.put('/profile', async (req, res) => {
     }
 });
 
+// ── Analytics ──────────────────────────────────────────────────────────
+
+// GET /api/insurer/analytics — subscription analytics with filters
+router.get('/analytics', async (req, res) => {
+    try {
+        const insurerId = req.insurer.id;
+        const { date_from, date_to, city } = req.query;
+
+        let conditions = ['ipd.insurer_id = ?'];
+        let params = [insurerId];
+
+        if (date_from) {
+            conditions.push('ipd.created_at >= ?');
+            params.push(date_from);
+        }
+        if (date_to) {
+            conditions.push('ipd.created_at <= ?');
+            params.push(date_to + 'T23:59:59');
+        }
+        if (city) {
+            conditions.push('u.city LIKE ?');
+            params.push('%' + city + '%');
+        }
+
+        const where = conditions.join(' AND ');
+
+        // Subscribers filtered
+        const subscribers = await all(
+            `SELECT u.id, u.full_name, u.email, u.phone, u.city,
+                    r.id as reservation_id, r.lot_type, r.lot_price, r.insurance_persons,
+                    r.duration_months, r.status as reservation_status, r.created_at as subscription_date,
+                    ipd.full_name as insured_name, ipd.created_at as insured_since
+             FROM insured_persons_details ipd
+             JOIN users u ON ipd.user_id = u.id
+             LEFT JOIN reservations r ON ipd.reservation_id = r.id
+             WHERE ${where} AND ipd.is_active = TRUE
+             ORDER BY ipd.created_at DESC`,
+            params
+        );
+
+        // Stats by city (geolocation)
+        const byCity = await all(
+            `SELECT u.city, COUNT(DISTINCT ipd.user_id) as subscriber_count, COUNT(ipd.id) as persons_count
+             FROM insured_persons_details ipd
+             JOIN users u ON ipd.user_id = u.id
+             WHERE ipd.insurer_id = ? AND ipd.is_active = TRUE AND u.city IS NOT NULL AND u.city != ''
+             GROUP BY u.city ORDER BY subscriber_count DESC`,
+            [insurerId]
+        );
+
+        // Stats by month (try/catch for SQLite compatibility — TO_CHAR is PostgreSQL-specific)
+        let byMonth = [];
+        try {
+            byMonth = await all(
+                `SELECT TO_CHAR(ipd.created_at, 'YYYY-MM') as month, COUNT(*) as count
+                 FROM insured_persons_details ipd
+                 WHERE ipd.insurer_id = ? AND ipd.is_active = TRUE
+                 GROUP BY TO_CHAR(ipd.created_at, 'YYYY-MM')
+                 ORDER BY month DESC LIMIT 12`,
+                [insurerId]
+            );
+        } catch (e) {
+            // SQLite fallback using strftime
+            try {
+                byMonth = await all(
+                    `SELECT strftime('%Y-%m', ipd.created_at) as month, COUNT(*) as count
+                     FROM insured_persons_details ipd
+                     WHERE ipd.insurer_id = ? AND ipd.is_active = TRUE
+                     GROUP BY strftime('%Y-%m', ipd.created_at)
+                     ORDER BY month DESC LIMIT 12`,
+                    [insurerId]
+                );
+            } catch (e2) { /* ignore */ }
+        }
+
+        // Prime calculations
+        const dailyCost = Number(req.insurer.daily_premium_cost || 100);
+        const totalPersons = subscribers.length;
+        const dailyRevenue = totalPersons * dailyCost;
+        const monthlyRevenue = dailyRevenue * 30;
+        const annualRevenue = dailyRevenue * 365;
+        const dailyCollection = totalPersons * 350; // what Mano Verde collects from clients
+        const monthlyCollection = dailyCollection * 30;
+
+        return res.json({
+            subscribers,
+            stats: {
+                total_filtered: subscribers.length,
+                by_city: byCity,
+                by_month: byMonth
+            },
+            primes: {
+                daily_premium_cost: dailyCost,
+                total_insured_persons: totalPersons,
+                daily_revenue: dailyRevenue,
+                monthly_revenue: monthlyRevenue,
+                annual_revenue: annualRevenue,
+                daily_collection_from_clients: dailyCollection,
+                monthly_collection_from_clients: monthlyCollection,
+                mano_verde_daily_margin: dailyCollection - dailyRevenue,
+                mano_verde_monthly_margin: monthlyCollection - monthlyRevenue
+            }
+        });
+    } catch (error) {
+        console.error('[INSURER ANALYTICS]', error.message);
+        return res.status(500).json({ error: 'Erreur chargement analytics' });
+    }
+});
+
+// ── Hospitals ──────────────────────────────────────────────────────────
+
+// GET /api/insurer/hospitals
+router.get('/hospitals', async (req, res) => {
+    try {
+        const hospitals = await all(
+            'SELECT * FROM insurer_hospitals WHERE insurer_id = ? AND is_active = TRUE ORDER BY city, name',
+            [req.insurer.id]
+        );
+        return res.json({ hospitals });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur chargement hopitaux' });
+    }
+});
+
+// POST /api/insurer/hospitals
+router.post('/hospitals', async (req, res) => {
+    try {
+        const { name, city, address, phone, specialty } = req.body;
+        if (!name || !city) return res.status(400).json({ error: 'Nom et ville requis' });
+
+        const safeName = sanitizeText(name, 255);
+        const safeCity = sanitizeText(city, 100);
+        const safeAddress = sanitizeText(address || '', 500);
+        const safePhone = sanitizeText(phone || '', 50);
+        const safeSpecialty = sanitizeText(specialty || '', 200);
+
+        const result = await run(
+            'INSERT INTO insurer_hospitals(insurer_id, name, city, address, phone, specialty) VALUES (?, ?, ?, ?, ?, ?)',
+            [req.insurer.id, safeName, safeCity, safeAddress, safePhone, safeSpecialty]
+        );
+
+        return res.status(201).json({ id: result.id, name: safeName, city: safeCity });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur ajout hopital' });
+    }
+});
+
+// DELETE /api/insurer/hospitals/:id
+router.delete('/hospitals/:id', async (req, res) => {
+    try {
+        await run(
+            'UPDATE insurer_hospitals SET is_active = FALSE WHERE id = ? AND insurer_id = ?',
+            [req.params.id, req.insurer.id]
+        );
+        return res.json({ message: 'Hopital retire' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur suppression hopital' });
+    }
+});
+
 module.exports = router;

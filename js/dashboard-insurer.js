@@ -15,7 +15,7 @@
   }
 
   // ── Panel switching ──
-  var panelNames = ['dashboard', 'subscribers', 'contracts', 'insured', 'profile'];
+  var panelNames = ['dashboard', 'subscribers', 'contracts', 'insured', 'analytics', 'hospitals', 'profile'];
 
   function switchPanel(name) {
     panelNames.forEach(function(p) {
@@ -257,6 +257,94 @@
     }
   });
 
+  // ── Analytics ──
+  async function loadAnalytics() {
+    var params = new URLSearchParams();
+    var dateFrom = document.getElementById('filter-date-from').value;
+    var dateTo = document.getElementById('filter-date-to').value;
+    var city = document.getElementById('filter-city').value;
+    if (dateFrom) params.set('date_from', dateFrom);
+    if (dateTo) params.set('date_to', dateTo);
+    if (city) params.set('city', city);
+
+    var qs = params.toString() ? '?' + params.toString() : '';
+    var data = await TSApi.request('/api/insurer/analytics' + qs);
+
+    // Primes
+    var xaf = function(v) { return Number(v || 0).toLocaleString('fr-FR') + ' FCFA'; };
+    document.getElementById('prime-daily').textContent = xaf(data.primes.daily_premium_cost) + '/pers.';
+    document.getElementById('prime-monthly').textContent = xaf(data.primes.monthly_revenue);
+    document.getElementById('prime-annual').textContent = xaf(data.primes.annual_revenue);
+    document.getElementById('prime-margin').textContent = xaf(data.primes.mano_verde_monthly_margin);
+
+    // Geo
+    var geoTbody = document.getElementById('geo-tbody');
+    geoTbody.innerHTML = data.stats.by_city.length ? data.stats.by_city.map(function(c) {
+      return '<tr><td>' + esc(c.city) + '</td><td>' + c.subscriber_count + '</td><td>' + c.persons_count + '</td></tr>';
+    }).join('') : '<tr><td colspan="3">Aucune donnee</td></tr>';
+
+    // Monthly
+    var monthTbody = document.getElementById('monthly-tbody');
+    monthTbody.innerHTML = data.stats.by_month.length ? data.stats.by_month.map(function(m) {
+      return '<tr><td>' + esc(m.month) + '</td><td>' + m.count + '</td></tr>';
+    }).join('') : '<tr><td colspan="2">Aucune donnee</td></tr>';
+
+    // Filtered subscribers
+    document.getElementById('analytics-count').textContent = data.subscribers.length;
+    var aTbody = document.getElementById('analytics-tbody');
+    aTbody.innerHTML = data.subscribers.length ? data.subscribers.map(function(s) {
+      var persons = Number(s.insurance_persons || 1);
+      var dailyCost = Number(data.primes.daily_premium_cost);
+      var primeMonthly = persons * dailyCost * 30;
+      var primeAnnual = persons * dailyCost * 365;
+      var since = s.insured_since ? new Date(s.insured_since).toLocaleDateString('fr-FR') : '-';
+      return '<tr><td>' + esc(s.full_name) + '</td><td>' + esc(s.city || '-') + '</td><td>' + esc((s.lot_type || '').toUpperCase()) + '</td><td>' + persons + '</td><td>' + xaf(primeMonthly) + '</td><td>' + xaf(primeAnnual) + '</td><td>' + since + '</td></tr>';
+    }).join('') : '<tr><td colspan="7">Aucun souscripteur</td></tr>';
+  }
+
+  document.getElementById('btn-filter-analytics').addEventListener('click', function() {
+    loadAnalytics();
+  });
+
+  // ── Hospitals ──
+  async function loadHospitals() {
+    var data = await TSApi.request('/api/insurer/hospitals');
+    var tbody = document.getElementById('hospitals-tbody');
+    tbody.innerHTML = data.hospitals.length ? data.hospitals.map(function(h) {
+      return '<tr><td>' + esc(h.name) + '</td><td>' + esc(h.city) + '</td><td>' + esc(h.address || '-') + '</td><td>' + esc(h.phone || '-') + '</td><td>' + esc(h.specialty || '-') + '</td><td><button class="btn-sm btn-orange" data-action="remove-hospital" data-id="' + h.id + '">Retirer</button></td></tr>';
+    }).join('') : '<tr><td colspan="6">Aucun hopital partenaire</td></tr>';
+  }
+
+  document.getElementById('hospital-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    try {
+      await TSApi.request('/api/insurer/hospitals', {
+        method: 'POST',
+        body: JSON.stringify({
+          name: document.getElementById('h-name').value,
+          city: document.getElementById('h-city').value,
+          address: document.getElementById('h-address').value,
+          phone: document.getElementById('h-phone').value,
+          specialty: document.getElementById('h-specialty').value
+        })
+      });
+      flash('Hopital ajoute avec succes.', 'ok');
+      document.getElementById('hospital-form').reset();
+      await loadHospitals();
+    } catch (err) { flash(err.message, 'err'); }
+  });
+
+  document.getElementById('hospitals-tbody').addEventListener('click', async function(e) {
+    var btn = e.target.closest('button');
+    if (!btn || btn.dataset.action !== 'remove-hospital') return;
+    if (!confirm('Retirer cet hopital partenaire ?')) return;
+    try {
+      await TSApi.request('/api/insurer/hospitals/' + btn.dataset.id, { method: 'DELETE' });
+      flash('Hopital retire.', 'ok');
+      await loadHospitals();
+    } catch (err) { flash(err.message, 'err'); }
+  });
+
   // ── Logout ──
   document.getElementById('logout-btn').addEventListener('click', function() {
     TSApi.clearSession();
@@ -266,7 +354,7 @@
   // ── Initial load ──
   async function loadAll() {
     try {
-      await Promise.all([loadDashboard(), loadSubscribers(), loadContracts(), loadPersons(), loadProfile()]);
+      await Promise.all([loadDashboard(), loadSubscribers(), loadContracts(), loadPersons(), loadProfile(), loadAnalytics(), loadHospitals()]);
     } catch (err) {
       flash(err.message, 'err');
     }

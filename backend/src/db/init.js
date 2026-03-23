@@ -595,6 +595,34 @@ async function initializeDatabase() {
     // v1.5 — ALTER reservations: add insurer_id
     try { await run('ALTER TABLE reservations ADD COLUMN insurer_id BIGINT'); } catch (e) { /* exists */ }
 
+    // v1.6 — Table hopitaux partenaires assureur
+    if (dbClient === 'postgres') {
+        await run(`CREATE TABLE IF NOT EXISTS insurer_hospitals (
+            id BIGSERIAL PRIMARY KEY,
+            insurer_id BIGINT NOT NULL REFERENCES insurers(id),
+            name TEXT NOT NULL,
+            city TEXT NOT NULL,
+            address TEXT,
+            phone TEXT,
+            specialty TEXT,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+    } else {
+        await run(`CREATE TABLE IF NOT EXISTS insurer_hospitals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            insurer_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            city TEXT NOT NULL,
+            address TEXT,
+            phone TEXT,
+            specialty TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(insurer_id) REFERENCES insurers(id)
+        )`);
+    }
+
     const admin = await get('SELECT id FROM users WHERE email = ?', ['admin@terrasocial.cm']);
     if (!admin) {
         const passwordHash = await bcrypt.hash('Admin@12345', 10);
