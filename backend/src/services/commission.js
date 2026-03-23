@@ -25,7 +25,7 @@ async function getCommissionRate(agentId) {
 async function createCommission(agentId, paymentId, paymentAmount) {
     // Check for duplicate
     const existing = await get(
-        'SELECT id FROM agent_commissions WHERE agent_id = ? AND payment_id = ?',
+        'SELECT id FROM agent_commissions WHERE agent_id = ? AND source_payment_id = ?',
         [agentId, paymentId]
     );
     if (existing) return null;
@@ -37,8 +37,8 @@ async function createCommission(agentId, paymentId, paymentAmount) {
     if (amount <= 0) return null;
 
     const result = await run(
-        `INSERT INTO agent_commissions(agent_id, payment_id, amount, rate_percent, status)
-         VALUES (?, ?, ?, ?, 'pending')`,
+        `INSERT INTO agent_commissions(agent_id, source_payment_id, amount, rate_percent, commission_type, status)
+         VALUES (?, ?, ?, ?, 'client_subscription', 'pending')`,
         [agentId, paymentId, amount, rate]
     );
 
