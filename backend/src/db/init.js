@@ -395,7 +395,7 @@ async function initializeDatabase() {
     if (dbClient === 'postgres') {
         await run(`CREATE TABLE IF NOT EXISTS referrals (
             id BIGSERIAL PRIMARY KEY,
-            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            agent_id TEXT NOT NULL REFERENCES agents(id),
             referred_user_id BIGINT REFERENCES users(id),
             referred_type TEXT NOT NULL DEFAULT 'client',
             promo_code_used TEXT,
@@ -404,7 +404,7 @@ async function initializeDatabase() {
         )`);
         await run(`CREATE TABLE IF NOT EXISTS agent_commissions (
             id BIGSERIAL PRIMARY KEY,
-            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            agent_id TEXT NOT NULL REFERENCES agents(id),
             payment_id BIGINT REFERENCES payments(id),
             amount INTEGER NOT NULL,
             rate_percent NUMERIC(5,2),
@@ -415,7 +415,7 @@ async function initializeDatabase() {
         )`);
         await run(`CREATE TABLE IF NOT EXISTS promo_codes (
             id BIGSERIAL PRIMARY KEY,
-            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            agent_id TEXT NOT NULL REFERENCES agents(id),
             code TEXT NOT NULL UNIQUE,
             description TEXT,
             max_uses INTEGER,
@@ -426,7 +426,7 @@ async function initializeDatabase() {
         )`);
         await run(`CREATE TABLE IF NOT EXISTS agent_withdrawals (
             id BIGSERIAL PRIMARY KEY,
-            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            agent_id TEXT NOT NULL REFERENCES agents(id),
             amount INTEGER NOT NULL,
             fee INTEGER NOT NULL DEFAULT 0,
             net_amount INTEGER NOT NULL,
