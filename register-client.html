@@ -71,6 +71,20 @@
   <script src="js/runtime-config.js"></script>
   <script src="js/app-api.js"></script>
   <script>
+    // Capture referral code from URL
+    var urlParams = new URLSearchParams(window.location.search);
+    var refCode = urlParams.get('ref') || '';
+    var promoCode = urlParams.get('promo') || '';
+
+    // Show referral banner if present
+    if (refCode) {
+        var banner = document.createElement('div');
+        banner.style.cssText = 'background:linear-gradient(135deg,#1B7A3D,#2E7D32);color:#fff;padding:12px 20px;border-radius:8px;margin-bottom:16px;text-align:center;font-weight:600;';
+        banner.textContent = 'Recommande par un agent TERRASOCIAL';
+        var form = document.querySelector('form');
+        if (form) form.parentElement.insertBefore(banner, form);
+    }
+
     function flash(message, type) {
       const el = document.getElementById('flash');
       el.innerHTML = `<div class="flash ${type}">${message}</div>`;
@@ -93,7 +107,9 @@
         phone: phone || undefined,
         email: email || undefined,
         city: document.getElementById('city').value,
-        password: document.getElementById('password').value
+        password: document.getElementById('password').value,
+        ref: refCode,
+        promo_code: promoCode
       };
 
       try {

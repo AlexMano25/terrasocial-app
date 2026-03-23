@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Assureur - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', Arial, sans-serif; background: #f5f5f5; color: #333; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 1px solid #eee; flex-wrap: wrap; gap: 12px; }
+    .topbar h1 { font-size: 22px; color: #1B5E20; }
+    .topbar .actions { display: flex; gap: 8px; }
+    .topbar .btn { padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-size: 13px; }
+    .topbar .btn.active { background: #1B5E20; color: #fff; border-color: #1B5E20; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .kpi-card .kpi-value { font-size: 28px; font-weight: 700; color: #1B5E20; }
+    .kpi-card .kpi-label { font-size: 13px; color: #666; margin-top: 4px; }
+    .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card h3 { margin: 0 0 16px; color: #1B5E20; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f9f9f9; padding: 10px; text-align: left; font-size: 12px; color: #666; text-transform: uppercase; }
+    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .badge-ok { background: #E8F5E9; color: #1B5E20; }
+    .badge-pending { background: #FFF3E0; color: #E65100; }
+    .badge-paid { background: #E3F2FD; color: #1565C0; }
+    .flash { padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+    .flash.ok { background: #E8F5E9; color: #1B5E20; }
+    .flash.err { background: #FFEBEE; color: #C62828; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .upload-form { background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+    .upload-form label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .upload-form input, .upload-form select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 8px; }
+    .btn-primary { background: #1B5E20; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .btn-sm { padding: 4px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-green { background: #1B5E20; color: #fff; }
+    .btn-orange { background: #FF8F00; color: #fff; }
+    .btn-blue { background: #1565C0; color: #fff; }
+    @media (max-width: 600px) { .grid-4 { grid-template-columns: 1fr 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>🛡️ Espace Assureur</h1>
+      <p id="insurer-meta" style="font-size:13px;color:#666;">Chargement...</p>
+    </div>
+    <div class="actions">
+      <button class="btn active" data-panel="dashboard" id="nav-dashboard">Tableau de bord</button>
+      <button class="btn" data-panel="subscribers" id="nav-subscribers">Souscripteurs</button>
+      <button class="btn" data-panel="contracts" id="nav-contracts">Contrats</button>
+      <button class="btn" data-panel="insured" id="nav-insured">Assures</button>
+      <button class="btn" data-panel="profile" id="nav-profile">Profil</button>
+      <a href="index.html" class="btn">Site public</a>
+      <button class="btn" id="logout-btn">Deconnexion</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="flash"></div>
+
+    <!-- PANEL: Dashboard -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="grid-4">
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-subscribers">0</div>
+          <div class="kpi-label">Total souscripteurs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-active-contracts">0</div>
+          <div class="kpi-label">Contrats actifs</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-signed-contracts">0</div>
+          <div class="kpi-label">Contrats signes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-persons">0</div>
+          <div class="kpi-label">Personnes assurees</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Subscribers -->
+    <div id="panel-subscribers" class="panel">
+      <div class="card">
+        <h3>Souscripteurs</h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Telephone</th>
+                <th>Lot</th>
+                <th>Prix</th>
+                <th>Personnes</th>
+                <th>Statut</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody id="subscribers-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Contracts -->
+    <div id="panel-contracts" class="panel">
+      <div class="card">
+        <h3>Telecharger un modele de contrat</h3>
+        <form id="upload-template-form" class="upload-form">
+          <label>Fichier du contrat (PDF)</label>
+          <input type="file" id="contract-file" accept=".pdf,.doc,.docx" required>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <div>
+              <label>ID Reservation</label>
+              <input type="text" id="contract-reservation-id" placeholder="ID de la reservation" required>
+            </div>
+            <div>
+              <label>ID Utilisateur</label>
+              <input type="text" id="contract-user-id" placeholder="ID de l'utilisateur" required>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary">Envoyer le contrat</button>
+          <span id="upload-result" style="margin-left:12px;font-size:13px;"></span>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Contrats existants</h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>N&#176; Contrat</th>
+                <th>Souscripteur</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="contracts-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Insured Persons -->
+    <div id="panel-insured" class="panel">
+      <div class="card">
+        <h3>Personnes assurees</h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom assure</th>
+                <th>Souscripteur</th>
+                <th>Date naissance</th>
+                <th>N&#176; ID</th>
+                <th>QR</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="persons-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Profile -->
+    <div id="panel-profile" class="panel">
+      <div class="card">
+        <h3>Mon profil assureur</h3>
+        <p style="font-size:13px;color:#666;margin-bottom:16px;">Mettez a jour les informations de votre entreprise</p>
+        <form id="insurer-profile-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-weight:600;font-size:13px;">Nom de l'entreprise</label>
+              <input id="ip-company-name" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">N&#176; de licence</label>
+              <input id="ip-license-number" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Telephone</label>
+              <input id="ip-phone" type="tel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Email</label>
+              <input id="ip-email" type="email" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Prime journaliere (FCFA)</label>
+              <input id="ip-daily-premium" type="number" min="100" max="349" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button type="submit" class="btn-primary">Enregistrer le profil</button>
+            <span id="profile-result" style="margin-left:12px;font-size:13px;"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/runtime-config.js"></script>
+  <script src="js/app-api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/dashboard-insurer.js"></script>
+</body>
+</html>

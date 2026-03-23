@@ -391,6 +391,210 @@ async function initializeDatabase() {
         )`);
     }
 
+    // v1.4 — Tables Agent: referrals, agent_commissions, promo_codes, agent_withdrawals
+    if (dbClient === 'postgres') {
+        await run(`CREATE TABLE IF NOT EXISTS referrals (
+            id BIGSERIAL PRIMARY KEY,
+            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            referred_user_id BIGINT REFERENCES users(id),
+            referred_type TEXT NOT NULL DEFAULT 'client',
+            promo_code_used TEXT,
+            status TEXT DEFAULT 'active',
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS agent_commissions (
+            id BIGSERIAL PRIMARY KEY,
+            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            payment_id BIGINT REFERENCES payments(id),
+            amount INTEGER NOT NULL,
+            rate_percent NUMERIC(5,2),
+            status TEXT DEFAULT 'pending',
+            paid_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ DEFAULT NOW(),
+            UNIQUE(agent_id, payment_id)
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS promo_codes (
+            id BIGSERIAL PRIMARY KEY,
+            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            code TEXT NOT NULL UNIQUE,
+            description TEXT,
+            max_uses INTEGER,
+            usage_count INTEGER DEFAULT 0,
+            is_active BOOLEAN DEFAULT TRUE,
+            expires_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS agent_withdrawals (
+            id BIGSERIAL PRIMARY KEY,
+            agent_id BIGINT NOT NULL REFERENCES agents(id),
+            amount INTEGER NOT NULL,
+            fee INTEGER NOT NULL DEFAULT 0,
+            net_amount INTEGER NOT NULL,
+            method TEXT NOT NULL,
+            phone TEXT,
+            status TEXT DEFAULT 'pending',
+            processed_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+    } else {
+        await run(`CREATE TABLE IF NOT EXISTS referrals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            agent_id INTEGER NOT NULL,
+            referred_user_id INTEGER,
+            referred_type TEXT NOT NULL DEFAULT 'client',
+            promo_code_used TEXT,
+            status TEXT DEFAULT 'active',
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(agent_id) REFERENCES agents(id),
+            FOREIGN KEY(referred_user_id) REFERENCES users(id)
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS agent_commissions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            agent_id INTEGER NOT NULL,
+            payment_id INTEGER,
+            amount INTEGER NOT NULL,
+            rate_percent REAL,
+            status TEXT DEFAULT 'pending',
+            paid_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(agent_id) REFERENCES agents(id),
+            FOREIGN KEY(payment_id) REFERENCES payments(id),
+            UNIQUE(agent_id, payment_id)
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS promo_codes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            agent_id INTEGER NOT NULL,
+            code TEXT NOT NULL UNIQUE,
+            description TEXT,
+            max_uses INTEGER,
+            usage_count INTEGER DEFAULT 0,
+            is_active INTEGER DEFAULT 1,
+            expires_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(agent_id) REFERENCES agents(id)
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS agent_withdrawals (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            agent_id INTEGER NOT NULL,
+            amount INTEGER NOT NULL,
+            fee INTEGER NOT NULL DEFAULT 0,
+            net_amount INTEGER NOT NULL,
+            method TEXT NOT NULL,
+            phone TEXT,
+            status TEXT DEFAULT 'pending',
+            processed_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(agent_id) REFERENCES agents(id)
+        )`);
+    }
+
+    // v1.4 — ALTER agents: add payment columns
+    try { await run('ALTER TABLE agents ADD COLUMN orange_money TEXT'); } catch (e) { /* exists */ }
+    try { await run('ALTER TABLE agents ADD COLUMN mtn_momo TEXT'); } catch (e) { /* exists */ }
+    try { await run('ALTER TABLE agents ADD COLUMN bank_name TEXT'); } catch (e) { /* exists */ }
+    try { await run('ALTER TABLE agents ADD COLUMN bank_account TEXT'); } catch (e) { /* exists */ }
+
+    // v1.5 — Tables Assureur: insurers, insurer_contracts, insured_persons_details
+    // Widen users.role CHECK constraint to include 'insurer'
+    if (dbClient === 'postgres') {
+        try {
+            await run("ALTER TABLE users DROP CONSTRAINT IF EXISTS users_role_check");
+            await run("ALTER TABLE users ADD CONSTRAINT users_role_check CHECK(role IN ('client', 'owner', 'admin', 'insurer'))");
+        } catch (e) { /* constraint may already be updated */ }
+
+        await run(`CREATE TABLE IF NOT EXISTS insurers (
+            id BIGSERIAL PRIMARY KEY,
+            user_id BIGINT NOT NULL UNIQUE REFERENCES users(id),
+            company_name TEXT NOT NULL,
+            license_number TEXT,
+            daily_premium_cost INTEGER DEFAULT 100,
+            is_active BOOLEAN DEFAULT TRUE,
+            phone TEXT,
+            email TEXT,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS insurer_contracts (
+            id BIGSERIAL PRIMARY KEY,
+            insurer_id BIGINT NOT NULL REFERENCES insurers(id),
+            reservation_id BIGINT REFERENCES reservations(id),
+            user_id BIGINT NOT NULL REFERENCES users(id),
+            contract_number TEXT NOT NULL,
+            template_file_path TEXT,
+            template_public_url TEXT,
+            signed_file_path TEXT,
+            signed_public_url TEXT,
+            status TEXT DEFAULT 'draft',
+            signature_requested_at TIMESTAMPTZ,
+            signed_at TIMESTAMPTZ,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS insured_persons_details (
+            id BIGSERIAL PRIMARY KEY,
+            reservation_id BIGINT NOT NULL REFERENCES reservations(id),
+            user_id BIGINT NOT NULL REFERENCES users(id),
+            insurer_id BIGINT REFERENCES insurers(id),
+            full_name TEXT NOT NULL,
+            date_of_birth DATE,
+            id_number TEXT,
+            phone TEXT,
+            qr_code_data TEXT,
+            card_generated_at TIMESTAMPTZ,
+            is_active BOOLEAN DEFAULT TRUE,
+            created_at TIMESTAMPTZ DEFAULT NOW()
+        )`);
+    } else {
+        await run(`CREATE TABLE IF NOT EXISTS insurers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            company_name TEXT NOT NULL,
+            license_number TEXT,
+            daily_premium_cost INTEGER DEFAULT 100,
+            is_active INTEGER DEFAULT 1,
+            phone TEXT,
+            email TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS insurer_contracts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            insurer_id INTEGER NOT NULL,
+            reservation_id INTEGER,
+            user_id INTEGER NOT NULL,
+            contract_number TEXT NOT NULL,
+            template_file_path TEXT,
+            template_public_url TEXT,
+            signed_file_path TEXT,
+            signed_public_url TEXT,
+            status TEXT DEFAULT 'draft',
+            signature_requested_at TEXT,
+            signed_at TEXT,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(insurer_id) REFERENCES insurers(id),
+            FOREIGN KEY(reservation_id) REFERENCES reservations(id),
+            FOREIGN KEY(user_id) REFERENCES users(id)
+        )`);
+        await run(`CREATE TABLE IF NOT EXISTS insured_persons_details (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            reservation_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            insurer_id INTEGER,
+            full_name TEXT NOT NULL,
+            date_of_birth TEXT,
+            id_number TEXT,
+            phone TEXT,
+            qr_code_data TEXT,
+            card_generated_at TEXT,
+            is_active INTEGER DEFAULT 1,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(reservation_id) REFERENCES reservations(id),
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(insurer_id) REFERENCES insurers(id)
+        )`);
+    }
+
+    // v1.5 — ALTER reservations: add insurer_id
+    try { await run('ALTER TABLE reservations ADD COLUMN insurer_id BIGINT'); } catch (e) { /* exists */ }
+
     const admin = await get('SELECT id FROM users WHERE email = ?', ['admin@terrasocial.cm']);
     if (!admin) {
         const passwordHash = await bcrypt.hash('Admin@12345', 10);

@@ -128,26 +128,39 @@
       </table>
     </div>
 
-    <!-- Barème -->
-    <div class="card" style="background:linear-gradient(135deg,#FFF8E1,#FFF3E0);">
-      <h3 style="color:#E65100;">📈 Barème de vos commissions</h3>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:12px;">
-        <div>
-          <h4 style="color:#1B5E20;">Clients recrutés</h4>
-          <p style="font-size:24px; font-weight:700; color:#1B5E20;">500 FCFA</p>
-          <p style="font-size:13px; color:#666;">Par souscription validée</p>
-        </div>
-        <div>
-          <h4 style="color:#E65100;">Propriétaires</h4>
-          <table style="font-size:13px;">
-            <tr><td>≤ 5 Ha</td><td style="font-weight:700; color:#1B5E20;">1%</td></tr>
-            <tr><td>5-10 Ha</td><td style="font-weight:700; color:#1B5E20;">2%</td></tr>
-            <tr><td>10-15 Ha</td><td style="font-weight:700; color:#1B5E20;">3%</td></tr>
-            <tr><td>15-20 Ha</td><td style="font-weight:700; color:#E65100;">4%</td></tr>
-            <tr><td>25+ Ha</td><td style="font-weight:700; color:#C62828;">Négociable</td></tr>
-          </table>
-        </div>
+    <!-- Retrait des gains -->
+    <div class="card" style="margin-top:20px;">
+      <h3>Retrait des gains</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+        <div><strong>Solde disponible :</strong> <span id="balance-available">—</span> FCFA</div>
+        <div><strong>Total gagne :</strong> <span id="balance-earned">—</span> FCFA</div>
       </div>
+      <form id="withdrawal-form" style="display:flex;gap:8px;flex-wrap:wrap;align-items:end;">
+        <div><label>Montant (min 5 000)</label><input type="number" id="w-amount" min="5000" step="500" required></div>
+        <div><label>Methode</label><select id="w-method"><option value="orange_money">Orange Money</option><option value="mtn_momo">MTN MoMo</option></select></div>
+        <div><label>Telephone</label><input type="tel" id="w-phone" placeholder="+237..." required></div>
+        <button type="submit" class="btn-primary">Demander un retrait</button>
+      </form>
+      <p class="small" style="color:#888;margin-top:6px;">Frais de retrait : 3%</p>
+      <div id="withdrawal-result" style="margin-top:8px;"></div>
+      <h4 style="margin-top:16px;">Historique des retraits</h4>
+      <div class="table-wrap"><table class="table"><thead><tr><th>Montant</th><th>Frais</th><th>Net</th><th>Methode</th><th>Statut</th><th>Date</th></tr></thead><tbody id="withdrawals-tbody"><tr><td colspan="6">Aucun retrait</td></tr></tbody></table></div>
+    </div>
+
+    <!-- Grille de commission variable -->
+    <div class="card">
+      <h3>Grille de commission — Versements clients</h3>
+      <table class="table">
+        <thead><tr><th>Filleuls actifs</th><th>Taux par versement</th></tr></thead>
+        <tbody>
+          <tr><td>1 – 2</td><td>1%</td></tr>
+          <tr><td>3 – 5</td><td>2%</td></tr>
+          <tr><td>6 – 10</td><td>3%</td></tr>
+          <tr><td>11 – 25</td><td>4%</td></tr>
+          <tr><td>26 – 50</td><td>5%</td></tr>
+        </tbody>
+      </table>
+      <p class="small" style="margin-top:8px;color:#666;">Votre taux actuel : <strong id="current-rate">—</strong>%</p>
     </div>
 
     <!-- Mon profil agent -->
@@ -373,8 +386,59 @@
       }
     });
 
+    // ── Balance & Withdrawals ─────────────────────────────────────────────
+    async function loadBalance() {
+      try {
+        var data = await TSApi.request('/api/agent/balance');
+        document.getElementById('balance-available').textContent = TSUtils.escapeHtml(xaf(data.available));
+        document.getElementById('balance-earned').textContent = TSUtils.escapeHtml(xaf(data.earned));
+        document.getElementById('current-rate').textContent = TSUtils.escapeHtml(String(data.current_rate || 0));
+      } catch (e) { /* silencieux */ }
+    }
+
+    async function loadWithdrawals() {
+      try {
+        var data = await TSApi.request('/api/agent/withdrawals');
+        var tbody = document.getElementById('withdrawals-tbody');
+        if (data.withdrawals && data.withdrawals.length) {
+          tbody.innerHTML = data.withdrawals.map(function(w) {
+            var statusBadge = w.status === 'paid' ? '<span class="badge badge-ok">Payé</span>' : w.status === 'approved' ? '<span class="badge badge-paid">Approuvé</span>' : '<span class="badge badge-pending">En attente</span>';
+            return '<tr><td>' + TSUtils.escapeHtml(xaf(w.amount)) + '</td><td>' + TSUtils.escapeHtml(xaf(w.fee)) + '</td><td>' + TSUtils.escapeHtml(xaf(w.net)) + '</td><td>' + TSUtils.escapeHtml(w.method || '-') + '</td><td>' + statusBadge + '</td><td style="font-size:12px;">' + TSUtils.escapeHtml(new Date(w.created_at).toLocaleDateString('fr-FR')) + '</td></tr>';
+          }).join('');
+        } else {
+          tbody.innerHTML = '<tr><td colspan="6">Aucun retrait</td></tr>';
+        }
+      } catch (e) { /* silencieux */ }
+    }
+
+    document.getElementById('withdrawal-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      var resultEl = document.getElementById('withdrawal-result');
+      resultEl.innerHTML = '<span style="color:#666;">Traitement...</span>';
+      try {
+        var body = {
+          amount: Number(document.getElementById('w-amount').value),
+          method: document.getElementById('w-method').value,
+          phone: document.getElementById('w-phone').value
+        };
+        var result = await TSApi.request('/api/agent/withdraw', {
+          method: 'POST',
+          body: JSON.stringify(body)
+        });
+        resultEl.innerHTML = '<span style="color:#1B5E20;font-weight:600;">Demande de retrait envoyée !</span>';
+        document.getElementById('w-amount').value = '';
+        document.getElementById('w-phone').value = '';
+        await loadBalance();
+        await loadWithdrawals();
+      } catch (err) {
+        resultEl.innerHTML = '<span style="color:#C62828;">' + TSUtils.escapeHtml(err.message) + '</span>';
+      }
+    });
+
     loadDashboard();
     loadAgentProfile();
+    loadBalance();
+    loadWithdrawals();
   })();
   </script>
   <script src="js/pwa-install.js"></script>

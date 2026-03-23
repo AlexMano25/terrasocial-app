@@ -62,6 +62,26 @@
       // Frais d'adhésion
       renderAdhesionSection(data.reservations, data.payments || []);
 
+      // After rendering the adhesion section, add insurance badge
+      if (data.reservations && data.reservations.some(function(r) { return r.insurance_persons > 0; })) {
+          var badgeSection = document.getElementById('insurance-badge-section');
+          if (badgeSection) {
+              var names = [];
+              // Collect insured person names from reservations data if available
+              data.reservations.forEach(function(r) {
+                  if (r.insurance_persons > 0) {
+                      names.push(r.lot_type.toUpperCase() + ': ' + r.insurance_persons + ' personne(s)');
+                  }
+              });
+              badgeSection.style.display = 'block';
+              badgeSection.innerHTML = '<div style="background:linear-gradient(135deg,#1565C0,#0D47A1);color:#fff;padding:16px 20px;border-radius:12px;text-align:center;">' +
+                  '<div style="font-size:24px;margin-bottom:4px;">🛡️</div>' +
+                  '<div style="font-weight:700;font-size:16px;">Vous etes assure</div>' +
+                  '<div style="font-size:13px;opacity:0.9;margin-top:4px;">' + names.map(function(n) { return TSUtils.escapeHtml(n); }).join(' | ') + '</div>' +
+                  '</div>';
+          }
+      }
+
       // Police d'assurance
       var hasRes = data.reservations && data.reservations.length > 0;
       document.getElementById('btn-insurance').disabled = !hasRes;

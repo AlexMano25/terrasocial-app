@@ -62,6 +62,26 @@ async function requireSuperAdmin(req, res, next) {
     }
 }
 
+async function isInsurerUser(userId) {
+    const row = await get('SELECT id FROM insurers WHERE user_id = ? AND is_active = TRUE', [userId]);
+    return Boolean(row);
+}
+
+async function requireInsurer(req, res, next) {
+    try {
+        if (!req.user) {
+            return res.status(401).json({ error: 'Authentification requise' });
+        }
+        const ok = await isInsurerUser(req.user.id);
+        if (!ok) {
+            return res.status(403).json({ error: 'Compte assureur requis' });
+        }
+        return next();
+    } catch (error) {
+        return res.status(500).json({ error: 'Verification assureur impossible' });
+    }
+}
+
 async function requireManager(req, res, next) {
     try {
         if (!req.user || req.user.role !== 'admin') {
@@ -83,5 +103,7 @@ module.exports = {
     requireSuperAdmin,
     requireManager,
     isSuperAdminUser,
-    isManagerUser
+    isManagerUser,
+    isInsurerUser,
+    requireInsurer
 };

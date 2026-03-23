@@ -237,4 +237,82 @@ router.put('/profile', requireAuth, requireAgent, async (req, res) => {
     }
 });
 
+// GET /api/agent/balance
+router.get('/balance', requireAuth, async (req, res) => {
+    try {
+        const agent = await get('SELECT id FROM agents WHERE user_id = ? AND is_active = TRUE', [req.user.id]);
+        if (!agent) return res.status(403).json({ error: 'Compte agent requis' });
+
+        const { getAgentBalance, getCommissionRate } = require('../services/commission');
+        const balance = await getAgentBalance(agent.id);
+        const currentRate = await getCommissionRate(agent.id);
+
+        return res.json({ ...balance, current_rate: currentRate });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur récupération solde' });
+    }
+});
+
+// POST /api/agent/withdraw
+router.post('/withdraw', requireAuth, async (req, res) => {
+    try {
+        const agent = await get('SELECT id FROM agents WHERE user_id = ? AND is_active = TRUE', [req.user.id]);
+        if (!agent) return res.status(403).json({ error: 'Compte agent requis' });
+
+        const { amount, method, phone } = req.body;
+        const safeAmount = Number(amount);
+
+        if (!safeAmount || safeAmount < 5000) {
+            return res.status(400).json({ error: 'Montant minimum: 5 000 FCFA' });
+        }
+        if (!method) {
+            return res.status(400).json({ error: 'Méthode de paiement requise' });
+        }
+
+        const { getAgentBalance } = require('../services/commission');
+        const balance = await getAgentBalance(agent.id);
+
+        if (safeAmount > balance.available) {
+            return res.status(400).json({ error: 'Solde insuffisant (' + balance.available + ' FCFA disponible)' });
+        }
+
+        const fee = Math.ceil(safeAmount * 0.03);
+        const netAmount = safeAmount - fee;
+
+        const result = await run(
+            `INSERT INTO agent_withdrawals(agent_id, amount, fee, net_amount, method, phone, status)
+             VALUES (?, ?, ?, ?, ?, ?, 'pending')`,
+            [agent.id, safeAmount, fee, netAmount, method, phone || '']
+        );
+
+        return res.status(201).json({
+            id: result.id,
+            amount: safeAmount,
+            fee,
+            net_amount: netAmount,
+            method,
+            status: 'pending'
+        });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur demande de retrait' });
+    }
+});
+
+// GET /api/agent/withdrawals
+router.get('/withdrawals', requireAuth, async (req, res) => {
+    try {
+        const agent = await get('SELECT id FROM agents WHERE user_id = ? AND is_active = TRUE', [req.user.id]);
+        if (!agent) return res.status(403).json({ error: 'Compte agent requis' });
+
+        const withdrawals = await all(
+            'SELECT * FROM agent_withdrawals WHERE agent_id = ? ORDER BY created_at DESC',
+            [agent.id]
+        );
+
+        return res.json({ withdrawals });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur récupération retraits' });
+    }
+});
+
 module.exports = router;

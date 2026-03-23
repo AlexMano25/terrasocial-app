@@ -40,6 +40,20 @@ router.post('/campay', async (req, res) => {
                 ['paid', payment.id]
             );
 
+            // Commission agent
+            try {
+                const referral = await get(
+                    "SELECT r.agent_id FROM referrals r WHERE r.referred_user_id = ? AND r.status = 'active'",
+                    [payment.user_id]
+                );
+                if (referral) {
+                    const { createCommission } = require('../services/commission');
+                    await createCommission(referral.agent_id, payment.id, Number(payment.amount));
+                }
+            } catch (commErr) {
+                console.error('[WEBHOOK COMMISSION] Error:', commErr.message);
+            }
+
             // Recompute reliability score
             try {
                 const { recomputeReliabilityScore } = require('../services/reliability');

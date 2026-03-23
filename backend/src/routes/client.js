@@ -373,6 +373,20 @@ router.post('/versement/:id/confirm', async (req, res) => {
         const { recomputeReliabilityScore } = require('../services/reliability');
         const score = await recomputeReliabilityScore(userId);
 
+        // Commission agent: si le payeur a été référé par un agent
+        try {
+            const referral = await get(
+                "SELECT r.agent_id FROM referrals r WHERE r.referred_user_id = ? AND r.status = 'active'",
+                [userId]
+            );
+            if (referral) {
+                const { createCommission } = require('../services/commission');
+                await createCommission(referral.agent_id, payment.id, Number(payment.amount));
+            }
+        } catch (commErr) {
+            console.error('[COMMISSION] Error creating commission:', commErr.message);
+        }
+
         await req.audit?.('client.versement_confirmed', {
             user_id: userId,
             payment_id: payment.id,
