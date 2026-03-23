@@ -13,11 +13,15 @@ function csrfProtection() {
             });
         }
 
-        // Skip CSRF check for safe methods, webhooks, and test environment
+        // Skip CSRF check for safe methods, webhooks, public auth, and test environment
         if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
             return next();
         }
         if (req.path.startsWith('/api/webhooks/')) {
+            return next();
+        }
+        // Auth routes are public (no session to hijack) — standard CSRF exemption
+        if (req.path.startsWith('/api/auth/')) {
             return next();
         }
         if (process.env.NODE_ENV === 'test') {
