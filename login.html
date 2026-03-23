@@ -111,7 +111,8 @@
       try {
         const res = await fetch(`${window.TERRASOCIAL_API_BASE || ''}/api/auth/google`, {
           method: 'HEAD',
-          redirect: 'manual'
+          redirect: 'manual',
+          credentials: 'include'
         });
         // Si le serveur retourne autre chose que 501, Google est configuré
         if (res.status !== 501) {

@@ -63,13 +63,16 @@
     const token = getToken();
     if (token) headers.Authorization = `Bearer ${token}`;
 
-    // CSRF protection
+    // CSRF protection — ensure token exists before any mutation
+    if (!getCsrfToken() && options?.method && options.method !== 'GET') {
+      await ensureCsrf();
+    }
     const csrfToken = getCsrfToken();
     if (csrfToken) headers['X-CSRF-Token'] = csrfToken;
 
     let response;
     try {
-      response = await fetch(`${API_BASE}${path}`, Object.assign({}, options, { headers }));
+      response = await fetch(`${API_BASE}${path}`, Object.assign({}, options, { headers, credentials: 'include' }));
     } catch (error) {
       throw new Error(`Backend injoignable (${API_BASE}). Configure ts_api_base vers ton API publique.`);
     }
@@ -90,11 +93,23 @@
     return data;
   }
 
+  // Ensure CSRF cookie exists by hitting a GET endpoint
+  async function ensureCsrf() {
+    if (getCsrfToken()) return; // already have it
+    try {
+      await fetch(`${API_BASE}/api/health`, { credentials: 'include' });
+    } catch (_) { /* ignore network errors */ }
+  }
+
+  // Auto-init CSRF on page load
+  ensureCsrf();
+
   window.TSApi = {
     API_BASE,
     getToken,
     setSession,
     clearSession,
-    request
+    request,
+    ensureCsrf
   };
 })();
