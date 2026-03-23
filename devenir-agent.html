@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Devenez agent partenaire TERRASOCIAL et gagnez des commissions sur chaque souscription. Rejoignez notre reseau d'agents immobiliers au Cameroun.">
+    <title>Devenir Agent Partenaire - TERRASOCIAL</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700&display=swap">
+    <style>
+        :root {
+            --green:#1B7A3D; --green-light:#27AE60; --green-dark:#145A2D;
+            --orange:#F39C12; --orange-dark:#E67E22;
+            --gray:#5A6C7D; --gray-light:#F8FAFB; --white:#FFF; --dark:#2C3E50;
+        }
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Inter',sans-serif;color:var(--dark);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+
+        /* NAV */
+        .topbar{background:var(--white);padding:16px 0;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:100;}
+        .container{max-width:1200px;margin:0 auto;padding:0 24px;}
+        .topbar .container{display:flex;align-items:center;justify-content:space-between;}
+        .logo{font-size:22px;font-weight:800;color:var(--green);}
+        .logo span:last-child{color:var(--dark);}
+        .topbar-links{display:flex;gap:16px;align-items:center;}
+        .topbar-links a{font-size:14px;font-weight:500;color:var(--gray);transition:color .2s;}
+        .topbar-links a:hover{color:var(--green);}
+        .topbar-links .btn-login{background:var(--green);color:#fff;padding:8px 20px;border-radius:8px;}
+        .topbar-links .btn-login:hover{background:var(--green-dark);}
+
+        /* HERO */
+        .hero{background:linear-gradient(135deg,#0a3d1a 0%,#1B7A3D 50%,#27AE60 100%);color:#fff;padding:100px 0 80px;position:relative;overflow:hidden;}
+        .hero::before{content:'';position:absolute;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,.05) 0%,transparent 70%);border-radius:50%;}
+        .hero::after{content:'';position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;background:radial-gradient(circle,rgba(243,156,18,.1) 0%,transparent 70%);border-radius:50%;}
+        .hero .container{position:relative;z-index:1;text-align:center;}
+        .hero-badge{display:inline-block;background:rgba(255,255,255,.15);padding:8px 24px;border-radius:50px;font-size:14px;font-weight:600;margin-bottom:24px;backdrop-filter:blur(4px);}
+        .hero h1{font-family:'Playfair Display',serif;font-size:52px;line-height:1.15;margin-bottom:20px;}
+        .hero h1 .accent{color:var(--orange);display:block;}
+        .hero p.subtitle{font-size:20px;max-width:700px;margin:0 auto 40px;opacity:.9;}
+        .hero-stats{display:flex;justify-content:center;gap:48px;margin-bottom:40px;}
+        .hero-stat{text-align:center;}
+        .hero-stat .num{font-size:42px;font-weight:800;color:var(--orange);}
+        .hero-stat .label{font-size:13px;opacity:.8;margin-top:4px;}
+        .hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+        .btn{display:inline-block;padding:16px 36px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:all .3s;border:none;}
+        .btn-orange{background:var(--orange);color:#fff;box-shadow:0 4px 20px rgba(243,156,18,.4);}
+        .btn-orange:hover{background:var(--orange-dark);transform:translateY(-2px);box-shadow:0 8px 30px rgba(243,156,18,.5);}
+        .btn-white{background:#fff;color:var(--green);}
+        .btn-white:hover{background:rgba(255,255,255,.9);transform:translateY(-2px);}
+        .btn-green{background:var(--green);color:#fff;}
+        .btn-green:hover{background:var(--green-dark);transform:translateY(-2px);}
+
+        /* COMMISSION GRID */
+        .section{padding:80px 0;}
+        .section-title{font-family:'Playfair Display',serif;font-size:36px;text-align:center;margin-bottom:12px;}
+        .section-sub{text-align:center;color:var(--gray);font-size:18px;max-width:600px;margin:0 auto 48px;}
+        .commission-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:900px;margin:0 auto;}
+        .commission-card{background:var(--white);border:2px solid #e8f5e9;border-radius:16px;padding:32px 20px;text-align:center;transition:all .3s;position:relative;}
+        .commission-card:hover{border-color:var(--green);transform:translateY(-4px);box-shadow:0 10px 40px rgba(27,122,61,.12);}
+        .commission-card.popular{border-color:var(--orange);background:linear-gradient(180deg,#fff8e1 0%,#fff 100%);}
+        .commission-card.popular::after{content:'POPULAIRE';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:700;}
+        .commission-card .range{font-size:14px;color:var(--gray);margin-bottom:8px;}
+        .commission-card .rate{font-size:48px;font-weight:800;color:var(--green);}
+        .commission-card .rate span{font-size:24px;}
+        .commission-card .example{font-size:13px;color:var(--gray);margin-top:12px;padding-top:12px;border-top:1px solid #eee;}
+        .commission-card .example strong{color:var(--orange);font-size:16px;}
+
+        /* HOW IT WORKS */
+        .bg-light{background:var(--gray-light);}
+        .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:32px;}
+        .step{text-align:center;padding:32px 24px;}
+        .step-num{width:60px;height:60px;border-radius:50%;background:var(--green);color:#fff;font-size:24px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+        .step h3{font-size:18px;margin-bottom:12px;}
+        .step p{color:var(--gray);font-size:15px;}
+
+        /* SIMULATEUR */
+        .simulator{background:var(--white);border-radius:20px;padding:48px;box-shadow:0 10px 40px rgba(0,0,0,.08);max-width:700px;margin:0 auto;}
+        .simulator h3{font-size:24px;margin-bottom:24px;text-align:center;}
+        .sim-row{display:flex;gap:20px;margin-bottom:20px;flex-wrap:wrap;}
+        .sim-field{flex:1;min-width:200px;}
+        .sim-field label{display:block;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:6px;}
+        .sim-field select,.sim-field input{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:16px;font-family:'Inter',sans-serif;transition:border .2s;}
+        .sim-field select:focus,.sim-field input:focus{outline:none;border-color:var(--green);}
+        .sim-result{background:linear-gradient(135deg,#e8f5e9,#fff);border-radius:16px;padding:32px;text-align:center;margin-top:24px;}
+        .sim-result .amount{font-size:48px;font-weight:800;color:var(--green);}
+        .sim-result .period{font-size:14px;color:var(--gray);}
+        .sim-result .detail{font-size:13px;color:var(--gray);margin-top:8px;}
+
+        /* AVANTAGES */
+        .advantages{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;}
+        .advantage{background:var(--white);border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.06);transition:transform .3s;}
+        .advantage:hover{transform:translateY(-4px);}
+        .advantage .icon{font-size:40px;margin-bottom:16px;}
+        .advantage h3{font-size:18px;margin-bottom:8px;}
+        .advantage p{color:var(--gray);font-size:14px;}
+
+        /* TESTIMONIALS */
+        .testimonials{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+        .testimonial{background:var(--white);border-radius:16px;padding:32px;box-shadow:0 4px 20px rgba(0,0,0,.06);border-left:4px solid var(--green);}
+        .testimonial .quote{font-size:16px;font-style:italic;margin-bottom:16px;color:var(--dark);}
+        .testimonial .author{font-weight:700;font-size:14px;}
+        .testimonial .role{font-size:13px;color:var(--gray);}
+
+        /* CTA FINAL */
+        .cta-section{background:linear-gradient(135deg,#0a3d1a,#1B7A3D);color:#fff;padding:80px 0;text-align:center;}
+        .cta-section h2{font-family:'Playfair Display',serif;font-size:40px;margin-bottom:16px;}
+        .cta-section p{font-size:18px;opacity:.9;max-width:600px;margin:0 auto 32px;}
+
+        /* FOOTER */
+        footer{background:#1a1a1a;color:#999;padding:40px 0;text-align:center;font-size:14px;}
+        footer a{color:var(--green-light);}
+
+        /* FORM */
+        .apply-form{max-width:600px;margin:0 auto;background:var(--white);border-radius:20px;padding:48px;box-shadow:0 10px 40px rgba(0,0,0,.08);}
+        .apply-form h3{font-size:24px;margin-bottom:24px;text-align:center;}
+        .form-group{margin-bottom:16px;}
+        .form-group label{display:block;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:6px;}
+        .form-group input,.form-group textarea,.form-group select{width:100%;padding:12px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;}
+        .form-group input:focus,.form-group textarea:focus,.form-group select:focus{outline:none;border-color:var(--green);}
+        .form-group textarea{resize:vertical;min-height:80px;}
+        .form-msg{display:none;padding:12px;border-radius:10px;margin-top:16px;text-align:center;font-weight:600;}
+        .form-msg.success{display:block;background:#e8f5e9;color:var(--green);}
+        .form-msg.error{display:block;background:#ffebee;color:#c62828;}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .hero h1{font-size:32px;}
+            .hero-stats{flex-direction:column;gap:24px;}
+            .hero-stat .num{font-size:32px;}
+            .commission-card .rate{font-size:36px;}
+            .simulator,.apply-form{padding:28px;margin:0 16px;}
+            .sim-row{flex-direction:column;}
+            .topbar-links{gap:10px;}
+            .topbar-links .hide-mobile{display:none;}
+        }
+    </style>
+</head>
+<body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="container">
+            <a href="index.html" class="logo"><span>TERRA</span><span>SOCIAL</span></a>
+            <div class="topbar-links">
+                <a href="index.html" class="hide-mobile">Accueil</a>
+                <a href="#commissions">Commissions</a>
+                <a href="#simulateur">Simulateur</a>
+                <a href="#candidature">Postuler</a>
+                <a href="login.html" class="btn-login">Mon espace</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">PROGRAMME PARTENAIRE TERRASOCIAL</div>
+            <h1>Gagnez de l'argent<br><span class="accent">en recommandant TERRASOCIAL</span></h1>
+            <p class="subtitle">Rejoignez notre reseau d'agents partenaires et touchez des commissions sur chaque souscription. Aucun investissement requis.</p>
+            <div class="hero-stats">
+                <div class="hero-stat"><div class="num">5%</div><div class="label">Commission maximale</div></div>
+                <div class="hero-stat"><div class="num">0 FCFA</div><div class="label">Investissement initial</div></div>
+                <div class="hero-stat"><div class="num">72h</div><div class="label">Delai de paiement</div></div>
+            </div>
+            <div class="hero-cta">
+                <a href="#candidature" class="btn btn-orange">Postuler maintenant</a>
+                <a href="#commissions" class="btn btn-white">Voir les commissions</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- GRILLE DE COMMISSIONS -->
+    <section class="section" id="commissions">
+        <div class="container">
+            <h2 class="section-title">Plus vous parrainez, plus vous gagnez</h2>
+            <p class="section-sub">Votre taux de commission augmente avec le nombre de filleuls actifs</p>
+            <div class="commission-grid">
+                <div class="commission-card">
+                    <div class="range">1 - 2 filleuls</div>
+                    <div class="rate">1<span>%</span></div>
+                    <div class="example">Ex: lot standard 1.3M<br>= <strong>13 000 FCFA</strong>/mois</div>
+                </div>
+                <div class="commission-card">
+                    <div class="range">3 - 5 filleuls</div>
+                    <div class="rate">2<span>%</span></div>
+                    <div class="example">Ex: lot confort 6.3M<br>= <strong>127 500 FCFA</strong>/mois</div>
+                </div>
+                <div class="commission-card popular">
+                    <div class="range">6 - 10 filleuls</div>
+                    <div class="rate">3<span>%</span></div>
+                    <div class="example">Ex: 8 lots standard<br>= <strong>312 000 FCFA</strong>/mois</div>
+                </div>
+                <div class="commission-card">
+                    <div class="range">11 - 25 filleuls</div>
+                    <div class="rate">4<span>%</span></div>
+                    <div class="example">Ex: 15 lots varies<br>= <strong>750 000 FCFA</strong>/mois</div>
+                </div>
+                <div class="commission-card">
+                    <div class="range">26+ filleuls</div>
+                    <div class="rate">5<span>%</span></div>
+                    <div class="example">Ex: 30 lots varies<br>= <strong>1 500 000+ FCFA</strong>/mois</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMENT CA MARCHE -->
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Comment devenir agent en 3 etapes</h2>
+            <p class="section-sub">Un processus simple, rapide et sans aucun frais</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Postulez en ligne</h3>
+                    <p>Remplissez le formulaire ci-dessous. Validation sous 48h par notre equipe.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Recevez votre lien</h3>
+                    <p>Un code agent unique et un lien de parrainage vous sont attribues pour tracker vos recommandations.</p>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h3>Parrainez et gagnez</h3>
+                    <p>Partagez votre lien. A chaque souscription confirmee, votre commission est creditee automatiquement.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SIMULATEUR -->
+    <section class="section" id="simulateur">
+        <div class="container">
+            <h2 class="section-title">Simulez vos gains</h2>
+            <p class="section-sub">Estimez combien vous pouvez gagner chaque mois</p>
+            <div class="simulator">
+                <div class="sim-row">
+                    <div class="sim-field">
+                        <label>Nombre de filleuls actifs</label>
+                        <input type="number" id="sim-referrals" min="1" max="100" value="5" oninput="simulate()">
+                    </div>
+                    <div class="sim-field">
+                        <label>Type de lot moyen</label>
+                        <select id="sim-lot" onchange="simulate()">
+                            <option value="300000">Starter - 300 000 FCFA</option>
+                            <option value="1300000" selected>Standard - 1 300 000 FCFA</option>
+                            <option value="6375000">Confort - 6 375 000 FCFA</option>
+                            <option value="10000000">Premium - 10 000 000 FCFA</option>
+                        </select>
+                    </div>
+                    <div class="sim-field">
+                        <label>Duree moyenne (mois)</label>
+                        <select id="sim-duration" onchange="simulate()">
+                            <option value="12">12 mois</option>
+                            <option value="24" selected>24 mois</option>
+                            <option value="36">36 mois</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="sim-result">
+                    <div class="period">Votre commission mensuelle estimee</div>
+                    <div class="amount" id="sim-amount">54 167 FCFA</div>
+                    <div class="detail" id="sim-detail">5 filleuls x 54 167 FCFA/mois x 2% = 5 417 FCFA/mois</div>
+                    <div class="detail" id="sim-annual" style="margin-top:8px;font-weight:600;color:#1B7A3D;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AVANTAGES -->
+    <section class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Pourquoi devenir agent TERRASOCIAL ?</h2>
+            <p class="section-sub">Des avantages concrets pour booster vos revenus</p>
+            <div class="advantages">
+                <div class="advantage">
+                    <div class="icon">&#128176;</div>
+                    <h3>Revenus passifs</h3>
+                    <p>Touchez des commissions chaque mois tant que vos filleuls paient. Un revenu recurrent sans effort supplementaire.</p>
+                </div>
+                <div class="advantage">
+                    <div class="icon">&#128200;</div>
+                    <h3>Commissions progressives</h3>
+                    <p>Votre taux augmente automatiquement avec le nombre de filleuls. De 1% a 5% sans aucun plafond sur le nombre.</p>
+                </div>
+                <div class="advantage">
+                    <div class="icon">&#128241;</div>
+                    <h3>Dashboard en temps reel</h3>
+                    <p>Suivez vos filleuls, commissions, et retraits depuis votre espace agent accessible 24h/24.</p>
+                </div>
+                <div class="advantage">
+                    <div class="icon">&#128274;</div>
+                    <h3>Zero investissement</h3>
+                    <p>Aucun frais d'inscription, aucun stock, aucun risque. Vous recommandez, nous gerons tout le reste.</p>
+                </div>
+                <div class="advantage">
+                    <div class="icon">&#9889;</div>
+                    <h3>Paiement rapide</h3>
+                    <p>Retraits via Orange Money ou MTN MoMo en 72h. Minimum de retrait : 5 000 FCFA seulement.</p>
+                </div>
+                <div class="advantage">
+                    <div class="icon">&#127891;</div>
+                    <h3>Formation offerte</h3>
+                    <p>Recevez un kit commercial, des supports marketing et un accompagnement pour maximiser vos resultats.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEMOIGNAGES -->
+    <section class="section">
+        <div class="container">
+            <h2 class="section-title">Ils ont rejoint le programme</h2>
+            <p class="section-sub">Des agents partenaires partagent leur experience</p>
+            <div class="testimonials">
+                <div class="testimonial">
+                    <div class="quote">"En 2 mois, j'ai parraine 8 personnes de mon reseau. Mes commissions couvrent deja mon loyer mensuel. Le systeme est transparent et les paiements arrivent vite."</div>
+                    <div class="author">Jean-Marc K.</div>
+                    <div class="role">Agent immobilier, Douala - 8 filleuls actifs</div>
+                </div>
+                <div class="testimonial">
+                    <div class="quote">"Je suis enseignante et je recommande TERRASOCIAL a mes collegues. C'est un complement de revenu facile et le programme est serieux. Je recommande sans hesitation."</div>
+                    <div class="author">Beatrice N.</div>
+                    <div class="role">Enseignante, Yaounde - 12 filleuls actifs</div>
+                </div>
+                <div class="testimonial">
+                    <div class="quote">"Avec 25 filleuls, ma commission est a 4%. Sur les lots confort, ca represente des sommes significatives chaque mois. Le meilleur partenariat que j'ai signe."</div>
+                    <div class="author">Patrick O.</div>
+                    <div class="role">Courtier, Bafoussam - 25 filleuls actifs</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULAIRE DE CANDIDATURE -->
+    <section class="section bg-light" id="candidature">
+        <div class="container">
+            <h2 class="section-title">Postulez maintenant</h2>
+            <p class="section-sub">Rejoignez notre reseau en quelques minutes</p>
+            <div class="apply-form">
+                <form id="agent-apply-form" onsubmit="return submitApplication(event)">
+                    <div class="sim-row">
+                        <div class="form-group" style="flex:1;min-width:200px;">
+                            <label>Nom complet *</label>
+                            <input type="text" name="full_name" required placeholder="Votre nom et prenom">
+                        </div>
+                        <div class="form-group" style="flex:1;min-width:200px;">
+                            <label>Telephone *</label>
+                            <input type="tel" name="phone" required placeholder="+237 6XX XXX XXX">
+                        </div>
+                    </div>
+                    <div class="sim-row">
+                        <div class="form-group" style="flex:1;min-width:200px;">
+                            <label>Email *</label>
+                            <input type="email" name="email" required placeholder="votre@email.cm">
+                        </div>
+                        <div class="form-group" style="flex:1;min-width:200px;">
+                            <label>Ville *</label>
+                            <select name="city" required>
+                                <option value="">Choisir...</option>
+                                <option>Yaounde</option>
+                                <option>Douala</option>
+                                <option>Bafoussam</option>
+                                <option>Bamenda</option>
+                                <option>Garoua</option>
+                                <option>Maroua</option>
+                                <option>Ngaoundere</option>
+                                <option>Bertoua</option>
+                                <option>Ebolowa</option>
+                                <option>Kribi</option>
+                                <option>Autre</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Profession / Activite actuelle</label>
+                        <input type="text" name="profession" placeholder="Ex: Agent immobilier, commercant, enseignant...">
+                    </div>
+                    <div class="form-group">
+                        <label>Motivation (pourquoi souhaitez-vous devenir agent ?)</label>
+                        <textarea name="motivation" rows="3" placeholder="Decrivez votre motivation et votre reseau potentiel..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Nombre estime de personnes que vous pouvez recommander</label>
+                        <select name="estimated_referrals">
+                            <option value="1-5">1 a 5 personnes</option>
+                            <option value="6-15">6 a 15 personnes</option>
+                            <option value="16-30">16 a 30 personnes</option>
+                            <option value="30+">Plus de 30 personnes</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-green" style="width:100%;margin-top:8px;">Envoyer ma candidature</button>
+                    <div class="form-msg" id="form-msg"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA FINAL -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Pret a transformer votre reseau en revenus ?</h2>
+            <p>Rejoignez les agents TERRASOCIAL et commencez a gagner des aujourd'hui. Inscription 100% gratuite.</p>
+            <a href="#candidature" class="btn btn-orange">Postuler maintenant</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 TERRASOCIAL by MANO VERDE INC SA. Tous droits reserves.</p>
+            <p style="margin-top:8px;"><a href="index.html">Accueil</a> &middot; <a href="login.html">Connexion</a> &middot; <a href="register-client.html">Inscription client</a></p>
+        </div>
+    </footer>
+
+    <script src="js/runtime-config.js"></script>
+    <script src="js/app-api.js"></script>
+    <script>
+    // Simulateur de gains
+    function simulate() {
+        const refs = parseInt(document.getElementById('sim-referrals').value) || 1;
+        const lotPrice = parseInt(document.getElementById('sim-lot').value);
+        const duration = parseInt(document.getElementById('sim-duration').value);
+        let rate = 0;
+        if (refs >= 26) rate = 5;
+        else if (refs >= 11) rate = 4;
+        else if (refs >= 6) rate = 3;
+        else if (refs >= 3) rate = 2;
+        else if (refs >= 1) rate = 1;
+        const monthlyPerClient = Math.round(lotPrice / duration);
+        const totalMonthly = monthlyPerClient * refs;
+        const commission = Math.round(totalMonthly * rate / 100);
+        const annual = commission * 12;
+        document.getElementById('sim-amount').textContent = commission.toLocaleString('fr-FR') + ' FCFA/mois';
+        document.getElementById('sim-detail').textContent = refs + ' filleul' + (refs > 1 ? 's' : '') + ' x ' + monthlyPerClient.toLocaleString('fr-FR') + ' FCFA/mois x ' + rate + '% = ' + commission.toLocaleString('fr-FR') + ' FCFA';
+        document.getElementById('sim-annual').textContent = 'Soit ' + annual.toLocaleString('fr-FR') + ' FCFA/an';
+    }
+    simulate();
+
+    // Candidature
+    async function submitApplication(e) {
+        e.preventDefault();
+        const form = e.target;
+        const msg = document.getElementById('form-msg');
+        const data = Object.fromEntries(new FormData(form));
+        msg.className = 'form-msg';
+        msg.style.display = 'none';
+        try {
+            const API = (window.__RUNTIME_CONFIG__ && window.__RUNTIME_CONFIG__.API_URL) || '';
+            const res = await fetch(API + '/api/agent/apply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const json = await res.json();
+            if (res.ok) {
+                msg.className = 'form-msg success';
+                msg.textContent = 'Candidature envoyee ! Nous vous recontacterons sous 48h.';
+                msg.style.display = 'block';
+                form.reset();
+            } else {
+                msg.className = 'form-msg error';
+                msg.textContent = json.error || 'Erreur lors de l\'envoi. Reessayez.';
+                msg.style.display = 'block';
+            }
+        } catch (err) {
+            msg.className = 'form-msg error';
+            msg.textContent = 'Erreur reseau. Verifiez votre connexion.';
+            msg.style.display = 'block';
+        }
+    }
+    </script>
+</body>
+</html>
