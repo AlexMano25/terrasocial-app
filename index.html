@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="TERRASOCIAL - Devenez propriétaire de votre terrain au Cameroun avec un paiement échelonné. Projet foncier social par MANO VERDE INC SA.">
-    <meta name="keywords" content="terrain, Cameroun, Yaoundé, paiement échelonné, foncier, propriété, TERRASOCIAL, MANO VERDE">
-    <title>TERRASOCIAL - Votre terrain, votre avenir | MANO VERDE INC SA</title>
+    <meta name="description" content="Achetez votre terrain securise au Cameroun avec Mano Verde. Paiement accessible des 1500 FCFA/jour, titre foncier garanti, accompagnement complet. Yaounde et environs.">
+    <meta name="keywords" content="achat terrain Cameroun, terrain Yaounde, parcelle securisee, paiement echelonne terrain, titre foncier Cameroun, TERRASOCIAL, MANO VERDE, terrain pas cher Cameroun">
+    <meta property="og:title" content="Devenez proprietaire de votre terrain des aujourd'hui - TERRASOCIAL">
+    <meta property="og:description" content="Des parcelles securisees, accessibles des 1500 FCFA/jour. Titre foncier garanti. Yaounde et environs.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://social.manovende.com">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://social.manovende.com/">
+    <title>Achat terrain Cameroun - Parcelles securisees des 1500 FCFA/jour | TERRASOCIAL by Mano Verde</title>
     <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="css/index.css">
@@ -65,35 +71,62 @@
         <strong data-i18n="alert.warning">TERRASOCIAL : vente de terrains avec paiement echelonne par MANO VERDE INC SA. Nous ne sommes ni une banque ni une microfinance.</strong>
     </div>
 
-    <!-- HERO SECTION -->
+    <!-- HERO SECTION — optimise conversion -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 data-i18n="hero.title">Devenez propriétaire de votre terrain au Cameroun</h1>
-                <p data-i18n="hero.description">Accédez à la propriété foncière grâce à notre système de paiement échelonné sur 24 à 36 mois. Des lots de qualité à Yaoundé et environs.</p>
-                <div class="hero-buttons">
-                    <a href="#lots" class="btn btn-primary" data-i18n="hero.cta_primary">Voir les lots disponibles</a>
-                    <a href="#souscrire" class="btn btn-secondary" data-i18n="hero.cta_secondary">Réserver maintenant</a>
+                <h1>Devenez proprietaire de votre terrain<br><span style="color:var(--orange-light);">des aujourd'hui</span></h1>
+                <p style="font-size:20px;max-width:650px;">Des parcelles securisees, accessibles et accompagnees par Mano Verde. Titre foncier garanti, paiement echelonne.</p>
+                <div class="hero-buttons" style="margin-top:24px;gap:16px;">
+                    <a href="#souscrire" class="btn btn-primary" style="font-size:18px;padding:16px 36px;" onclick="trackEvent('cta_hero_reserve')">Reserver maintenant</a>
+                    <a href="https://wa.me/237696875895?text=Bonjour%2C%20je%20veux%20des%20informations%20sur%20les%20terrains%20TERRASOCIAL" class="btn btn-secondary" style="font-size:18px;padding:16px 36px;background:rgba(37,211,102,.2);border:2px solid #25D366;" onclick="trackEvent('cta_hero_whatsapp')">📲 Parler a un conseiller</a>
                 </div>
-                <!-- Badge paiement journalier -->
-                <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,152,0,0.18);border:1.5px solid var(--orange-light);border-radius:30px;padding:10px 22px;margin-bottom:18px;margin-top:10px;">
-                    <span style="font-size:24px;">🗓️</span>
-                    <span style="font-size:17px;font-weight:700;color:#fff;">Devenez propriétaire à partir de <span style="color:var(--orange-light);">1 500 FCFA/jour</span></span>
+                <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,152,0,0.18);border:1.5px solid var(--orange-light);border-radius:30px;padding:10px 22px;margin-top:20px;">
+                    <span style="font-size:24px;">🏡</span>
+                    <span style="font-size:17px;font-weight:700;color:#fff;">A partir de <span style="color:var(--orange-light);font-size:22px;">1 500 FCFA/jour</span> — Securise — Accompagne</span>
                 </div>
-
                 <div class="hero-stats">
                     <div class="stat">
-                        <div class="stat-number" data-i18n="hero.stats.lots.number">50+</div>
-                        <div class="stat-label" data-i18n="hero.stats.lots.label">Lots disponibles</div>
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Lots disponibles</div>
                     </div>
                     <div class="stat">
-                        <div class="stat-number" data-i18n="hero.stats.surface.number">500m²</div>
-                        <div class="stat-label" data-i18n="hero.stats.surface.label">Surface minimum</div>
+                        <div class="stat-number">200m²</div>
+                        <div class="stat-label">Surface minimum</div>
                     </div>
                     <div class="stat">
                         <div class="stat-number" style="color:var(--orange-light);">1 500 Fr</div>
                         <div class="stat-label">Minimum par jour</div>
                     </div>
+                    <div class="stat">
+                        <div class="stat-number" style="color:#25D366;">100%</div>
+                        <div class="stat-label">Titre foncier</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION PROBLEME / SOLUTION -->
+    <section style="padding:60px 0;background:#fff;">
+        <div class="container">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;align-items:center;">
+                <div>
+                    <h2 style="font-family:'Playfair Display',serif;font-size:32px;color:#c62828;margin-bottom:20px;">Le probleme au Cameroun</h2>
+                    <div style="display:flex;flex-direction:column;gap:16px;">
+                        <div style="display:flex;align-items:start;gap:12px;"><span style="font-size:24px;">❌</span><div><strong style="color:#c62828;">Terrains frauduleux</strong><p style="color:#5A6C7D;font-size:14px;margin-top:4px;">Des milliers de Camerounais arnagues chaque annee par de faux vendeurs de terrains</p></div></div>
+                        <div style="display:flex;align-items:start;gap:12px;"><span style="font-size:24px;">❌</span><div><strong style="color:#c62828;">Manque de confiance</strong><p style="color:#5A6C7D;font-size:14px;margin-top:4px;">Pas de transparence sur les documents, les bornes, la legalite du terrain</p></div></div>
+                        <div style="display:flex;align-items:start;gap:12px;"><span style="font-size:24px;">❌</span><div><strong style="color:#c62828;">Prix inaccessibles</strong><p style="color:#5A6C7D;font-size:14px;margin-top:4px;">Les terrains titres coutent cher et exigent un paiement cash impossible pour beaucoup</p></div></div>
+                    </div>
+                </div>
+                <div style="background:linear-gradient(135deg,#e8f5e9,#fff);border-radius:20px;padding:40px;border:2px solid var(--green-light);">
+                    <h2 style="font-family:'Playfair Display',serif;font-size:32px;color:var(--green-primary);margin-bottom:20px;">La solution Mano Verde</h2>
+                    <div style="display:flex;flex-direction:column;gap:16px;">
+                        <div style="display:flex;align-items:start;gap:12px;"><span style="font-size:24px;">✅</span><div><strong style="color:var(--green-primary);">Titres fonciers verifies</strong><p style="color:#5A6C7D;font-size:14px;margin-top:4px;">Chaque terrain est verifie par nos geometres et notaires partenaires</p></div></div>
+                        <div style="display:flex;align-items:start;gap:12px;"><span style="font-size:24px;">✅</span><div><strong style="color:var(--green-primary);">Transparence totale</strong><p style="color:#5A6C7D;font-size:14px;margin-top:4px;">Visite terrain, documents accessibles, suivi en temps reel de vos paiements</p></div></div>
+                        <div style="display:flex;align-items:start;gap:12px;"><span style="font-size:24px;">✅</span><div><strong style="color:var(--green-primary);">Des 1 500 FCFA/jour</strong><p style="color:#5A6C7D;font-size:14px;margin-top:4px;">Payez a votre rythme via Orange Money ou MTN MoMo. Pas de pression, pas de surprise.</p></div></div>
+                    </div>
+                    <a href="#souscrire" style="display:inline-block;margin-top:24px;background:var(--green-primary);color:#fff;padding:14px 32px;border-radius:10px;font-weight:700;text-decoration:none;" onclick="trackEvent('cta_solution')">Reserver mon terrain securise</a>
                 </div>
             </div>
         </div>
@@ -882,6 +915,86 @@
             </div>
         </div>
     </section>
+
+    <!-- SECTION URGENCE -->
+    <section style="padding:60px 0;background:linear-gradient(135deg,#FFF8E1,#FFECB3);">
+        <div class="container" style="text-align:center;">
+            <div style="display:inline-block;background:#c62828;color:#fff;padding:8px 24px;border-radius:50px;font-size:13px;font-weight:700;margin-bottom:20px;">OFFRE LIMITEE</div>
+            <h2 style="font-family:'Playfair Display',serif;font-size:36px;color:#c62828;margin-bottom:12px;">⚠️ Nombre de parcelles limite</h2>
+            <p style="font-size:18px;color:#5A6C7D;max-width:600px;margin:0 auto 32px;">Les terrains a ces prix sont en nombre restreint. Une fois vendus, les prochains lots seront a un prix superieur.</p>
+            <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap;margin-bottom:32px;">
+                <div style="background:#fff;border-radius:16px;padding:24px 32px;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;min-width:150px;">
+                    <div style="font-size:42px;font-weight:800;color:#c62828;">7</div>
+                    <div style="font-size:14px;color:#5A6C7D;">Lots Starter restants</div>
+                </div>
+                <div style="background:#fff;border-radius:16px;padding:24px 32px;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;min-width:150px;">
+                    <div style="font-size:42px;font-weight:800;color:var(--orange-primary);">12</div>
+                    <div style="font-size:14px;color:#5A6C7D;">Lots Standard restants</div>
+                </div>
+                <div style="background:#fff;border-radius:16px;padding:24px 32px;box-shadow:0 4px 20px rgba(0,0,0,.08);text-align:center;min-width:150px;">
+                    <div style="font-size:42px;font-weight:800;color:var(--green-primary);">5</div>
+                    <div style="font-size:14px;color:#5A6C7D;">Lots Premium restants</div>
+                </div>
+            </div>
+            <a href="#souscrire" class="btn btn-primary" style="font-size:18px;padding:16px 40px;background:#c62828;" onclick="trackEvent('cta_urgence')">Reserver avant qu'il soit trop tard</a>
+        </div>
+    </section>
+
+    <!-- FORMULAIRE DE CONVERSION RAPIDE -->
+    <section id="formulaire-rapide" style="padding:60px 0;background:#fff;">
+        <div class="container">
+            <div style="max-width:600px;margin:0 auto;text-align:center;">
+                <h2 style="font-family:'Playfair Display',serif;font-size:32px;margin-bottom:12px;color:var(--green-primary);">Reservez votre terrain en 30 secondes</h2>
+                <p style="color:#5A6C7D;margin-bottom:28px;">Remplissez ce formulaire et un conseiller vous rappellera sous 24h</p>
+                <form id="quick-reservation-form" style="display:grid;gap:16px;" onsubmit="return submitQuickForm(event)">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <input type="text" name="name" required placeholder="Votre nom complet" style="padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;">
+                        <input type="tel" name="phone" required placeholder="+237 6XX XXX XXX" style="padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;">
+                    </div>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                        <select name="city" required style="padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;">
+                            <option value="">Votre ville</option>
+                            <option>Yaounde</option><option>Douala</option><option>Bafoussam</option><option>Bamenda</option><option>Autre</option>
+                        </select>
+                        <select name="budget" required style="padding:14px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;">
+                            <option value="">Votre budget</option>
+                            <option value="40000">Starter - 40 000 FCFA</option>
+                            <option value="1300000">Standard - 1 300 000 FCFA</option>
+                            <option value="3400000">Confort - 3 400 000 FCFA</option>
+                            <option value="5000000">Premium - 5 000 000 FCFA</option>
+                        </select>
+                    </div>
+                    <button type="submit" style="background:var(--green-primary);color:#fff;padding:16px;border:none;border-radius:10px;font-size:18px;font-weight:700;cursor:pointer;transition:all .3s;" onclick="trackEvent('form_quick_reservation')">Reserver mon terrain</button>
+                    <div id="quick-form-msg" style="display:none;padding:12px;border-radius:10px;text-align:center;font-weight:600;"></div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script>
+    async function submitQuickForm(e) {
+        e.preventDefault();
+        var form = e.target, msg = document.getElementById('quick-form-msg');
+        var data = Object.fromEntries(new FormData(form));
+        msg.style.display = 'none';
+        try {
+            var API = (window.__RUNTIME_CONFIG__ && window.__RUNTIME_CONFIG__.API_URL) || '';
+            var res = await fetch(API + '/api/public/leads', {
+                method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(data)
+            });
+            if (res.ok) {
+                msg.style.display = 'block'; msg.style.background = '#e8f5e9'; msg.style.color = '#1B7A3D';
+                msg.textContent = 'Demande envoyee ! Un conseiller vous contactera sous 24h.';
+                form.reset(); trackEvent('lead_submitted');
+            } else {
+                msg.style.display = 'block'; msg.style.background = '#ffebee'; msg.style.color = '#c62828';
+                msg.textContent = 'Erreur. Contactez-nous sur WhatsApp.';
+            }
+        } catch(err) {
+            msg.style.display = 'block'; msg.style.background = '#ffebee'; msg.style.color = '#c62828';
+            msg.textContent = 'Erreur reseau. Essayez WhatsApp.';
+        }
+    }
+    </script>
 
     <!-- DEVENIR AGENT CTA -->
     <section id="devenir-agent" style="background:linear-gradient(135deg,#0a3d1a 0%,#1B7A3D 50%,#27AE60 100%);padding:80px 0;color:#fff;text-align:center;">
@@ -1956,5 +2069,80 @@
         }
     })();
     </script>
+
+    <!-- WHATSAPP FLOATING BUTTON -->
+    <a href="https://wa.me/237696875895?text=Bonjour%2C%20je%20veux%20des%20informations%20sur%20les%20terrains%20TERRASOCIAL" target="_blank" rel="noopener" onclick="trackEvent('whatsapp_float')" style="position:fixed;bottom:24px;right:24px;z-index:9999;background:#25D366;color:#fff;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 4px 20px rgba(37,211,102,.5);text-decoration:none;transition:transform .3s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 01-4.243-1.214l-.252-.149-2.625.688.7-2.55-.163-.26A8 8 0 1112 20z"/></svg>
+    </a>
+
+    <!-- URGENCE BANNER (fixed bottom on mobile) -->
+    <div id="urgence-bar" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:9998;background:linear-gradient(90deg,#c62828,#e53935);color:#fff;padding:12px 20px;text-align:center;font-size:14px;font-weight:600;box-shadow:0 -4px 20px rgba(0,0,0,.2);">
+        ⚠️ Places limitees — <span id="urgence-count">7</span> parcelles restantes a ce prix | <a href="#souscrire" style="color:#FFC107;text-decoration:underline;">Reserver maintenant</a>
+        <button onclick="document.getElementById('urgence-bar').style.display='none'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:20px;cursor:pointer;">×</button>
+    </div>
+    <script>
+    // Show urgence bar after 5s
+    setTimeout(function(){ document.getElementById('urgence-bar').style.display = 'block'; }, 5000);
+    </script>
+
+    <!-- TRACKING & ANALYTICS -->
+    <script>
+    // Event tracking helper
+    function trackEvent(name, params) {
+        // Meta Pixel
+        if (typeof fbq === 'function') fbq('track', name, params || {});
+        // Google Analytics
+        if (typeof gtag === 'function') gtag('event', name, params || {});
+        // Console (dev)
+        console.log('[Track]', name, params || {});
+    }
+
+    // Track scroll depth
+    (function() {
+        var tracked = {};
+        window.addEventListener('scroll', function() {
+            var pct = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+            [25, 50, 75, 100].forEach(function(m) {
+                if (pct >= m && !tracked[m]) { tracked[m] = true; trackEvent('scroll_' + m); }
+            });
+        });
+    })();
+
+    // Track form submissions
+    document.addEventListener('submit', function(e) {
+        var form = e.target;
+        if (form.id === 'reservation-form' || form.closest('#souscrire')) trackEvent('form_reservation');
+        if (form.id === 'partnership-form') trackEvent('form_partnership');
+    });
+
+    // Track CTA clicks
+    document.querySelectorAll('a[href*="wa.me"]').forEach(function(a) {
+        a.addEventListener('click', function() { trackEvent('click_whatsapp'); });
+    });
+    </script>
+
+    <!-- META PIXEL (a remplacer par votre vrai pixel ID) -->
+    <!--
+    <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'VOTRE_PIXEL_ID');
+    fbq('track', 'PageView');
+    </script>
+    -->
+
+    <!-- GOOGLE ANALYTICS (a remplacer par votre vrai ID) -->
+    <!--
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+    </script>
+    -->
 </body>
 </html>

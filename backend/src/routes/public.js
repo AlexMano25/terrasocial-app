@@ -129,4 +129,44 @@ router.post('/partnership', async (req, res) => {
     }
 });
 
+// Lead capture (quick reservation form)
+router.post('/leads', async (req, res) => {
+    try {
+        const { name, phone, city, budget } = req.body;
+        if (!name || !phone) return res.status(400).json({ error: 'Nom et telephone requis' });
+        const cleanName = sanitizeText(name);
+        const cleanPhone = sanitizeText(phone);
+        const cleanCity = sanitizeOptionalText(city) || '';
+        const cleanBudget = sanitizeOptionalText(budget) || '';
+        await run(
+            `INSERT INTO leads(full_name, phone, city, budget, source, created_at) VALUES (?, ?, ?, ?, 'website', datetime('now'))`,
+            [cleanName, cleanPhone, cleanCity, cleanBudget]
+        );
+        res.json({ success: true, message: 'Demande enregistree' });
+    } catch (error) {
+        // Table might not exist yet — create it and retry
+        if (error.message && error.message.includes('leads')) {
+            try {
+                await run(`CREATE TABLE IF NOT EXISTS leads (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    full_name TEXT NOT NULL,
+                    phone TEXT NOT NULL,
+                    city TEXT,
+                    budget TEXT,
+                    source TEXT DEFAULT 'website',
+                    status TEXT DEFAULT 'new',
+                    created_at TEXT DEFAULT (datetime('now'))
+                )`);
+                const { name, phone, city, budget } = req.body;
+                await run(
+                    `INSERT INTO leads(full_name, phone, city, budget, source) VALUES (?, ?, ?, ?, 'website')`,
+                    [sanitizeText(name), sanitizeText(phone), sanitizeOptionalText(city) || '', sanitizeOptionalText(budget) || '']
+                );
+                return res.json({ success: true, message: 'Demande enregistree' });
+            } catch (e) { /* fall through */ }
+        }
+        res.status(500).json({ error: 'Erreur enregistrement' });
+    }
+});
+
 module.exports = router;
