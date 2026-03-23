@@ -619,11 +619,11 @@ router.get('/insurance-policy', async (req, res) => {
         doc.fontSize(10).fillColor('#333');
         const guarantees = [
             'Garantie de propriété : Le terrain objet de la présente police sera transféré en pleine propriété à l\'assuré dès le paiement intégral du prix.',
-            'Protection contre l\'éviction : Mano Verde garantit l\'assuré contre toute revendication de tiers sur le terrain pendant et après la période de paiement.',
+            'Protection contre l\'éviction : TERRASOCIAL garantit l\'assuré contre toute revendication de tiers sur le terrain pendant et après la période de paiement.',
             'Garantie de conformité cadastrale : Le terrain est conforme au plan cadastral et dispose de tous les titres nécessaires.',
             'Droit de jouissance provisoire : Dès que 50% du prix total est versé, l\'assuré obtient un Procès-Verbal de Jouissance Provisoire.',
-            'Protection contre les vices cachés : Mano Verde garantit l\'absence de servitudes non déclarées et de vices cachés affectant le terrain.',
-            'Assurance des personnes : Les personnes enregistrées sur ce contrat bénéficient de la couverture d\'assurance foncière de Mano Verde.'
+            'Protection contre les vices cachés : TERRASOCIAL garantit l\'absence de servitudes non déclarées et de vices cachés affectant le terrain.',
+            'Assurance des personnes : Les personnes enregistrées sur ce contrat bénéficient de la couverture d\'assurance foncière TERRASOCIAL.'
         ];
         guarantees.forEach((g, i) => {
             doc.text(`${i + 1}. ${g}`, { indent: 10 });

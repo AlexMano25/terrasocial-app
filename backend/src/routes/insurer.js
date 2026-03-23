@@ -383,7 +383,7 @@ router.get('/analytics', async (req, res) => {
         const dailyRevenue = totalPersons * dailyCost;
         const monthlyRevenue = dailyRevenue * 30;
         const annualRevenue = dailyRevenue * 365;
-        const dailyCollection = totalPersons * 350; // what Mano Verde collects from clients
+        const dailyCollection = totalPersons * 350; // what TERRASOCIAL collects from clients
         const monthlyCollection = dailyCollection * 30;
 
         return res.json({
