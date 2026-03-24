@@ -145,6 +145,11 @@
           return;
         }
 
+        if (payload.user.is_legal) {
+          window.location.href = 'dashboard-legal.html';
+          return;
+        }
+
         if (payload.user.is_super_admin) {
           window.location.href = 'dashboard-super-admin.html';
           return;

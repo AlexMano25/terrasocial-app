@@ -165,6 +165,9 @@ router.post('/login', async (req, res) => {
         const insurerRow = await get('SELECT id, company_name FROM insurers WHERE user_id = ? AND is_active = TRUE', [user.id]);
         const isInsurer = Boolean(insurerRow);
 
+        // Check if user is legal (law firm)
+        const legalFirm = await get('SELECT firm_name FROM law_firms WHERE user_id = ? AND is_active = TRUE', [user.id]);
+
         return res.json({
             token: tokenForUser(user),
             user: {
@@ -179,7 +182,9 @@ router.post('/login', async (req, res) => {
                 is_agent: isAgent,
                 agent_code: agentRow ? agentRow.agent_code : null,
                 is_insurer: isInsurer,
-                insurer_company: insurerRow ? insurerRow.company_name : null
+                insurer_company: insurerRow ? insurerRow.company_name : null,
+                is_legal: !!legalFirm,
+                legal_firm: legalFirm?.firm_name || null
             }
         });
     } catch (error) {
@@ -270,7 +275,9 @@ router.get('/me', requireAuth, async (req, res) => {
     const isManager = (!isSuperAdmin && req.user.role === 'admin') ? await isManagerUser(req.user.id) : false;
     const agentRow = await get('SELECT id, agent_code FROM agents WHERE user_id = ? AND (status = ? OR is_active = TRUE)', [req.user.id, 'active']);
     const insurerRow = await get('SELECT id, company_name FROM insurers WHERE user_id = ? AND is_active = TRUE', [req.user.id]);
-    return res.json({ user: Object.assign({}, req.user, { is_super_admin: isSuperAdmin, is_manager: isManager, is_agent: Boolean(agentRow), agent_code: agentRow ? agentRow.agent_code : null, is_insurer: Boolean(insurerRow), insurer_company: insurerRow ? insurerRow.company_name : null }) });
+    // Check if user is legal (law firm)
+    const legalFirm = await get('SELECT firm_name FROM law_firms WHERE user_id = ? AND is_active = TRUE', [req.user.id]);
+    return res.json({ user: Object.assign({}, req.user, { is_super_admin: isSuperAdmin, is_manager: isManager, is_agent: Boolean(agentRow), agent_code: agentRow ? agentRow.agent_code : null, is_insurer: Boolean(insurerRow), insurer_company: insurerRow ? insurerRow.company_name : null, is_legal: !!legalFirm, legal_firm: legalFirm?.firm_name || null }) });
 });
 
 // ─── GOOGLE OAUTH ──────────────────────────────────────────────────────────

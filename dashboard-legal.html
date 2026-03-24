@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cabinet Juridique - TERRASOCIAL</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', Arial, sans-serif; background: #f5f5f5; color: #333; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #fff; border-bottom: 2px solid #c9a84c; flex-wrap: wrap; gap: 12px; }
+    .topbar h1 { font-size: 22px; color: #1a237e; }
+    .topbar .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .topbar .btn { padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; background: #fff; cursor: pointer; font-size: 13px; }
+    .topbar .btn.active { background: #1a237e; color: #fff; border-color: #1a237e; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .grid-6 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .kpi-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border-top: 3px solid #c9a84c; }
+    .kpi-card .kpi-value { font-size: 28px; font-weight: 700; color: #1a237e; }
+    .kpi-card .kpi-label { font-size: 13px; color: #666; margin-top: 4px; }
+    .card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .card h3 { margin: 0 0 16px; color: #1a237e; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th { background: #f9f9f9; padding: 10px; text-align: left; font-size: 12px; color: #666; text-transform: uppercase; }
+    td { padding: 10px; border-bottom: 1px solid #f0f0f0; }
+    .badge { padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+    .badge-pending { background: #FFF3E0; color: #E65100; }
+    .badge-review { background: #E3F2FD; color: #1565C0; }
+    .badge-approved { background: #E8F5E9; color: #1B5E20; }
+    .badge-rejected { background: #FFEBEE; color: #C62828; }
+    .badge-paid { background: #E8F5E9; color: #1B5E20; }
+    .badge-unpaid { background: #FFF3E0; color: #E65100; }
+    .badge-partner { background: #EDE7F6; color: #4527A0; }
+    .badge-associate { background: #E3F2FD; color: #1565C0; }
+    .badge-paralegal { background: #FFF3E0; color: #E65100; }
+    .badge-secretary { background: #F3E5F5; color: #7B1FA2; }
+    .flash { padding: 10px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
+    .flash.ok { background: #E8F5E9; color: #1B5E20; }
+    .flash.err { background: #FFEBEE; color: #C62828; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .filter-bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: end; margin-bottom: 16px; }
+    .filter-bar select, .filter-bar input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
+    .upload-form { background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 16px; }
+    .upload-form label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+    .upload-form input, .upload-form select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 8px; }
+    .btn-primary { background: #1a237e; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .btn-primary:hover { background: #0d1654; }
+    .btn-gold { background: #c9a84c; color: #fff; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; }
+    .btn-sm { padding: 4px 10px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
+    .btn-navy { background: #1a237e; color: #fff; }
+    .btn-green { background: #1B5E20; color: #fff; }
+    .btn-orange { background: #FF8F00; color: #fff; }
+    .btn-red { background: #C62828; color: #fff; }
+    .btn-blue { background: #1565C0; color: #fff; }
+    .tab-bar { display: flex; gap: 0; margin-bottom: 16px; border-bottom: 2px solid #eee; }
+    .tab-bar button { padding: 10px 20px; border: none; background: transparent; cursor: pointer; font-size: 14px; font-weight: 600; color: #666; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .tab-bar button.active { color: #1a237e; border-bottom-color: #c9a84c; }
+    /* Messaging layout */
+    .msg-layout { display: grid; grid-template-columns: 300px 1fr; gap: 16px; min-height: 500px; }
+    .msg-sidebar { border-right: 1px solid #eee; padding-right: 16px; overflow-y: auto; max-height: 500px; }
+    .msg-thread { padding-left: 16px; display: flex; flex-direction: column; }
+    .msg-conv-item { padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 4px; border: 1px solid #eee; }
+    .msg-conv-item:hover, .msg-conv-item.active { background: #e8eaf6; border-color: #1a237e; }
+    .msg-conv-item .conv-title { font-weight: 600; font-size: 13px; color: #1a237e; }
+    .msg-conv-item .conv-preview { font-size: 12px; color: #666; margin-top: 2px; }
+    .msg-unread { background: #c9a84c; color: #fff; border-radius: 50%; width: 20px; height: 20px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+    .msg-bubble { padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; max-width: 75%; font-size: 14px; }
+    .msg-bubble.sent { background: #1a237e; color: #fff; align-self: flex-end; }
+    .msg-bubble.received { background: #e8eaf6; color: #333; align-self: flex-start; }
+    .msg-bubble .msg-meta { font-size: 11px; color: rgba(255,255,255,0.7); margin-top: 4px; }
+    .msg-bubble.received .msg-meta { color: #999; }
+    .msg-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; padding: 8px 0; max-height: 350px; }
+    .msg-input-area { border-top: 1px solid #eee; padding-top: 12px; }
+    .msg-input-area input, .msg-input-area textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 8px; font-size: 13px; }
+    .msg-input-area textarea { resize: vertical; min-height: 60px; }
+    /* Modal */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: #fff; border-radius: 12px; padding: 28px; width: 90%; max-width: 700px; max-height: 85vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.2); }
+    .modal h3 { color: #1a237e; margin-bottom: 16px; border-bottom: 2px solid #c9a84c; padding-bottom: 8px; }
+    .modal label { display: block; font-weight: 600; font-size: 13px; margin-bottom: 4px; margin-top: 12px; }
+    .modal input, .modal select, .modal textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px; }
+    .modal textarea { resize: vertical; min-height: 80px; }
+    .modal-actions { display: flex; gap: 8px; margin-top: 20px; justify-content: flex-end; }
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stats-row .stat-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .stats-row .stat-value { font-size: 24px; font-weight: 700; }
+    .stats-row .stat-label { font-size: 12px; color: #666; margin-top: 4px; }
+    @media (max-width: 768px) {
+      .grid-6 { grid-template-columns: 1fr 1fr; }
+      .msg-layout { grid-template-columns: 1fr; }
+      .msg-sidebar { max-height: 200px; border-right: none; border-bottom: 1px solid #eee; padding-right: 0; padding-bottom: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div>
+      <h1>&#9878;&#65039; Cabinet Juridique</h1>
+      <p id="legal-meta" style="font-size:13px;color:#666;">Chargement...</p>
+    </div>
+    <div class="actions">
+      <button class="btn active" data-panel="dashboard" id="nav-dashboard">Tableau de bord</button>
+      <button class="btn" data-panel="reviews" id="nav-reviews">Dossiers</button>
+      <button class="btn" data-panel="documents" id="nav-documents">Documents</button>
+      <button class="btn" data-panel="messages" id="nav-messages">Messagerie</button>
+      <button class="btn" data-panel="billing" id="nav-billing">Facturation</button>
+      <button class="btn" data-panel="collaborators" id="nav-collaborators">Collaborateurs</button>
+      <button class="btn" data-panel="profile" id="nav-profile">Profil</button>
+      <button class="btn" id="logout-btn">Deconnexion</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div id="flash"></div>
+
+    <!-- PANEL: Dashboard -->
+    <div id="panel-dashboard" class="panel active">
+      <div class="grid-6">
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-active">0</div>
+          <div class="kpi-label">Dossiers en cours</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-pending">0</div>
+          <div class="kpi-label">En attente</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-approved">0</div>
+          <div class="kpi-label">Approuves</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-rejected">0</div>
+          <div class="kpi-label">Rejetes</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-total-billed">0</div>
+          <div class="kpi-label">Montant facture total</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-value" id="kpi-pending-amount">0</div>
+          <div class="kpi-label">Montant en attente</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Activite recente</h3>
+        <ul id="recent-activity" style="list-style:none;padding:0;font-size:14px;">
+          <li style="color:#999;">Chargement...</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- PANEL: Dossiers (Reviews) -->
+    <div id="panel-reviews" class="panel">
+      <div class="card">
+        <h3>Dossiers juridiques</h3>
+        <div class="filter-bar">
+          <div>
+            <label style="font-size:12px;font-weight:600;">Statut</label>
+            <select id="filter-review-status">
+              <option value="">Tous</option>
+              <option value="pending">En attente</option>
+              <option value="in_review">En revision</option>
+              <option value="approved">Approuve</option>
+              <option value="rejected">Rejete</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;">Type</label>
+            <select id="filter-review-type">
+              <option value="">Tous</option>
+              <option value="inscription">Inscription</option>
+              <option value="contract">Contrat</option>
+              <option value="amendment">Amendement</option>
+              <option value="dispute">Litige</option>
+            </select>
+          </div>
+          <button class="btn-primary" id="btn-filter-reviews" style="padding:8px 16px;">Filtrer</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>N&#176; Dossier</th>
+                <th>Client</th>
+                <th>Type</th>
+                <th>Lot</th>
+                <th>Statut</th>
+                <th>Assigne a</th>
+                <th>Date</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="reviews-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Documents -->
+    <div id="panel-documents" class="panel">
+      <div class="card">
+        <div class="tab-bar">
+          <button class="active" data-doc-tab="all" id="doc-tab-all">Tous les documents</button>
+          <button data-doc-tab="templates" id="doc-tab-templates">Modeles</button>
+        </div>
+
+        <div id="doc-section-all">
+          <form id="upload-doc-form" class="upload-form">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+              <div>
+                <label>Fichier</label>
+                <input type="file" id="doc-file" accept=".pdf,.doc,.docx,.jpg,.png" required>
+              </div>
+              <div>
+                <label>Type de document</label>
+                <select id="doc-type">
+                  <option value="legal_opinion">Avis juridique</option>
+                  <option value="contract">Contrat</option>
+                  <option value="amendment">Amendement</option>
+                  <option value="certificate">Certificat</option>
+                  <option value="correspondence">Correspondance</option>
+                  <option value="other">Autre</option>
+                </select>
+              </div>
+              <div>
+                <label>Dossier associe</label>
+                <select id="doc-review-id">
+                  <option value="">Aucun</option>
+                </select>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;padding-top:20px;">
+                <input type="checkbox" id="doc-is-template" style="width:auto;">
+                <label style="margin:0;">Modele</label>
+              </div>
+            </div>
+            <button type="submit" class="btn-primary" style="margin-top:8px;">Telecharger le document</button>
+            <span id="doc-upload-result" style="margin-left:12px;font-size:13px;"></span>
+          </form>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom fichier</th>
+                  <th>Type</th>
+                  <th>Dossier associe</th>
+                  <th>Statut</th>
+                  <th>Telecharger</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="documents-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div id="doc-section-templates" style="display:none;">
+          <h3 style="margin-top:0;">Modeles de documents</h3>
+          <div id="templates-list" style="font-size:14px;">
+            <p style="color:#999;">Chargement...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Messagerie -->
+    <div id="panel-messages" class="panel">
+      <div class="card">
+        <h3>Messagerie</h3>
+        <div class="filter-bar" style="margin-bottom:12px;">
+          <div>
+            <label style="font-size:12px;font-weight:600;">Filtrer par destinataire</label>
+            <select id="filter-msg-recipient">
+              <option value="">Tous</option>
+              <option value="client">Client</option>
+              <option value="owner">Proprietaire</option>
+              <option value="collaborator">Collaborateur</option>
+            </select>
+          </div>
+        </div>
+        <div class="msg-layout">
+          <div class="msg-sidebar" id="msg-conversations">
+            <p style="color:#999;font-size:13px;">Chargement des conversations...</p>
+          </div>
+          <div class="msg-thread">
+            <div class="msg-messages" id="msg-thread-messages">
+              <p style="color:#999;font-size:13px;text-align:center;margin-top:40px;">Selectionnez une conversation</p>
+            </div>
+            <div class="msg-input-area" id="msg-input-area" style="display:none;">
+              <input type="text" id="msg-subject" placeholder="Objet du message">
+              <textarea id="msg-body" placeholder="Votre message..."></textarea>
+              <div style="display:flex;gap:8px;align-items:center;">
+                <input type="file" id="msg-attachment" style="flex:1;">
+                <button class="btn-primary" id="btn-send-msg">Envoyer</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Facturation -->
+    <div id="panel-billing" class="panel">
+      <div class="stats-row">
+        <div class="stat-card" style="border-top:3px solid #1a237e;">
+          <div class="stat-value" style="color:#1a237e;" id="billing-total">0 FCFA</div>
+          <div class="stat-label">Total facture</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #E65100;">
+          <div class="stat-value" style="color:#E65100;" id="billing-pending">0 FCFA</div>
+          <div class="stat-label">En attente paiement</div>
+        </div>
+        <div class="stat-card" style="border-top:3px solid #1B5E20;">
+          <div class="stat-value" style="color:#1B5E20;" id="billing-paid">0 FCFA</div>
+          <div class="stat-label">Paye</div>
+        </div>
+      </div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <h3 style="margin:0;">Factures</h3>
+          <button class="btn-gold" id="btn-generate-invoices">Generer les factures du mois</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>N&#176; Facture</th>
+                <th>Client</th>
+                <th>Periode</th>
+                <th>Jours</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="billing-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Collaborateurs -->
+    <div id="panel-collaborators" class="panel">
+      <div class="card">
+        <h3>Ajouter un collaborateur</h3>
+        <form id="collab-form" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end;">
+          <div>
+            <label style="font-size:12px;font-weight:600;">Nom complet *</label>
+            <input type="text" id="collab-name" required style="padding:8px;border:1px solid #ddd;border-radius:6px;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;">Email *</label>
+            <input type="email" id="collab-email" required style="padding:8px;border:1px solid #ddd;border-radius:6px;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;">Telephone</label>
+            <input type="tel" id="collab-phone" style="padding:8px;border:1px solid #ddd;border-radius:6px;">
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;">Role *</label>
+            <select id="collab-role" required style="padding:8px;border:1px solid #ddd;border-radius:6px;">
+              <option value="partner">Associe principal</option>
+              <option value="associate">Avocat collaborateur</option>
+              <option value="paralegal">Parajuriste</option>
+              <option value="secretary">Secretaire</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:12px;font-weight:600;">Permissions *</label>
+            <select id="collab-permissions" required style="padding:8px;border:1px solid #ddd;border-radius:6px;">
+              <option value="read">Lecture seule</option>
+              <option value="write">Lecture/Ecriture</option>
+              <option value="admin">Administrateur</option>
+            </select>
+          </div>
+          <button type="submit" class="btn-primary" style="padding:8px 16px;">Ajouter</button>
+        </form>
+      </div>
+      <div class="card">
+        <h3>Equipe</h3>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Permissions</th>
+                <th>Actif</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="collaborators-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL: Profil -->
+    <div id="panel-profile" class="panel">
+      <div class="card">
+        <h3>Profil du cabinet</h3>
+        <p style="font-size:13px;color:#666;margin-bottom:16px;">Mettez a jour les informations de votre cabinet juridique</p>
+        <form id="legal-profile-form">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <label style="font-weight:600;font-size:13px;">Nom du cabinet</label>
+              <input id="lp-firm-name" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">N&#176; de licence / Barreau</label>
+              <input id="lp-license-number" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Adresse</label>
+              <input id="lp-address" type="text" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Telephone</label>
+              <input id="lp-phone" type="tel" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Email</label>
+              <input id="lp-email" type="email" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Specialites</label>
+              <input id="lp-specialties" type="text" placeholder="Foncier, Contrats, Litiges..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+            <div>
+              <label style="font-weight:600;font-size:13px;">Honoraires journaliers (FCFA)</label>
+              <input id="lp-daily-fee" type="number" min="50" max="500" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-top:4px;">
+            </div>
+          </div>
+          <div style="margin-top:16px;">
+            <button type="submit" class="btn-primary">Enregistrer le profil</button>
+            <span id="profile-result" style="margin-left:12px;font-size:13px;"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review Detail Modal -->
+  <div class="modal-overlay" id="review-modal">
+    <div class="modal">
+      <h3>Detail du dossier <span id="modal-review-number"></span></h3>
+      <div id="modal-client-info" style="margin-bottom:12px;"></div>
+      <div id="modal-reservation-info" style="margin-bottom:12px;"></div>
+      <label>Avis juridique</label>
+      <textarea id="modal-legal-opinion" placeholder="Redigez votre avis juridique..."></textarea>
+      <label>Statut</label>
+      <select id="modal-status">
+        <option value="pending">En attente</option>
+        <option value="in_review">En revision</option>
+        <option value="approved">Approuve</option>
+        <option value="rejected">Rejete</option>
+      </select>
+      <label>Notes internes</label>
+      <textarea id="modal-notes" placeholder="Notes internes..."></textarea>
+      <label>Documents associes</label>
+      <ul id="modal-documents" style="font-size:13px;margin-top:4px;padding-left:16px;"></ul>
+      <div style="margin-top:12px;">
+        <label>Envoyer un message au client</label>
+        <textarea id="modal-message" placeholder="Message au client..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-sm" style="background:#eee;color:#333;" id="modal-close">Fermer</button>
+        <button class="btn-sm btn-blue" id="modal-send-msg">Envoyer message</button>
+        <button class="btn-primary" id="modal-save">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/runtime-config.js"></script>
+  <script src="js/app-api.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/dashboard-legal.js"></script>
+</body>
+</html>
