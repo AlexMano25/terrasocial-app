@@ -243,7 +243,7 @@ router.get('/documents', async (req, res) => {
 
         const where = conditions.join(' AND ');
 
-        const documents = await all(
+        const rows = await all(
             `SELECT ld.*, u.full_name, u.email
              FROM legal_documents ld
              LEFT JOIN users u ON ld.user_id = u.id
@@ -251,6 +251,14 @@ router.get('/documents', async (req, res) => {
              ORDER BY ld.id DESC`,
             params
         );
+
+        // Map DB column names to frontend expected names
+        const documents = rows.map(r => ({
+            ...r,
+            filename: r.file_name || r.filename || null,
+            url: r.file_url || r.url || null,
+            review_number: r.review_number || null
+        }));
 
         return res.json({ documents });
     } catch (error) {
