@@ -1,34 +1,4 @@
 {
-    "outputDirectory": ".",
-    "cleanUrls": false,
-    "trailingSlash": false,
-    "headers": [
-          {
-                  "source": "/docs/legal/(.*)\\.docx",
-                  "headers": [
-                            { "key": "Content-Type", "value": "application/vnd.openxmlformats-officedocument.wordprocessingml.document" },
-                            { "key": "Content-Disposition", "value": "attachment" }
-                  ]
-          }
-    ],
-    "redirects": [
-          {
-                  "source": "/home",
-                  "destination": "/index.html",
-                  "permanent": false
-          }
-    ],
-    "rewrites": [
-          {
-                  "source": "/api/(.*)",
-                  "destination": "/api/[...path]"
-          },
-          {
-                  "source": "/",
-                  "destination": "/index.html"
-          }
-    ]
-}{
   "outputDirectory": ".",
   "cleanUrls": false,
   "trailingSlash": false,
