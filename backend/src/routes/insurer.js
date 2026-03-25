@@ -76,14 +76,14 @@ router.get('/dashboard', async (req, res) => {
 router.get('/subscribers', async (req, res) => {
     try {
         const subscribers = await all(
-            `SELECT u.id, u.full_name, u.email, u.phone, u.city,
-                    r.id as reservation_id, r.lot_type, r.lot_price, r.insurance_persons, r.status as reservation_status,
-                    r.created_at as subscription_date
+            `SELECT DISTINCT u.id, u.full_name, u.email, u.phone, u.city,
+                    r.id as reservation_id, r.lot_type, r.lot_price, r.status, r.insurance_persons, r.created_at
              FROM reservations r
              JOIN users u ON r.user_id = u.id
-             WHERE r.insurer_id = ? AND r.insurance_persons > 0
+             WHERE (r.insurer_id = ? OR r.id IN (SELECT DISTINCT reservation_id FROM insured_persons_details WHERE insurer_id = ?))
+               AND r.insurance_persons > 0
              ORDER BY r.created_at DESC`,
-            [req.insurer.id]
+            [req.insurer.id, req.insurer.id]
         );
         return res.json({ subscribers });
     } catch (error) {

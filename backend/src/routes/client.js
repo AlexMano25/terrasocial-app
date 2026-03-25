@@ -2,6 +2,7 @@ const express = require('express');
 const { all, get, run } = require('../db/connection');
 const { requireAuth, requireRole } = require('../middleware/auth');
 const { validateReservationPayload } = require('../utils/validation');
+const sync = require('../services/sync');
 
 const router = express.Router();
 
@@ -293,6 +294,7 @@ router.post('/insured-persons', async (req, res) => {
         );
 
         // Insert new entries
+        const insurerId = await sync.getReservationInsurerId(reservation_id);
         const insertedPersons = [];
         for (let i = 0; i < names.length; i++) {
             const name = (names[i] || '').trim().slice(0, 200);
@@ -301,10 +303,12 @@ router.post('/insured-persons', async (req, res) => {
             const result = await run(
                 `INSERT INTO insured_persons_details (reservation_id, user_id, insurer_id, full_name, is_active, created_at)
                  VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
-                [reservation_id, userId, userId, name]
+                [reservation_id, userId, insurerId, name]
             );
             insertedPersons.push({ id: result.id, full_name: name });
         }
+
+        try { await sync.onInsuredPersonsUpdated(reservation_id); } catch(e) { console.error('[SYNC] insured persons:', e.message); }
 
         return res.json({
             ok: true,
@@ -467,6 +471,8 @@ router.post('/versement/:id/confirm', async (req, res) => {
             console.error('[COMMISSION] Error creating commission:', commErr.message);
         }
 
+        try { await sync.onPaymentConfirmed(payment.id, payment.reservation_id, userId); } catch(e) { console.error('[SYNC] payment confirmed:', e.message); }
+
         await req.audit?.('client.versement_confirmed', {
             user_id: userId,
             payment_id: payment.id,
@@ -546,6 +552,9 @@ router.post('/reservations', async (req, res) => {
         );
 
         await req.audit?.('client.reservation_created', { user_id: req.user.id, reservation_id: result.id });
+
+        // Sync: create legal review + link insurer
+        try { await sync.onReservationCreated(userId, result.id); } catch(e) { console.error('[SYNC] reservation created:', e.message); }
 
         return res.status(201).json({
             id: result.id,

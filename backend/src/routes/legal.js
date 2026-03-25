@@ -661,13 +661,13 @@ router.delete('/collaborators/:id', async (req, res) => {
 router.get('/subscriptions', async (req, res) => {
     try {
         const subscriptions = await all(
-            `SELECT r.id, r.lot_type, r.status, r.insurance_persons, r.created_at,
-                    u.id as user_id, u.full_name, u.email, u.phone, u.city
+            `SELECT r.*, u.full_name, u.email, u.phone, u.city
              FROM reservations r
              JOIN users u ON r.user_id = u.id
              WHERE r.status = 'active'
-             ORDER BY r.created_at DESC`,
-            []
+               AND EXISTS (SELECT 1 FROM legal_reviews WHERE firm_id = ? AND reservation_id = r.id)
+             ORDER BY r.id DESC`,
+            [req.firm.id]
         );
         return res.json({ subscriptions });
     } catch (error) {
