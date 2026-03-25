@@ -334,6 +334,23 @@ router.put('/documents/:id/status', async (req, res) => {
     }
 });
 
+// DELETE /api/legal/documents/:id
+router.delete('/documents/:id', async (req, res) => {
+    try {
+        const doc = await get(
+            'SELECT * FROM legal_documents WHERE id = ? AND firm_id = ?',
+            [req.params.id, req.firm.id]
+        );
+        if (!doc) return res.status(404).json({ error: 'Document introuvable' });
+
+        await run('DELETE FROM legal_documents WHERE id = ?', [doc.id]);
+
+        return res.json({ success: true, id: doc.id });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur suppression document' });
+    }
+});
+
 // GET /api/legal/documents/templates
 router.get('/documents/templates', async (req, res) => {
     try {

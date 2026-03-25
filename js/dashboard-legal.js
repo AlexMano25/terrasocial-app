@@ -289,9 +289,10 @@
       var actions = '';
       if (docStatus === 'pending' || docStatus === 'in_review') {
         actions = '<button class="btn-sm btn-green" data-action="approve-doc" data-id="' + esc(String(d.id)) + '">Approuver</button> ' +
-          '<button class="btn-sm btn-red" data-action="reject-doc" data-id="' + esc(String(d.id)) + '">Rejeter</button>';
+          '<button class="btn-sm btn-red" data-action="reject-doc" data-id="' + esc(String(d.id)) + '">Rejeter</button> ' +
+          '<button class="btn-sm" style="background:#666;color:#fff;" data-action="delete-doc" data-id="' + esc(String(d.id)) + '" data-name="' + esc(d.filename || d.file_name || '') + '">Supprimer</button>';
       } else {
-        actions = '<span style="color:#999;font-size:12px;">Traite</span>';
+        actions = '<button class="btn-sm" style="background:#666;color:#fff;" data-action="delete-doc" data-id="' + esc(String(d.id)) + '" data-name="' + esc(d.filename || d.file_name || '') + '">Supprimer</button>';
       }
       return '<tr>' +
         '<td>' + esc(d.filename || '-') + '</td>' +
@@ -393,6 +394,16 @@
       try {
         await TSApi.request('/api/legal/documents/' + id + '/reject', { method: 'POST' });
         flash('Document rejete.', 'ok');
+        await loadDocuments();
+      } catch (err) { flash(err.message, 'err'); }
+    }
+
+    if (action === 'delete-doc') {
+      var docName = btn.dataset.name || 'ce document';
+      if (!confirm('Supprimer definitivement "' + docName + '" ?')) return;
+      try {
+        await TSApi.request('/api/legal/documents/' + id, { method: 'DELETE' });
+        flash('Document supprime.', 'ok');
         await loadDocuments();
       } catch (err) { flash(err.message, 'err'); }
     }
