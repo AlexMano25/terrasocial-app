@@ -7,7 +7,6 @@
   if (!user.is_legal) { window.location.href = 'login.html'; return; }
 
   var esc = TSUtils.escapeHtml;
-
   // ── Flash messages ──
   function flash(msg, type) {
     document.getElementById('flash').innerHTML = '<div class="flash ' + type + '">' + esc(msg) + '</div>';
@@ -188,7 +187,11 @@
 
       // Documents
       var docList = document.getElementById('modal-documents');
-      var docs = r.documents || [];
+      var docs = (r.documents || []).map(function(d) {
+        d.filename = d.filename || d.file_name || null;
+        d.url = d.url || d.file_url || null;
+        return d;
+      });
       if (!docs.length) {
         docList.innerHTML = '<li style="color:#999;">Aucun document associe</li>';
       } else {
@@ -260,8 +263,15 @@
   // ── Documents ──
   async function loadDocuments() {
     var data = await TSApi.request('/api/legal/documents');
-    state.documents = (data.documents || []).filter(function(d) { return !d.is_template; });
-    state.templates = (data.documents || []).filter(function(d) { return d.is_template; });
+    // Normalize DB column names (file_name/file_url) to frontend names (filename/url)
+    var docs = (data.documents || []).map(function(d) {
+      d.filename = d.filename || d.file_name || null;
+      d.url = d.url || d.file_url || null;
+      d.review_number = d.review_number || null;
+      return d;
+    });
+    state.documents = docs.filter(function(d) { return !d.is_template; });
+    state.templates = docs.filter(function(d) { return d.is_template; });
     renderDocuments();
     renderTemplates();
     populateReviewSelect();
