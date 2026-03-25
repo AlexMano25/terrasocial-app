@@ -128,12 +128,12 @@
     }
     tbody.innerHTML = state.reviews.map(function(r) {
       return '<tr>' +
-        '<td style="font-family:monospace;">' + esc(r.review_number || r.id || '-') + '</td>' +
-        '<td>' + esc(r.client_name || '-') + '</td>' +
-        '<td>' + esc(typeLabelFr(r.type)) + '</td>' +
-        '<td>' + esc(r.lot_reference || '-') + '</td>' +
+        '<td style="font-family:monospace;">' + esc(String(r.id || '-')) + '</td>' +
+        '<td>' + esc(r.full_name || r.client_name || '-') + '</td>' +
+        '<td>' + esc(typeLabelFr(r.review_type || r.type)) + '</td>' +
+        '<td>' + esc(r.lot_type || r.lot_reference || '-') + '</td>' +
         '<td>' + statusBadge(r.status) + '</td>' +
-        '<td>' + esc(r.assigned_to || '-') + '</td>' +
+        '<td>' + esc(r.assigned_name || r.assigned_to || '-') + '</td>' +
         '<td>' + (r.created_at ? new Date(r.created_at).toLocaleDateString('fr-FR') : '-') + '</td>' +
         '<td>' +
           '<button class="btn-sm btn-navy" data-action="view-review" data-id="' + esc(String(r.id)) + '">Voir</button> ' +
@@ -287,7 +287,7 @@
       var docStatus = d.status || 'pending';
       var badge = statusBadge(docStatus);
       var actions = '';
-      if (docStatus === 'pending' || docStatus === 'in_review') {
+      if (docStatus === 'pending' || docStatus === 'in_review' || docStatus === 'pending_review' || docStatus === 'draft') {
         actions = '<button class="btn-sm btn-green" data-action="approve-doc" data-id="' + esc(String(d.id)) + '">Approuver</button> ' +
           '<button class="btn-sm btn-red" data-action="reject-doc" data-id="' + esc(String(d.id)) + '">Rejeter</button> ' +
           '<button class="btn-sm" style="background:#666;color:#fff;" data-action="delete-doc" data-id="' + esc(String(d.id)) + '" data-name="' + esc(d.filename || d.file_name || '') + '">Supprimer</button>';
@@ -295,11 +295,11 @@
         actions = '<button class="btn-sm" style="background:#666;color:#fff;" data-action="delete-doc" data-id="' + esc(String(d.id)) + '" data-name="' + esc(d.filename || d.file_name || '') + '">Supprimer</button>';
       }
       return '<tr>' +
-        '<td>' + esc(d.filename || '-') + '</td>' +
+        '<td>' + esc(d.file_name || d.filename || '-') + '</td>' +
         '<td>' + esc(d.document_type || '-') + '</td>' +
-        '<td>' + esc(d.review_number || '-') + '</td>' +
+        '<td>' + esc(d.review_id || d.review_number || '-') + '</td>' +
         '<td>' + badge + '</td>' +
-        '<td>' + (d.url ? '<a class="btn-sm btn-blue" style="text-decoration:none;display:inline-block;" href="' + esc(d.url) + '" target="_blank">Telecharger</a>' : '-') + '</td>' +
+        '<td>' + ((d.file_url || d.url) ? '<a class="btn-sm btn-blue" style="text-decoration:none;display:inline-block;" href="' + esc(d.file_url || d.url) + '" target="_blank">Telecharger</a>' : '-') + '</td>' +
         '<td>' + actions + '</td>' +
         '</tr>';
     }).join('');
