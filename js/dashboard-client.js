@@ -683,5 +683,83 @@
   // Show phone field by default for first option (orange_money)
   document.getElementById('phone-field').style.display = 'block';
 
+  // === Legal messaging ===
+  async function loadLegalMessages() {
+      try {
+          const data = await TSApi.request('/api/client/legal-messages');
+          const container = document.getElementById('legal-msgs-container');
+          if (!data.messages || data.messages.length === 0) {
+              container.innerHTML = '<p style="color:#999;">Aucun message.</p>';
+              return;
+          }
+          container.innerHTML = data.messages.map(m => {
+              const isMe = m.sender_type === 'client';
+              const align = isMe ? 'right' : 'left';
+              const bg = isMe ? '#e3f2fd' : '#f5f5ff';
+              const label = isMe ? 'Vous' : 'Cabinet juridique';
+              return `<div style="text-align:${align};margin-bottom:12px;">
+                  <div style="display:inline-block;background:${bg};padding:10px 14px;border-radius:8px;max-width:70%;text-align:left;">
+                      <strong>${TSUtils.escapeHtml(label)}</strong>
+                      ${m.subject ? '<br><em>' + TSUtils.escapeHtml(m.subject) + '</em>' : ''}
+                      <p style="margin:4px 0 0;">${TSUtils.escapeHtml(m.body)}</p>
+                      <small style="color:#999;">${TSUtils.escapeHtml(m.created_at || '')}</small>
+                  </div>
+              </div>`;
+          }).join('');
+      } catch (err) {
+          console.error('Legal messages error:', err);
+      }
+  }
+
+  async function loadLegalDocuments() {
+      try {
+          const data = await TSApi.request('/api/client/legal-documents');
+          const tbody = document.getElementById('legal-docs-tbody');
+          if (!data.documents || data.documents.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="5">Aucun document.</td></tr>';
+              return;
+          }
+          tbody.innerHTML = data.documents.map(d => `<tr>
+              <td>${TSUtils.escapeHtml(d.document_type)}</td>
+              <td>${TSUtils.escapeHtml(d.file_name)}</td>
+              <td>${TSUtils.escapeHtml(d.status)}</td>
+              <td>${TSUtils.escapeHtml(d.created_at || '')}</td>
+              <td>${d.file_url ? '<a href="' + TSUtils.escapeHtml(d.file_url) + '" target="_blank" class="btn" style="background:#1a237e;color:#fff;padding:4px 8px;font-size:12px;">Telecharger</a>' : '-'}</td>
+          </tr>`).join('');
+      } catch (err) {
+          console.error('Legal docs error:', err);
+      }
+  }
+
+  // Wire up buttons
+  document.getElementById('btn-show-legal-msgs')?.addEventListener('click', () => {
+      document.getElementById('legal-messages-list').style.display = 'block';
+      document.getElementById('legal-documents-list').style.display = 'none';
+      loadLegalMessages();
+  });
+
+  document.getElementById('btn-show-legal-docs')?.addEventListener('click', () => {
+      document.getElementById('legal-documents-list').style.display = 'block';
+      document.getElementById('legal-messages-list').style.display = 'none';
+      loadLegalDocuments();
+  });
+
+  document.getElementById('btn-send-legal-msg')?.addEventListener('click', async () => {
+      const subject = document.getElementById('legal-msg-subject').value.trim();
+      const body = document.getElementById('legal-msg-body').value.trim();
+      const result = document.getElementById('legal-msg-result');
+      if (!body) { result.innerHTML = '<span style="color:red;">Veuillez ecrire un message.</span>'; return; }
+      try {
+          await TSApi.request('/api/client/legal-messages', { method: 'POST', body: JSON.stringify({ subject, body }) });
+          result.innerHTML = '<span style="color:green;">Message envoye !</span>';
+          document.getElementById('legal-msg-subject').value = '';
+          document.getElementById('legal-msg-body').value = '';
+          loadLegalMessages();
+          document.getElementById('legal-messages-list').style.display = 'block';
+      } catch (err) {
+          result.innerHTML = '<span style="color:red;">Erreur lors de l\'envoi.</span>';
+      }
+  });
+
   load();
 })();

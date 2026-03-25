@@ -145,5 +145,114 @@
     }
   });
 
+  // ── Service Juridique ──
+
+  async function loadLegalMessages() {
+    try {
+      var data = await TSApi.request('/api/owner/legal-messages');
+      var messages = data.messages || [];
+      var container = document.getElementById('legal-msgs-container');
+      if (!messages.length) {
+        container.innerHTML = '<p style="color:#999;font-size:13px;">Aucun message juridique</p>';
+        return;
+      }
+      container.innerHTML = messages.map(function(m) {
+        var isSent = m.sender_type === 'owner';
+        var cls = isSent ? 'sent' : 'received';
+        var bgColor = isSent ? '#e8eaf6' : '#fff8e1';
+        return '<div style="background:' + bgColor + ';padding:10px;border-radius:8px;margin-bottom:8px;" class="' + cls + '">' +
+          '<div style="font-weight:600;font-size:13px;">' + TSUtils.escapeHtml(m.subject || 'Sans objet') + '</div>' +
+          '<div style="margin-top:4px;">' + TSUtils.escapeHtml(m.body || '') + '</div>' +
+          '<div style="font-size:11px;color:#999;margin-top:4px;">' +
+            TSUtils.escapeHtml(m.sender_name || (isSent ? 'Vous' : 'Cabinet')) + ' — ' +
+            (m.created_at ? new Date(m.created_at).toLocaleString('fr-FR') : '') +
+          '</div>' +
+        '</div>';
+      }).join('');
+    } catch (err) {
+      flash(err.message, 'err');
+    }
+  }
+
+  async function loadLegalDocuments() {
+    try {
+      var data = await TSApi.request('/api/owner/legal-documents');
+      var docs = data.documents || [];
+      var tbody = document.getElementById('legal-docs-tbody');
+      if (!docs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="small">Aucun document juridique</td></tr>';
+        return;
+      }
+      tbody.innerHTML = docs.map(function(d) {
+        var url = d.public_url || d.file_url || d.url || '';
+        var link = url
+          ? '<a href="' + TSUtils.escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">Ouvrir</a>'
+          : '-';
+        return '<tr>' +
+          '<td>' + TSUtils.escapeHtml(d.document_type || '-') + '</td>' +
+          '<td>' + TSUtils.escapeHtml(d.file_name || d.filename || '-') + '</td>' +
+          '<td><span class="status ' + TSUtils.escapeHtml(d.status || 'pending') + '">' + TSUtils.escapeHtml(d.status || 'pending') + '</span></td>' +
+          '<td>' + (d.created_at ? new Date(d.created_at).toLocaleDateString('fr-FR') : '-') + '</td>' +
+          '<td>' + link + '</td>' +
+        '</tr>';
+      }).join('');
+    } catch (err) {
+      flash(err.message, 'err');
+    }
+  }
+
+  document.getElementById('btn-show-legal-msgs').addEventListener('click', function() {
+    var msgList = document.getElementById('legal-messages-list');
+    var docList = document.getElementById('legal-documents-list');
+    docList.style.display = 'none';
+    msgList.style.display = msgList.style.display === 'none' ? '' : 'none';
+    if (msgList.style.display !== 'none') {
+      loadLegalMessages();
+    }
+  });
+
+  document.getElementById('btn-show-legal-docs').addEventListener('click', function() {
+    var msgList = document.getElementById('legal-messages-list');
+    var docList = document.getElementById('legal-documents-list');
+    msgList.style.display = 'none';
+    docList.style.display = docList.style.display === 'none' ? '' : 'none';
+    if (docList.style.display !== 'none') {
+      loadLegalDocuments();
+    }
+  });
+
+  document.getElementById('btn-send-legal-msg').addEventListener('click', async function() {
+    var subject = document.getElementById('legal-msg-subject').value.trim();
+    var body = document.getElementById('legal-msg-body').value.trim();
+    var resultEl = document.getElementById('legal-msg-result');
+
+    if (!body) {
+      resultEl.innerHTML = '<span style="color:#C62828;">Veuillez saisir un message.</span>';
+      return;
+    }
+
+    resultEl.innerHTML = '<span style="color:#666;">Envoi en cours...</span>';
+
+    try {
+      await TSApi.request('/api/owner/legal-messages', {
+        method: 'POST',
+        body: JSON.stringify({
+          subject: subject,
+          body: body,
+          sender_type: 'owner'
+        })
+      });
+      resultEl.innerHTML = '<span style="color:#1B5E20;font-weight:600;">Message envoyé avec succès</span>';
+      document.getElementById('legal-msg-subject').value = '';
+      document.getElementById('legal-msg-body').value = '';
+      // Refresh messages if visible
+      if (document.getElementById('legal-messages-list').style.display !== 'none') {
+        loadLegalMessages();
+      }
+    } catch (err) {
+      resultEl.innerHTML = '<span style="color:#C62828;">' + TSUtils.escapeHtml(err.message) + '</span>';
+    }
+  });
+
   load();
 })();

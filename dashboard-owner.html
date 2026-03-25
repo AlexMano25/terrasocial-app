@@ -140,6 +140,35 @@
         </table>
       </div>
     </section>
+
+    <!-- Section Juridique -->
+    <div class="section-card" id="legal-section" style="margin-top:24px;">
+      <h3 style="color:#1a237e;">Service Juridique</h3>
+      <p style="color:#666;margin-bottom:16px;">Echangez avec le cabinet d'avocats et consultez vos documents juridiques.</p>
+
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;">
+        <button id="btn-show-legal-msgs" class="btn" style="background:#1a237e;color:#fff;">Messages juridiques</button>
+        <button id="btn-show-legal-docs" class="btn" style="background:#c9a84c;color:#fff;">Documents juridiques</button>
+      </div>
+
+      <div id="legal-msg-form" style="background:#f5f5ff;padding:16px;border-radius:8px;margin-bottom:16px;">
+        <h4 style="margin:0 0 8px;">Envoyer un message au cabinet</h4>
+        <input type="text" id="legal-msg-subject" placeholder="Objet" style="width:100%;padding:8px;margin-bottom:8px;border:1px solid #ccc;border-radius:4px;">
+        <textarea id="legal-msg-body" placeholder="Votre message..." rows="3" style="width:100%;padding:8px;border:1px solid #ccc;border-radius:4px;"></textarea>
+        <button id="btn-send-legal-msg" class="btn" style="background:#1a237e;color:#fff;margin-top:8px;">Envoyer</button>
+        <div id="legal-msg-result" style="margin-top:8px;"></div>
+      </div>
+
+      <div id="legal-messages-list" style="display:none;">
+        <h4>Historique des messages</h4>
+        <div id="legal-msgs-container"></div>
+      </div>
+
+      <div id="legal-documents-list" style="display:none;">
+        <h4>Documents juridiques</h4>
+        <table class="table"><thead><tr><th>Type</th><th>Fichier</th><th>Statut</th><th>Date</th><th>Action</th></tr></thead><tbody id="legal-docs-tbody"></tbody></table>
+      </div>
+    </div>
   </main>
 
   <script src="js/runtime-config.js"></script>
