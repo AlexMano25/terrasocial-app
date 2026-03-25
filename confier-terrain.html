@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Vendez votre terrain rapidement et en toute securite avec TERRASOCIAL. Paiement garanti, echelonne sur 12 a 36 mois, encadre par un avocat et un notaire au Cameroun.">
+    <meta name="keywords" content="vendre terrain Cameroun, confier terrain Yaounde, vente terrain Douala, foncier social, terrain a vendre Cameroun, TERRASOCIAL proprietaire">
+    <meta property="og:title" content="Vendez votre terrain rapidement et en toute securite | TERRASOCIAL">
+    <meta property="og:description" content="Confiez votre propriete a TERRASOCIAL. Paiement garanti, avocat + notaire inclus, suivi en temps reel.">
+    <meta property="og:type" content="website">
+    <title>Vendez votre terrain en toute securite | Proprietaire TERRASOCIAL</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@700&display=swap">
+    <style>
+        :root{--green:#1B5E20;--green-light:#2E7D32;--green-dark:#0a3d12;--green-bg:#f0faf0;--orange:#F39C12;--orange-dark:#E67E22;--gold:#FFD700;--gray:#5A6C7D;--gray-light:#F8FAFB;--white:#FFF;--dark:#2C3E50;}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        html{scroll-behavior:smooth;}
+        body{font-family:'Inter',sans-serif;color:var(--dark);line-height:1.6;}
+        a{text-decoration:none;color:inherit;}
+        .container{max-width:1100px;margin:0 auto;padding:0 20px;}
+
+        /* TOPBAR */
+        .topbar{background:var(--white);padding:14px 0;box-shadow:0 2px 10px rgba(0,0,0,.06);position:sticky;top:0;z-index:100;}
+        .topbar .container{display:flex;align-items:center;justify-content:space-between;}
+        .logo{font-size:20px;font-weight:800;color:var(--green);}
+        .logo span:last-child{color:var(--dark);}
+        .top-cta{display:flex;gap:10px;align-items:center;}
+        .top-cta a{font-size:13px;font-weight:600;padding:8px 16px;border-radius:8px;transition:all .2s;}
+        .btn-wa{background:#25D366;color:#fff;}
+        .btn-wa:hover{background:#1da851;}
+        .btn-green{background:var(--green);color:#fff;}
+        .btn-green:hover{background:var(--green-dark);}
+
+        /* HERO */
+        .hero{background:linear-gradient(135deg,#0a2e12 0%,#1B5E20 40%,#2E7D32 100%);color:#fff;padding:100px 0 70px;position:relative;overflow:hidden;}
+        .hero::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(243,156,18,.12),transparent 70%);border-radius:50%;}
+        .hero::after{content:'';position:absolute;bottom:-60px;left:-60px;width:300px;height:300px;background:radial-gradient(circle,rgba(255,255,255,.05),transparent 70%);border-radius:50%;}
+        .hero .container{position:relative;z-index:1;text-align:center;}
+        .hero-badge{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:6px 20px;border-radius:50px;font-size:13px;font-weight:700;color:#fff;margin-bottom:20px;letter-spacing:.5px;}
+        .hero h1{font-family:'Playfair Display',serif;font-size:46px;font-weight:700;line-height:1.15;margin-bottom:20px;letter-spacing:-1px;}
+        .hero h1 .highlight{color:var(--gold);display:block;margin-top:4px;}
+        .hero .sub{font-size:19px;opacity:.92;max-width:680px;margin:0 auto 36px;line-height:1.6;}
+        .hero-cta{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;}
+        .btn{display:inline-flex;align-items:center;gap:8px;padding:16px 32px;border-radius:12px;font-size:17px;font-weight:700;cursor:pointer;transition:all .3s;border:none;}
+        .btn-gold{background:linear-gradient(135deg,var(--orange),#FF6F00);color:#fff;box-shadow:0 4px 20px rgba(243,156,18,.4);font-size:18px;}
+        .btn-gold:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(243,156,18,.5);}
+        .btn-whatsapp{background:#25D366;color:#fff;box-shadow:0 4px 20px rgba(37,211,102,.3);}
+        .btn-whatsapp:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(37,211,102,.4);}
+        .hero-stats{display:flex;justify-content:center;gap:40px;flex-wrap:wrap;}
+        .hero-stat{text-align:center;}
+        .hero-stat .number{font-size:32px;font-weight:900;color:var(--gold);}
+        .hero-stat .label{font-size:13px;opacity:.85;margin-top:2px;}
+
+        /* GUARANTEES */
+        .guarantees{padding:80px 0;background:var(--white);}
+        .guarantees h2{font-family:'Playfair Display',serif;font-size:36px;text-align:center;color:var(--green);margin-bottom:12px;}
+        .guarantees .sub{text-align:center;color:var(--gray);font-size:17px;margin-bottom:48px;max-width:600px;margin-left:auto;margin-right:auto;}
+        .guarantees-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;}
+        .guarantee-card{background:var(--gray-light);border-radius:16px;padding:32px 28px;transition:all .3s;border:2px solid transparent;display:flex;gap:18px;align-items:flex-start;}
+        .guarantee-card:hover{border-color:var(--green);transform:translateY(-3px);box-shadow:0 8px 30px rgba(0,0,0,.06);}
+        .guarantee-card .emoji{font-size:36px;flex-shrink:0;margin-top:2px;}
+        .guarantee-card h3{font-size:17px;margin-bottom:6px;color:var(--green);}
+        .guarantee-card p{color:var(--gray);font-size:14px;line-height:1.6;}
+
+        /* STEPS */
+        .how-it-works{padding:80px 0;background:var(--green-bg);}
+        .how-it-works h2{font-family:'Playfair Display',serif;font-size:36px;text-align:center;color:var(--green);margin-bottom:48px;}
+        .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;position:relative;}
+        .step{text-align:center;padding:28px 16px;background:var(--white);border-radius:16px;position:relative;box-shadow:0 4px 15px rgba(0,0,0,.04);}
+        .step-num{width:50px;height:50px;border-radius:50%;background:var(--green);color:#fff;font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;}
+        .step h3{font-size:15px;margin-bottom:6px;color:var(--green);}
+        .step p{color:var(--gray);font-size:13px;line-height:1.5;}
+        .step-arrow{position:absolute;top:50%;right:-16px;font-size:24px;color:var(--orange);display:none;z-index:2;}
+        @media(min-width:769px){.step-arrow{display:block;}}
+
+        /* ADVANTAGES */
+        .advantages{padding:80px 0;background:var(--white);}
+        .advantages h2{font-family:'Playfair Display',serif;font-size:36px;text-align:center;color:var(--green);margin-bottom:48px;}
+        .advantages-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px;max-width:900px;margin:0 auto;}
+        .advantage-item{display:flex;align-items:flex-start;gap:14px;padding:18px 20px;background:var(--green-bg);border-radius:12px;transition:all .2s;}
+        .advantage-item:hover{background:#e0f2e0;transform:translateX(4px);}
+        .advantage-item .check{font-size:22px;flex-shrink:0;margin-top:1px;}
+        .advantage-item p{font-size:15px;color:var(--dark);line-height:1.5;}
+
+        /* TESTIMONIALS */
+        .testimonials{padding:80px 0;background:var(--green-bg);}
+        .testimonials h2{font-family:'Playfair Display',serif;font-size:36px;text-align:center;color:var(--green);margin-bottom:48px;}
+        .testi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;}
+        .testi{background:var(--white);border-radius:16px;padding:28px;border-left:4px solid var(--green);box-shadow:0 4px 15px rgba(0,0,0,.04);}
+        .testi .gains{background:var(--green);color:#fff;display:inline-block;padding:4px 14px;border-radius:20px;font-size:13px;font-weight:700;margin-bottom:12px;}
+        .testi .quote{font-size:15px;font-style:italic;margin-bottom:16px;line-height:1.65;color:var(--dark);}
+        .testi .author{font-weight:700;font-size:14px;color:var(--green);}
+        .testi .role{font-size:13px;color:var(--gray);}
+
+        /* FORM SECTION */
+        .form-section{padding:80px 0;background:linear-gradient(135deg,#0a2e12,#1B5E20);color:#fff;}
+        .form-section h2{font-family:'Playfair Display',serif;font-size:36px;text-align:center;margin-bottom:8px;}
+        .form-section .sub{text-align:center;opacity:.9;margin-bottom:36px;font-size:16px;}
+        .apply-form{max-width:640px;margin:0 auto;background:#fff;border-radius:20px;padding:40px;box-shadow:0 10px 40px rgba(0,0,0,.15);}
+        .apply-form h3{font-family:'Playfair Display',serif;color:var(--green);text-align:center;font-size:22px;margin-bottom:24px;}
+        .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+        .field{margin-bottom:14px;}
+        .field label{display:block;font-size:13px;font-weight:600;color:var(--gray);margin-bottom:4px;}
+        .field input,.field select,.field textarea{width:100%;padding:13px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'Inter',sans-serif;transition:border .2s;color:var(--dark);}
+        .field textarea{resize:vertical;min-height:80px;}
+        .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--green);}
+        .form-msg{display:none;padding:12px;border-radius:10px;margin-top:12px;text-align:center;font-weight:600;}
+
+        /* URGENCY */
+        .urgency{padding:50px 0;background:linear-gradient(90deg,#c62828,#e53935);color:#fff;text-align:center;}
+        .urgency h3{font-size:24px;margin-bottom:8px;}
+        .urgency p{opacity:.9;margin-bottom:20px;}
+
+        /* FOOTER */
+        footer{background:#1a1a1a;color:#999;padding:32px 0;text-align:center;font-size:13px;}
+        footer a{color:var(--green-light);}
+
+        /* WHATSAPP FLOAT */
+        .wa-float{position:fixed;bottom:24px;right:24px;z-index:9999;background:#25D366;color:#fff;width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.5);transition:transform .3s;animation:pulse 2s infinite;}
+        .wa-float:hover{transform:scale(1.1);}
+        @keyframes pulse{0%,100%{box-shadow:0 4px 20px rgba(37,211,102,.5);}50%{box-shadow:0 4px 30px rgba(37,211,102,.8);}}
+        .wa-float svg{width:32px;height:32px;fill:#fff;}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .hero h1{font-size:30px;}
+            .hero .sub{font-size:16px;}
+            .hero-stats{gap:20px;}
+            .hero-stat .number{font-size:24px;}
+            .btn{padding:14px 24px;font-size:15px;}
+            .apply-form{padding:24px;margin:0 12px;}
+            .form-row{grid-template-columns:1fr;}
+            .guarantees-grid{grid-template-columns:1fr;}
+            .top-cta .hide-m{display:none;}
+            .guarantees h2,.how-it-works h2,.advantages h2,.testimonials h2,.form-section h2{font-size:28px;}
+        }
+    </style>
+</head>
+<body>
+    <!-- TOPBAR -->
+    <header class="topbar">
+        <div class="container">
+            <a href="index.html" class="logo"><span>TERRA</span><span>SOCIAL</span></a>
+            <div class="top-cta">
+                <a href="index.html" class="hide-m" style="color:var(--gray);">Accueil</a>
+                <a href="#formulaire" class="btn-green">Soumettre mon terrain</a>
+                <a href="https://wa.me/237696875895?text=Bonjour%20je%20suis%20proprietaire%20et%20je%20veux%20confier%20mon%20terrain" class="btn-wa">WhatsApp</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">PROPRIETAIRES FONCIERS</div>
+            <h1>Vendez votre terrain<span class="highlight">rapidement et en toute securite</span></h1>
+            <p class="sub">Confiez votre propriete a TERRASOCIAL et beneficiez d'un paiement garanti, echelonne sur 12 a 36 mois, encadre par un avocat et un notaire.</p>
+            <div class="hero-cta">
+                <a href="#formulaire" class="btn btn-gold" onclick="trackEvent('cta_hero_form_owner')">Soumettre mon terrain</a>
+                <a href="https://wa.me/237696875895?text=Bonjour%20je%20suis%20proprietaire%20et%20je%20veux%20confier%20mon%20terrain" class="btn btn-whatsapp" onclick="trackEvent('cta_hero_wa_owner')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+                    Parler a un conseiller
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="number">50+</div>
+                    <div class="label">Terrains vendus</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">100%</div>
+                    <div class="label">Paiements securises</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="number">Avocat + Notaire</div>
+                    <div class="label">Inclus dans chaque vente</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- POURQUOI TERRASOCIAL -->
+    <section class="guarantees">
+        <div class="container">
+            <h2>Pourquoi confier votre terrain a TERRASOCIAL ?</h2>
+            <p class="sub">6 garanties concretes pour vendre en toute serenite</p>
+            <div class="guarantees-grid">
+                <div class="guarantee-card">
+                    <div class="emoji">&#9878;</div>
+                    <div>
+                        <h3>Contrat securise par un cabinet d'avocats</h3>
+                        <p>Chaque transaction est encadree par le Cabinet Me TAMAKUE Jean-Noel. Vos droits sont proteges a chaque etape.</p>
+                    </div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="emoji">&#128221;</div>
+                    <div>
+                        <h3>Notaire pour l'authentification des actes</h3>
+                        <p>Tous les actes de cession sont authentifies par un notaire agree. Valeur juridique opposable aux tiers.</p>
+                    </div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="emoji">&#128737;</div>
+                    <div>
+                        <h3>Assurance incluse pour chaque souscripteur</h3>
+                        <p>En partenariat avec Assurance Masseu, chaque acheteur est assure. Votre paiement est garanti meme en cas d'imprevus.</p>
+                    </div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="emoji">&#128176;</div>
+                    <div>
+                        <h3>Paiement echelonne garanti (12 a 36 mois)</h3>
+                        <p>Recevez vos paiements de maniere reguliere et previsible selon un echeancier convenu a l'avance.</p>
+                    </div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="emoji">&#128202;</div>
+                    <div>
+                        <h3>Suivi en temps reel via votre tableau de bord</h3>
+                        <p>Consultez les souscriptions, suivez les paiements et gardez le controle depuis votre espace proprietaire.</p>
+                    </div>
+                </div>
+                <div class="guarantee-card">
+                    <div class="emoji">&#128161;</div>
+                    <div>
+                        <h3>Commission transparente, pas de frais caches</h3>
+                        <p>Nos conditions sont claires des le depart. Aucun frais d'inscription, aucune surprise en cours de route.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMENT CA MARCHE -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2>Comment ca marche ?</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <h3>Soumettez votre terrain</h3>
+                    <p>Remplissez le formulaire ci-dessous ou contactez-nous sur WhatsApp.</p>
+                    <div class="step-arrow">&rarr;</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <h3>Evaluation juridique</h3>
+                    <p>Notre cabinet d'avocats verifie les documents et la conformite juridique de votre terrain.</p>
+                    <div class="step-arrow">&rarr;</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <h3>Signature du contrat</h3>
+                    <p>Contrat de mandat signe devant notaire pour une securite maximale.</p>
+                    <div class="step-arrow">&rarr;</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <h3>Mise en vente</h3>
+                    <p>Votre terrain est expose a des milliers d'acheteurs sur la plateforme TERRASOCIAL.</p>
+                    <div class="step-arrow">&rarr;</div>
+                </div>
+                <div class="step">
+                    <div class="step-num">5</div>
+                    <h3>Recevez vos paiements</h3>
+                    <p>Vous recevez vos paiements selon l'echeancier convenu, de maniere reguliere et securisee.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- VOS AVANTAGES CONCRETS -->
+    <section class="advantages">
+        <div class="container">
+            <h2>Vos avantages concrets</h2>
+            <div class="advantages-grid">
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Pas de frais d'inscription</strong> &mdash; soumettez votre terrain gratuitement</p>
+                </div>
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Exposition maximale</strong> &mdash; votre terrain est visible par des milliers d'acheteurs qualifies</p>
+                </div>
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Chaque acheteur est assure</strong> &mdash; en cas de deces, le terrain est integralement paye</p>
+                </div>
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Avocat dedie</strong> &mdash; un avocat verifie chaque contrat avant signature</p>
+                </div>
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Actes notaries</strong> &mdash; un notaire authentifie tous les actes de cession</p>
+                </div>
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Tableau de bord en temps reel</strong> &mdash; suivez souscriptions et paiements a tout moment</p>
+                </div>
+                <div class="advantage-item">
+                    <span class="check">&#10003;</span>
+                    <p><strong>Service juridique disponible</strong> &mdash; posez vos questions a notre equipe juridique</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEMOIGNAGES PROPRIETAIRES -->
+    <section class="testimonials">
+        <div class="container">
+            <h2>Ils ont confie leur terrain a TERRASOCIAL</h2>
+            <div class="testi-grid">
+                <div class="testi">
+                    <div class="gains">Terrain de 500 m2 vendu</div>
+                    <div class="quote">"J'avais un terrain a Soa que je n'arrivais pas a vendre depuis 2 ans. En 3 mois avec TERRASOCIAL, j'ai eu 4 souscripteurs et je recois mes paiements chaque mois. Le suivi par l'avocat m'a rassure."</div>
+                    <div class="author">M. Etienne Nkoulou</div>
+                    <div class="role">Proprietaire a Yaounde &mdash; Gain : 6 500 000 FCFA</div>
+                </div>
+                <div class="testi">
+                    <div class="gains">2 parcelles vendues</div>
+                    <div class="quote">"J'ai confie 2 parcelles a Logbessou. L'equipe est serieuse, le notaire a tout authentifie et je n'ai eu aucun souci de paiement. Je recommande a tous les proprietaires."</div>
+                    <div class="author">Mme Claudine Fotso</div>
+                    <div class="role">Proprietaire a Douala &mdash; Gain : 11 200 000 FCFA</div>
+                </div>
+                <div class="testi">
+                    <div class="gains">Terrain de 1000 m2 vendu</div>
+                    <div class="quote">"Ce qui m'a convaincu, c'est l'assurance pour les acheteurs et le cabinet d'avocats qui supervise tout. Mes paiements arrivent comme prevu. C'est du serieux."</div>
+                    <div class="author">M. Paul Kamga</div>
+                    <div class="role">Proprietaire a Bafoussam &mdash; Gain : 8 000 000 FCFA</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FORMULAIRE -->
+    <section class="form-section" id="formulaire">
+        <div class="container">
+            <h2>Soumettez votre terrain</h2>
+            <p class="sub">Remplissez le formulaire ci-dessous et notre equipe vous contactera sous 48h</p>
+            <div class="apply-form">
+                <h3>Formulaire de soumission</h3>
+                <form id="owner-form" onsubmit="return submitOwner(event)">
+                    <div class="form-row">
+                        <div class="field">
+                            <label>Nom complet *</label>
+                            <input type="text" name="full_name" required placeholder="Votre nom et prenom">
+                        </div>
+                        <div class="field">
+                            <label>Telephone *</label>
+                            <input type="tel" name="phone" required placeholder="+237 6XX XXX XXX">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="field">
+                            <label>Email</label>
+                            <input type="email" name="email" placeholder="votre@email.com">
+                        </div>
+                        <div class="field">
+                            <label>Ville du terrain *</label>
+                            <input type="text" name="city" required placeholder="Ex: Yaounde, Douala, Kribi...">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="field">
+                            <label>Superficie (m&sup2;) *</label>
+                            <input type="number" name="surface_area" required placeholder="Ex: 500">
+                        </div>
+                        <div class="field">
+                            <label>Prix souhaite (FCFA) *</label>
+                            <input type="number" name="desired_price" required placeholder="Ex: 5000000">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Type de document *</label>
+                        <select name="document_type" required>
+                            <option value="">Choisir le type de document</option>
+                            <option value="titre_foncier">Titre foncier</option>
+                            <option value="certificat_propriete">Certificat de propriete</option>
+                            <option value="lettre_administrative">Lettre administrative</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Message (optionnel)</label>
+                        <textarea name="message" placeholder="Decrivez votre terrain : localisation exacte, acces route, voisinage..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-gold" style="width:100%;justify-content:center;" onclick="trackEvent('form_owner_submit')">Soumettre mon terrain</button>
+                    <div class="form-msg" id="form-msg"></div>
+                </form>
+                <div style="text-align:center;margin-top:20px;">
+                    <span style="color:var(--gray);font-size:13px;">Vous preferez echanger directement ?</span><br>
+                    <a href="https://wa.me/237696875895?text=Bonjour%20je%20suis%20proprietaire%20et%20je%20veux%20confier%20mon%20terrain" style="display:inline-flex;align-items:center;gap:8px;margin-top:8px;color:#25D366;font-weight:700;font-size:16px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#25D366"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+                        Contacter un conseiller via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- URGENCE -->
+    <section class="urgency">
+        <div class="container">
+            <h3>Nombre de places proprietaires limitees &mdash; Inscriptions en cours</h3>
+            <p>Nous selectionnons les terrains avec soin pour garantir la qualite a nos acheteurs. Soumettez le votre avant la cloture des inscriptions.</p>
+            <a href="#formulaire" class="btn btn-gold" onclick="trackEvent('cta_urgency_owner')">Soumettre mon terrain maintenant</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 TERRASOCIAL by MANO VERDE INC SA. Tous droits reserves.</p>
+            <p style="margin-top:6px;"><a href="index.html">Accueil</a> &middot; <a href="devenir-agent.html">Devenir agent</a> &middot; <a href="register-client.html">Devenir client</a> &middot; <a href="login.html">Connexion</a></p>
+        </div>
+    </footer>
+
+    <!-- WHATSAPP FLOATING -->
+    <a href="https://wa.me/237696875895?text=Bonjour%20je%20suis%20proprietaire%20et%20je%20veux%20confier%20mon%20terrain" target="_blank" rel="noopener" class="wa-float" onclick="trackEvent('wa_float_owner')">
+        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.832-1.438A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a8 8 0 01-4.243-1.214l-.252-.149-2.625.688.7-2.55-.163-.26A8 8 0 1112 20z"/></svg>
+    </a>
+
+    <script src="js/runtime-config.js"></script>
+    <script src="js/app-api.js"></script>
+    <script>
+    function trackEvent(n){if(typeof fbq==='function')fbq('track',n);if(typeof gtag==='function')gtag('event',n);console.log('[Track]',n);}
+
+    async function submitOwner(e) {
+        e.preventDefault();
+        var form = e.target, msg = document.getElementById('form-msg');
+        var data = Object.fromEntries(new FormData(form));
+        data.lead_type = 'owner';
+        msg.style.display = 'none';
+        try {
+            var API = (window.__RUNTIME_CONFIG__ && window.__RUNTIME_CONFIG__.API_URL) || '';
+            var res = await fetch(API + '/api/public/leads', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+            var json = await res.json();
+            if (res.ok) {
+                msg.style.display = 'block'; msg.style.background = '#e8f5e9'; msg.style.color = '#1B5E20';
+                msg.textContent = 'Terrain soumis avec succes ! Notre equipe vous contactera sous 48h.';
+                form.reset(); trackEvent('owner_terrain_submitted');
+            } else {
+                msg.style.display = 'block'; msg.style.background = '#ffebee'; msg.style.color = '#c62828';
+                msg.textContent = json.error || 'Erreur. Essayez via WhatsApp.';
+            }
+        } catch(err) {
+            msg.style.display = 'block'; msg.style.background = '#ffebee'; msg.style.color = '#c62828';
+            msg.textContent = 'Erreur reseau. Contactez-nous sur WhatsApp.';
+        }
+    }
+    </script>
+</body>
+</html>
