@@ -225,7 +225,7 @@
   }
 
   // ── Section personnes assurées ─────────────────────────────────────────
-  function renderInsurancePersonsSection(reservations) {
+  async function renderInsurancePersonsSection(reservations) {
     var section = document.getElementById('insurance-persons-section');
     if (!reservations || !reservations.length) { section.style.display = 'none'; return; }
     section.style.display = 'block';
@@ -240,8 +240,16 @@
       sel.appendChild(opt);
     });
 
+    // Load insured names for the first selected reservation
+    var firstOpt = sel.options[sel.selectedIndex];
+    if (firstOpt && firstOpt.value) {
+      await loadInsuredNames(firstOpt.value);
+    }
     updateInsuranceDisplay();
   }
+
+  // Cache for insured person names per reservation
+  var insuredNamesCache = {};
 
   function updateInsuranceDisplay() {
     var sel = document.getElementById('insurance-res-select');
@@ -249,9 +257,102 @@
     var count = opt ? Number(opt.dataset.persons || 0) : 0;
     document.getElementById('persons-count').textContent = count;
     document.getElementById('insurance-daily-cost').textContent = xaf(count * 350) + '/jour';
+    renderInsuredNameFields(opt ? opt.value : null, count);
   }
 
-  document.getElementById('insurance-res-select').addEventListener('change', updateInsuranceDisplay);
+  function renderInsuredNameFields(reservationId, count) {
+    var container = document.getElementById('insured-names-container');
+    var fields = document.getElementById('insured-names-fields');
+    var msgEl = document.getElementById('insured-names-msg');
+    msgEl.textContent = '';
+
+    if (!count || count <= 0) {
+      container.style.display = 'none';
+      fields.innerHTML = '';
+      return;
+    }
+
+    container.style.display = 'block';
+
+    // Get cached names or empty array
+    var cached = insuredNamesCache[reservationId] || [];
+    var clientName = user.full_name || '';
+    var esc = TSUtils.escapeHtml;
+
+    var h = '';
+    for (var i = 0; i < count; i++) {
+      var defaultVal = '';
+      if (cached[i]) {
+        defaultVal = cached[i];
+      } else if (i === 0) {
+        defaultVal = clientName;
+      }
+      var label = i === 0 ? 'Personne 1 (vous)' : 'Personne ' + (i + 1);
+      h += '<div class="insured-name-row">' +
+        '<label>' + esc(label) + '</label>' +
+        '<input type="text" class="insured-name-input" data-index="' + i + '" placeholder="Nom complet" value="' + esc(defaultVal) + '">' +
+        '</div>';
+    }
+    fields.innerHTML = h;
+  }
+
+  async function loadInsuredNames(reservationId) {
+    if (!reservationId) return;
+    try {
+      var data = await TSApi.request('/api/client/insured-persons/' + reservationId);
+      var names = (data.persons || []).map(function(p) { return p.full_name || ''; });
+      insuredNamesCache[reservationId] = names;
+    } catch (e) {
+      // No saved names yet, that's fine
+      insuredNamesCache[reservationId] = [];
+    }
+  }
+
+  async function saveInsuredNames() {
+    var sel = document.getElementById('insurance-res-select');
+    var opt = sel.options[sel.selectedIndex];
+    if (!opt) return;
+    var reservationId = opt.value;
+    var msgEl = document.getElementById('insured-names-msg');
+    var btn = document.getElementById('btn-save-insured-names');
+
+    var inputs = document.querySelectorAll('.insured-name-input');
+    var names = [];
+    for (var i = 0; i < inputs.length; i++) {
+      names.push(inputs[i].value.trim());
+    }
+
+    // Validate: at least first name required
+    if (names.length > 0 && !names[0]) {
+      msgEl.innerHTML = '<span style="color:#C62828;">Le nom de la premiere personne est requis.</span>';
+      return;
+    }
+
+    btn.disabled = true;
+    msgEl.innerHTML = '<span style="color:#666;">Enregistrement...</span>';
+    try {
+      await TSApi.request('/api/client/insured-persons', {
+        method: 'POST',
+        body: JSON.stringify({ reservation_id: Number(reservationId), names: names })
+      });
+      insuredNamesCache[reservationId] = names;
+      msgEl.innerHTML = '<span style="color:#1B5E20;font-weight:600;">Noms enregistres !</span>';
+    } catch (e) {
+      msgEl.innerHTML = '<span style="color:#C62828;">' + TSUtils.escapeHtml(e.message) + '</span>';
+    }
+    btn.disabled = false;
+  }
+
+  document.getElementById('btn-save-insured-names').addEventListener('click', saveInsuredNames);
+
+  document.getElementById('insurance-res-select').addEventListener('change', async function() {
+    var sel = document.getElementById('insurance-res-select');
+    var opt = sel.options[sel.selectedIndex];
+    if (opt && !insuredNamesCache[opt.value]) {
+      await loadInsuredNames(opt.value);
+    }
+    updateInsuranceDisplay();
+  });
 
   document.getElementById('persons-plus').addEventListener('click', async function() {
     var sel = document.getElementById('insurance-res-select');

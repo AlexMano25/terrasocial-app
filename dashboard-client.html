@@ -39,6 +39,15 @@
     .persons-control button{width:36px;height:36px;border-radius:50%;border:2px solid #1565C0;background:#fff;color:#1565C0;font-size:18px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center}
     .persons-control button:hover{background:#E3F2FD}
     .persons-control .count{font-size:24px;font-weight:700;color:#0D47A1;min-width:40px;text-align:center}
+    .insured-names-list{margin-top:12px}
+    .insured-name-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+    .insured-name-row label{font-size:13px;font-weight:600;color:#0D47A1;min-width:90px}
+    .insured-name-row input{flex:1;padding:8px 12px;border:1px solid #90CAF9;border-radius:6px;font-size:13px}
+    .insured-name-row input:focus{outline:none;border-color:#1565C0;box-shadow:0 0 0 2px rgba(21,101,192,.15)}
+    .insured-names-save{background:#1565C0;color:#fff;border:none;padding:8px 20px;border-radius:6px;font-weight:600;font-size:13px;cursor:pointer;margin-top:4px}
+    .insured-names-save:hover{background:#0D47A1}
+    .insured-names-save:disabled{opacity:.5;cursor:not-allowed}
+    .insured-names-msg{font-size:12px;margin-left:8px}
   </style>
 </head>
 <body>
@@ -135,6 +144,15 @@
         <div style="text-align:right">
           <div class="small" style="color:#37474F">Coût journalier assurance</div>
           <div id="insurance-daily-cost" style="font-size:18px;font-weight:700;color:#0D47A1">0 FCFA</div>
+        </div>
+      </div>
+      <!-- Noms des personnes assurées -->
+      <div id="insured-names-container" class="insured-names-list" style="display:none">
+        <h4 style="color:#0D47A1;margin:0 0 8px">Noms des personnes assurées</h4>
+        <div id="insured-names-fields"></div>
+        <div style="display:flex;align-items:center;margin-top:8px">
+          <button type="button" id="btn-save-insured-names" class="insured-names-save">Enregistrer les noms</button>
+          <span id="insured-names-msg" class="insured-names-msg"></span>
         </div>
       </div>
     </section>

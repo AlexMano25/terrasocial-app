@@ -237,6 +237,86 @@ router.post('/reservations/:id/insurance-persons', async (req, res) => {
     }
 });
 
+// ── Récupérer les noms des personnes assurées pour une réservation ────────
+router.get('/insured-persons/:reservationId', async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const resId = req.params.reservationId;
+
+        // Verify the reservation belongs to this user
+        const reservation = await get(
+            'SELECT id FROM reservations WHERE id = ? AND user_id = ? AND status != ?',
+            [resId, userId, 'cancelled']
+        );
+        if (!reservation) {
+            return res.status(404).json({ error: 'Réservation introuvable' });
+        }
+
+        const persons = await all(
+            `SELECT id, full_name, date_of_birth, phone, is_active, created_at
+             FROM insured_persons_details
+             WHERE reservation_id = ? AND user_id = ? AND is_active = 1
+             ORDER BY id ASC`,
+            [resId, userId]
+        );
+
+        return res.json({ persons: persons || [] });
+    } catch (error) {
+        console.error('Get insured persons error:', error);
+        return res.status(500).json({ error: 'Erreur lecture personnes assurées' });
+    }
+});
+
+// ── Enregistrer/mettre à jour les noms des personnes assurées ────────────
+router.post('/insured-persons', async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const { reservation_id, names } = req.body;
+
+        if (!reservation_id || !Array.isArray(names)) {
+            return res.status(400).json({ error: 'Données invalides' });
+        }
+
+        // Verify the reservation belongs to this user
+        const reservation = await get(
+            'SELECT id, insurance_persons FROM reservations WHERE id = ? AND user_id = ? AND status != ?',
+            [reservation_id, userId, 'cancelled']
+        );
+        if (!reservation) {
+            return res.status(404).json({ error: 'Réservation introuvable' });
+        }
+
+        // Deactivate existing entries for this reservation
+        await run(
+            'UPDATE insured_persons_details SET is_active = 0 WHERE reservation_id = ? AND user_id = ?',
+            [reservation_id, userId]
+        );
+
+        // Insert new entries
+        const insertedPersons = [];
+        for (let i = 0; i < names.length; i++) {
+            const name = (names[i] || '').trim().slice(0, 200);
+            if (!name) continue;
+
+            const result = await run(
+                `INSERT INTO insured_persons_details (reservation_id, user_id, insurer_id, full_name, is_active, created_at)
+                 VALUES (?, ?, ?, ?, 1, CURRENT_TIMESTAMP)`,
+                [reservation_id, userId, userId, name]
+            );
+            insertedPersons.push({ id: result.id, full_name: name });
+        }
+
+        return res.json({
+            ok: true,
+            reservation_id,
+            persons: insertedPersons
+        });
+    } catch (error) {
+        console.error('Save insured persons error:', error);
+        return res.status(500).json({ error: 'Erreur enregistrement personnes assurées' });
+    }
+});
+
 // ── Initier un versement (crée un paiement PENDING → CamPay le confirme) ──
 router.post('/versement', async (req, res) => {
     try {
