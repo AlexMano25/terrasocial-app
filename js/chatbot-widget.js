@@ -147,6 +147,7 @@
         border-radius: 50%;
         background: #25D366;
         border: none;
+        z-index: 999999 !important;
         cursor: pointer;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
         display: flex;
@@ -471,8 +472,15 @@
           border-radius: 0;
         }
         .ts-chat-bubble {
-          bottom: 16px;
+          bottom: 90px;
           right: 16px;
+          width: 56px;
+          height: 56px;
+          z-index: 999999 !important;
+        }
+        .ts-chat-bubble svg {
+          width: 26px;
+          height: 26px;
         }
       }
     `;
