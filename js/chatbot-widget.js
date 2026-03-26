@@ -137,11 +137,17 @@
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       }
 
+      /* Fix: prevent horizontal scroll that hides fixed elements on mobile */
+      html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+      }
+
       /* ── Floating bubble ── */
       .ts-chat-bubble {
         position: fixed;
         bottom: 24px;
-        right: 24px;
+        right: 16px;
         width: 60px;
         height: 60px;
         border-radius: 50%;
@@ -153,7 +159,6 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 99999;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
       }
       .ts-chat-bubble:hover {
