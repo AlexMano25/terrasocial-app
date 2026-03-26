@@ -193,8 +193,8 @@
         position: fixed;
         bottom: 96px;
         right: 24px;
-        width: 380px;
-        height: 520px;
+        width: 400px;
+        height: 540px;
         border-radius: 16px;
         background: #ECE5DD;
         box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
@@ -302,13 +302,14 @@
 
       /* ── Message bubbles ── */
       .ts-msg {
-        max-width: 82%;
-        padding: 8px 12px;
-        border-radius: 8px;
+        max-width: 88%;
+        padding: 10px 14px;
+        border-radius: 10px;
         font-size: 14px;
-        line-height: 1.45;
+        line-height: 1.5;
         position: relative;
         word-wrap: break-word;
+        white-space: pre-line;
         animation: ts-fadeIn 0.2s ease;
       }
       @keyframes ts-fadeIn {
@@ -601,12 +602,23 @@
     this.scrollToBottom();
   };
 
+  // Simple markdown: **bold**, [text](url)
+  function formatBotText(text) {
+    var safe = escapeHtml(text);
+    // Bold: **text** → <strong>text</strong>
+    safe = safe.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Links: [text](url) → <a href="url">text</a>
+    safe = safe.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, '<a href="$2" target="_blank" style="color:#1B5E20;text-decoration:underline;">$1</a>');
+    return safe;
+  }
+
   // Render a single message bubble
   ChatBot.prototype.renderMessage = function (msg, skipScroll) {
     var div = document.createElement('div');
     div.className = 'ts-msg ' + (msg.role === 'user' ? 'ts-msg-user' : 'ts-msg-bot');
+    var textHtml = msg.role === 'user' ? escapeHtml(msg.text) : formatBotText(msg.text);
     div.innerHTML =
-      '<div class="ts-msg-text">' + escapeHtml(msg.text) + '</div>' +
+      '<div class="ts-msg-text">' + textHtml + '</div>' +
       '<div class="ts-msg-time">' + formatTime(msg.time) + '</div>';
 
     // Insert before typing indicator
