@@ -110,7 +110,18 @@ const RULES = [
   // Spanish rules
   { patterns: ['hola', 'buenos dias', 'buenas tardes', 'buenas noches'], response: 'Hola! 👋 Bienvenido a TERRASOCIAL.\n\nSoy su asistente. Como puedo ayudarle?\n\n🏡 Ver los terrenos disponibles\n💰 Conocer los precios\n📝 Registrarse\n🤝 Convertirse en agente socio' },
   { patterns: ['precio', 'cuanto', 'cuesta', 'caro', 'barato'], response: 'Nuestros lotes son accesibles:\n\n🏡 **Starter** (200m²): 40.000 FCFA\n🏠 **Standard** (200m²): 1.300.000 FCFA\n🏘️ **Confort** (400m²): 6.375.000 FCFA\n🏰 **Premium** (500m²): 10.000.000 FCFA\n\nCuota de inscripcion: 10.000 FCFA' },
-  { patterns: ['gracias', 'muchas gracias'], response: 'Con mucho gusto! 😊 No dude en volver si tiene mas preguntas.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com' }
+  { patterns: ['gracias', 'muchas gracias'], response: 'Con mucho gusto! 😊 No dude en volver si tiene mas preguntas.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com' },
+  // German rules
+  { patterns: ['hallo', 'guten tag', 'guten morgen', 'guten abend', 'moin'], response: 'Hallo! 👋 Willkommen bei TERRASOCIAL.\n\nIch bin Ihr Assistent. Wie kann ich Ihnen helfen?\n\n🏡 Verfuegbare Grundstuecke ansehen\n💰 Preise erfahren\n📝 Registrieren\n🤝 Partner-Agent werden' },
+  { patterns: ['preis', 'kosten', 'wieviel', 'wie viel', 'teuer', 'guenstig'], response: 'Unsere Grundstuecke sind erschwinglich:\n\n🏡 **Starter** (200m²): 40.000 FCFA\n🏠 **Standard** (200m²): 1.300.000 FCFA\n🏘️ **Komfort** (400m²): 6.375.000 FCFA\n🏰 **Premium** (500m²): 10.000.000 FCFA\n\nAnmeldegebuehr: 10.000 FCFA\n\nMoechten Sie mehr erfahren?' },
+  { patterns: ['registrier', 'anmeld', 'konto erstellen', 'beitreten', 'anfangen'], response: 'Die Registrierung ist einfach:\n\n1️⃣ Hier klicken: [Registrieren](https://social.manovende.com/register-client.html)\n2️⃣ Daten ausfuellen\n3️⃣ Anmeldegebuehr zahlen (10.000 FCFA)\n4️⃣ Grundstueck waehlen\n\nSoll ich Sie fuehren?' },
+  { patterns: ['sicher', 'vertrauen', 'betrug', 'zuverlaessig', 'garantie'], response: 'TERRASOCIAL garantiert 100% Sicherheit:\n\n⚖️ Vertraege geprueft von Me TAMAKUE (Anwaltskanzlei)\n📋 Notarielle Beglaubigung\n🛡️ Grundstuecksversicherung inklusive\n📊 Echtzeit-Dashboard\n🔒 Sichere Zahlungen' },
+  { patterns: ['grundstueck', 'land', 'flaeche', 'verfuegbar', 'groesse'], response: 'Unsere verfuegbaren Grundstuecke:\n\n🏡 **Starter** - 200m² ab 40.000 FCFA\n🏠 **Standard** - 200m² ab 1.300.000 FCFA\n🏘️ **Komfort** - 400m² ab 6.375.000 FCFA\n🏰 **Premium** - 500m² ab 10.000.000 FCFA\n\n📍 Standort: Yaounde und Umgebung\n📄 Alle mit geprueftem Grundbucheintrag' },
+  { patterns: ['wie funktioniert', 'ablauf', 'schritte', 'prozess', 'verfahren'], response: 'Der Prozess ist einfach in 5 Schritten:\n\n1️⃣ Online-Registrierung\n2️⃣ Anmeldegebuehr zahlen (10.000 FCFA)\n3️⃣ Grundstueck waehlen\n4️⃣ Ratenzahlung (taeglich oder monatlich)\n5️⃣ Grundbucheintrag erhalten\n\nIhr Vertrag wird von einem Anwalt geprueft und notariell beglaubigt.' },
+  { patterns: ['zahlung', 'zahlen', 'bezahlen', 'rate', 'monatlich'], response: 'Verschiedene Zahlungsmethoden:\n\n📱 Orange Money\n📱 MTN MoMo\n💳 Kreditkarte\n🏦 Bankueberweisung\n\nZahlungen sind taeglich (Starter) oder monatlich (Standard/Komfort/Premium).' },
+  { patterns: ['danke', 'vielen dank', 'dankeschoen'], response: 'Gerne geschehen! 😊 Zogern Sie nicht, wiederzukommen.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com' },
+  { patterns: ['ja', 'jawohl', 'genau', 'gut', 'wunderbar', 'toll'], response: 'Wunderbar! 😊 Wie kann ich Ihnen weiterhelfen?\n\n🏡 Verfuegbare Grundstuecke\n💰 Preise erfahren\n📝 Jetzt registrieren\n🤝 Partner-Agent werden' },
+  { patterns: ['nein', 'nicht', 'nichts', 'kein'], response: 'Kein Problem! Kommen Sie jederzeit wieder. Ich bin 24/7 verfuegbar.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com\n\nSchoenen Tag noch! 😊' }
 ];
 
 // Try AI response, fallback to rules
@@ -184,9 +195,14 @@ async function generateResponse(message, context, history) {
   // Detect language for fallback response
   const enWords = ['the','is','are','can','do','what','how','where','when','my','your','this','that','have','will'];
   const esWords = ['el','la','es','los','las','como','donde','que','por','para','con','una','tiene','puede'];
+  const deWords = ['ich','sie','das','ist','ein','eine','wie','was','wo','und','der','die','den','dem','mir','mein','kann','haben','werden'];
   const enScore = enWords.filter(w => (' ' + lower + ' ').includes(' ' + w + ' ')).length;
   const esScore = esWords.filter(w => (' ' + lower + ' ').includes(' ' + w + ' ')).length;
+  const deScore = deWords.filter(w => (' ' + lower + ' ').includes(' ' + w + ' ')).length;
 
+  if (deScore > enScore && deScore > esScore && deScore > 0) {
+    return { text: 'Ich bin mir nicht sicher, ob ich Ihre Frage verstehe. Koennten Sie sie umformulieren?\n\nOder kontaktieren Sie unser Team:\n📲 WhatsApp: +237696875895\n📧 support@manovende.com', source: 'fallback' };
+  }
   if (esScore > enScore && esScore > 0) {
     return { text: 'No estoy seguro de entender su pregunta. Puede reformular?\n\nO contacte a nuestro equipo:\n📲 WhatsApp: +237696875895\n📧 support@manovende.com', source: 'fallback' };
   }
