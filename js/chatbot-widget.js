@@ -472,7 +472,7 @@
           border-radius: 0;
         }
         .ts-chat-bubble {
-          bottom: 90px;
+          bottom: 20px;
           right: 16px;
           width: 56px;
           height: 56px;
