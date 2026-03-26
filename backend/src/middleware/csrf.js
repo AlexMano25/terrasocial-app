@@ -24,6 +24,10 @@ function csrfProtection() {
         if (req.path.startsWith('/api/auth/')) {
             return next();
         }
+        // Chat bot is public — called from widget JS on all pages
+        if (req.path.startsWith('/api/chat')) {
+            return next();
+        }
         if (process.env.NODE_ENV === 'test') {
             return next();
         }
