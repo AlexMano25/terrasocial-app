@@ -122,6 +122,7 @@ function buildApp() {
     app.use('/api/webhooks', require('./routes/webhooks'));
     app.use('/api/insurer', require('./routes/insurer'));
     app.use('/api/legal', require('./routes/legal'));
+    app.use('/api/chat', require('./routes/chat'));
 
     app.get('/api/health', (req, res) => {
         res.json({

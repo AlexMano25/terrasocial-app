@@ -143,6 +143,17 @@ function statementsFor(client) {
                 notes TEXT,
                 updated_by BIGINT REFERENCES users(id),
                 updated_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS chat_conversations (
+                id BIGSERIAL PRIMARY KEY,
+                user_id BIGINT REFERENCES users(id),
+                user_role TEXT DEFAULT 'visitor',
+                page TEXT,
+                message TEXT NOT NULL,
+                response TEXT,
+                source TEXT DEFAULT 'rules',
+                needs_escalation BOOLEAN DEFAULT FALSE,
+                created_at TIMESTAMPTZ DEFAULT NOW()
             )`
         ];
     }
@@ -305,6 +316,18 @@ function statementsFor(client) {
             updated_by INTEGER,
             updated_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(updated_by) REFERENCES users(id)
+        )`,
+        `CREATE TABLE IF NOT EXISTS chat_conversations (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER,
+            user_role TEXT DEFAULT 'visitor',
+            page TEXT,
+            message TEXT NOT NULL,
+            response TEXT,
+            source TEXT DEFAULT 'rules',
+            needs_escalation INTEGER DEFAULT 0,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(user_id) REFERENCES users(id)
         )`,
         `CREATE TABLE IF NOT EXISTS law_firms (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
