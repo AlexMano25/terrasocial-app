@@ -7,7 +7,7 @@ const router = express.Router();
 // System prompts by context
 const SYSTEM_PROMPTS = {
   base: `Tu es l'assistant commercial de TERRASOCIAL, une plateforme d'acces au foncier securise au Cameroun.
-Tu es enthousiaste, convaincant mais honnete. Tu parles francais.
+Tu es enthousiaste, convaincant mais honnete. Tu DOIS TOUJOURS repondre dans la MEME LANGUE que le message de l'utilisateur. Si l'utilisateur ecrit en anglais, reponds en anglais. Si en espagnol, reponds en espagnol. Par defaut, reponds en francais.
 Tu connais parfaitement les offres:
 - Lot Starter: 200m², a partir de 40 000 FCFA (paiement quotidien)
 - Lot Standard: 200m², 1 300 000 FCFA (paiement mensuel sur 24 mois)
@@ -93,7 +93,24 @@ const RULES = [
   { patterns: ['yaound', 'douala', 'cameroun', 'localisation', 'ou', 'emplacement', 'adresse', 'lieu'], response: 'Nos terrains sont situes a Yaounde et ses environs.\n\n📍 Zones disponibles: peripherie de Yaounde\n🏗️ Terrains viabilises et securises\n📄 Tous avec titre foncier verifie\n\nPour plus de details sur les emplacements, contactez-nous:\n📲 WhatsApp: +237696875895' },
   { patterns: ['notaire', 'authentif', 'certif'], response: 'Chaque transaction est authentifiee par un notaire certifie:\n\n📋 Verification du titre foncier\n✅ Authentification de l\'acte de vente\n🔐 Certification de la transaction\n📄 Remise des documents officiels\n\nC\'est une garantie supplementaire pour votre securite.' },
   { patterns: ['oui', 'ok', 'daccord', 'd\'accord', 'bien', 'super', 'genial', 'parfait', 'excellent'], response: 'Parfait! 😊 Comment puis-je vous aider davantage?\n\n🏡 Voir les lots disponibles\n💰 Connaitre les prix\n📝 S\'inscrire maintenant\n🤝 Devenir agent partenaire' },
-  { patterns: ['non', 'pas', 'rien', 'aucun'], response: 'D\'accord! N\'hesitez pas a revenir si vous avez des questions. Je suis disponible 24h/24.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com\n\nBonne journee! 😊' }
+  { patterns: ['non', 'pas', 'rien', 'aucun'], response: 'D\'accord! N\'hesitez pas a revenir si vous avez des questions. Je suis disponible 24h/24.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com\n\nBonne journee! 😊' },
+  // English rules
+  { patterns: ['hello', 'hi ', 'hey', 'good morning', 'good evening'], response: 'Hello! 👋 Welcome to TERRASOCIAL.\n\nI\'m your assistant. How can I help you?\n\n🏡 View available plots\n💰 Know the prices\n📝 Sign up\n🤝 Become a partner agent' },
+  { patterns: ['price', 'cost', 'how much', 'expensive', 'cheap', 'afford'], response: 'Our plots are affordable for all budgets:\n\n🏡 **Starter** (200m²): 40,000 FCFA\n🏠 **Standard** (200m²): 1,300,000 FCFA\n🏘️ **Comfort** (400m²): 6,375,000 FCFA\n🏰 **Premium** (500m²): 10,000,000 FCFA\n\nRegistration fee: 10,000 FCFA\n\nWant to know more?' },
+  { patterns: ['register', 'sign up', 'create account', 'subscribe', 'join', 'start'], response: 'Registration is simple:\n\n1️⃣ Click here: [Sign up](https://social.manovende.com/register-client.html)\n2️⃣ Fill in your details\n3️⃣ Pay the registration fee (10,000 FCFA)\n4️⃣ Choose your plot\n\nShall I guide you?' },
+  { patterns: ['insurance', 'insured', 'policy', 'protect'], response: 'TERRASOCIAL land insurance protects you:\n\n🛡️ Protection against eviction\n📄 Cadastral compliance\n💰 350 FCFA/day/insured person\n\nManaged by Assurance Masseu. Subscribe from your dashboard.' },
+  { patterns: ['lawyer', 'legal', 'contract', 'law'], response: 'Your contracts are supervised by Me TAMAKUE Jean Noel:\n\n⚖️ Legal verification of each registration\n📝 Certified contract templates\n🔒 Secure signature\n💬 Direct messaging with the law firm\n\nAll accessible from your client space.' },
+  { patterns: ['payment', 'pay', 'installment', 'monthly'], response: 'Several payment methods available:\n\n📱 Orange Money\n📱 MTN MoMo\n💳 Credit card\n🏦 Bank transfer\n\nPayments are daily (Starter) or monthly (Standard/Comfort/Premium).' },
+  { patterns: ['land', 'plot', 'available', 'area', 'size'], response: 'Our available plots:\n\n🏡 **Starter** - 200m² at 40,000 FCFA\n🏠 **Standard** - 200m² at 1,300,000 FCFA\n🏘️ **Comfort** - 400m² at 6,375,000 FCFA\n🏰 **Premium** - 500m² at 10,000,000 FCFA\n\n📍 Location: Yaounde area\n📄 All with verified land title' },
+  { patterns: ['how', 'work', 'step', 'process'], response: 'The process is simple in 5 steps:\n\n1️⃣ Online registration\n2️⃣ Pay registration fee (10,000 FCFA)\n3️⃣ Choose your plot\n4️⃣ Installment payments (daily or monthly)\n5️⃣ Get your land title\n\nYour contract is verified by a lawyer and authenticated by a notary.' },
+  { patterns: ['safe', 'secure', 'trust', 'scam', 'reliable'], response: 'TERRASOCIAL guarantees 100% security:\n\n⚖️ Contracts verified by Me TAMAKUE (law firm)\n📋 Notary-certified authentication\n🛡️ Land insurance included (Assurance Masseu)\n📊 Real-time dashboard\n🔒 Secure payments\n\nAll our lands have verified title deeds.' },
+  { patterns: ['thank', 'thanks', 'thx'], response: 'You\'re welcome! 😊 Don\'t hesitate if you have more questions. I\'m here to help!' },
+  { patterns: ['yes', 'yeah', 'sure', 'great', 'perfect', 'awesome'], response: 'Great! 😊 How can I help you further?\n\n🏡 View available plots\n💰 Know the prices\n📝 Sign up now\n🤝 Become a partner agent' },
+  { patterns: ['no', 'nope', 'nothing', 'not'], response: 'No problem! Feel free to come back anytime. I\'m available 24/7.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com\n\nHave a great day! 😊' },
+  // Spanish rules
+  { patterns: ['hola', 'buenos dias', 'buenas tardes', 'buenas noches'], response: 'Hola! 👋 Bienvenido a TERRASOCIAL.\n\nSoy su asistente. Como puedo ayudarle?\n\n🏡 Ver los terrenos disponibles\n💰 Conocer los precios\n📝 Registrarse\n🤝 Convertirse en agente socio' },
+  { patterns: ['precio', 'cuanto', 'cuesta', 'caro', 'barato'], response: 'Nuestros lotes son accesibles:\n\n🏡 **Starter** (200m²): 40.000 FCFA\n🏠 **Standard** (200m²): 1.300.000 FCFA\n🏘️ **Confort** (400m²): 6.375.000 FCFA\n🏰 **Premium** (500m²): 10.000.000 FCFA\n\nCuota de inscripcion: 10.000 FCFA' },
+  { patterns: ['gracias', 'muchas gracias'], response: 'Con mucho gusto! 😊 No dude en volver si tiene mas preguntas.\n\n📲 WhatsApp: +237696875895\n📧 support@manovende.com' }
 ];
 
 // Try AI response, fallback to rules
@@ -164,6 +181,18 @@ async function generateResponse(message, context, history) {
     }
   }
 
+  // Detect language for fallback response
+  const enWords = ['the','is','are','can','do','what','how','where','when','my','your','this','that','have','will'];
+  const esWords = ['el','la','es','los','las','como','donde','que','por','para','con','una','tiene','puede'];
+  const enScore = enWords.filter(w => (' ' + lower + ' ').includes(' ' + w + ' ')).length;
+  const esScore = esWords.filter(w => (' ' + lower + ' ').includes(' ' + w + ' ')).length;
+
+  if (esScore > enScore && esScore > 0) {
+    return { text: 'No estoy seguro de entender su pregunta. Puede reformular?\n\nO contacte a nuestro equipo:\n📲 WhatsApp: +237696875895\n📧 support@manovende.com', source: 'fallback' };
+  }
+  if (enScore > 0) {
+    return { text: 'I\'m not sure I understand your question. Could you rephrase it?\n\nOr contact our team:\n📲 WhatsApp: +237696875895\n📧 support@manovende.com', source: 'fallback' };
+  }
   return {
     text: 'Je ne suis pas sur de comprendre votre question. Pouvez-vous reformuler?\n\nOu contactez notre equipe:\n📲 WhatsApp: +237696875895\n📧 support@manovende.com',
     source: 'fallback'
