@@ -16,7 +16,14 @@ Tu connais parfaitement les offres:
 
 Avantages cles:
 - Contrats encadres par un cabinet d'avocats (Me TAMAKUE Jean Noel)
-- Assurance fonciere incluse (Assurance Masseu, 350 FCFA/jour/personne)
+- Assurance maladie TERRASOCIAL (geree par Assurance Masseu):
+  * Prime: 350 FCFA/jour minimum par personne assuree
+  * Prime annuelle equivalente: 127 750 FCFA/personne
+  * Capital deces: 1 000 000 FCFA verse aux ayants droit
+  * Couverture invalidite: en cas d'infirmite invalidante grave empechant de travailler, l'assureur prend en charge la totalite du credit restant
+  * Remboursement frais medicaux: sur presentation de factures medicales, apres un delai de carence de 2 semaines
+  * Nombre d'assures illimite (conjoint, enfants, parents) a condition de payer la prime par personne
+  * Souscription: via formulaire numerique + paiement de la premiere traite, pas de frais de souscription
 - Notaire certifie pour authentification
 - Tableau de bord en temps reel
 - Paiement echelonne accessible
@@ -75,7 +82,7 @@ NE PARLE PAS des interfaces assureur, legal ou admin.`,
 const RULES = [
   { patterns: ['prix', 'combien', 'cout', 'tarif', 'cher'], response: 'Nos lots sont accessibles a tous les budgets:\n\n🏡 **Starter** (200m²): 40 000 FCFA\n🏠 **Standard** (200m²): 1 300 000 FCFA\n🏘️ **Confort** (400m²): 6 375 000 FCFA\n🏰 **Premium** (500m²): 10 000 000 FCFA\n\nFrais d\'adhesion: 10 000 FCFA\n\nVoulez-vous en savoir plus sur un type de lot?' },
   { patterns: ['inscription', 'inscrire', 'creer un compte', 'souscrire', 'commencer'], response: 'Pour vous inscrire, c\'est simple:\n\n1️⃣ Cliquez ici: [S\'inscrire](https://social.manovende.com/register-client.html)\n2️⃣ Remplissez vos informations\n3️⃣ Payez les frais d\'adhesion (10 000 FCFA)\n4️⃣ Choisissez votre lot\n\nVoulez-vous que je vous guide?' },
-  { patterns: ['assurance', 'assure', 'police'], response: 'L\'assurance fonciere TERRASOCIAL vous protege:\n\n🛡️ Protection contre l\'eviction\n📄 Conformite cadastrale\n💰 350 FCFA/jour/personne assuree\n\nElle est geree par Assurance Masseu. Vous pouvez souscrire depuis votre tableau de bord.' },
+  { patterns: ['assurance', 'assure', 'police', 'maladie', 'sante', 'medical', 'deces', 'invalidite', 'infirmite'], response: 'L\'assurance maladie TERRASOCIAL (Assurance Masseu) vous couvre:\n\n💊 **Remboursement medical** : factures medicales remboursees (delai de carence: 2 semaines)\n♿ **Invalidite grave** : si vous ne pouvez plus travailler, l\'assureur paie la totalite du credit restant\n⚰️ **Capital deces** : 1 000 000 FCFA verses aux ayants droit\n\n💰 **Prime** : 350 FCFA/jour/personne (soit ~127 750 FCFA/an)\n👨‍👩‍👧‍👦 **Nombre d\'assures illimite** (conjoint, enfants, parents)\n📝 **Souscription** : formulaire numerique + paiement 1ere traite, pas de frais d\'inscription\n\nSouscrivez depuis votre tableau de bord!' },
   { patterns: ['avocat', 'juridique', 'legal', 'contrat'], response: 'Vos contrats sont encadres par Me TAMAKUE Jean Noel:\n\n⚖️ Verification juridique de chaque inscription\n📝 Modeles de contrats certifies\n🔒 Signature securisee\n💬 Messagerie directe avec le cabinet\n\nTout est accessible depuis votre espace client.' },
   { patterns: ['paiement', 'payer', 'versement', 'mensualite'], response: 'Plusieurs modes de paiement disponibles:\n\n📱 Orange Money\n📱 MTN MoMo\n💳 Carte bancaire\n🏦 Virement\n\nLes versements sont quotidiens (Starter) ou mensuels (Standard/Confort/Premium). Tout est visible dans votre calendrier de paiement.' },
   { patterns: ['agent', 'partenaire', 'commission', 'parrainage'], response: 'Devenez agent partenaire TERRASOCIAL:\n\n💰 Commissions de 1% a 5% sur chaque vente\n📈 Plus vous recrutez, plus votre taux augmente\n📲 Simple: juste un telephone\n🤝 Accompagnement complet\n\n👉 [Devenir agent](https://social.manovende.com/devenir-agent.html)' },
@@ -98,7 +105,7 @@ const RULES = [
   { patterns: ['hello', 'hi ', 'hey', 'good morning', 'good evening'], response: 'Hello! 👋 Welcome to TERRASOCIAL.\n\nI\'m your assistant. How can I help you?\n\n🏡 View available plots\n💰 Know the prices\n📝 Sign up\n🤝 Become a partner agent' },
   { patterns: ['price', 'cost', 'how much', 'expensive', 'cheap', 'afford'], response: 'Our plots are affordable for all budgets:\n\n🏡 **Starter** (200m²): 40,000 FCFA\n🏠 **Standard** (200m²): 1,300,000 FCFA\n🏘️ **Comfort** (400m²): 6,375,000 FCFA\n🏰 **Premium** (500m²): 10,000,000 FCFA\n\nRegistration fee: 10,000 FCFA\n\nWant to know more?' },
   { patterns: ['register', 'sign up', 'create account', 'subscribe', 'join', 'start'], response: 'Registration is simple:\n\n1️⃣ Click here: [Sign up](https://social.manovende.com/register-client.html)\n2️⃣ Fill in your details\n3️⃣ Pay the registration fee (10,000 FCFA)\n4️⃣ Choose your plot\n\nShall I guide you?' },
-  { patterns: ['insurance', 'insured', 'policy', 'protect'], response: 'TERRASOCIAL land insurance protects you:\n\n🛡️ Protection against eviction\n📄 Cadastral compliance\n💰 350 FCFA/day/insured person\n\nManaged by Assurance Masseu. Subscribe from your dashboard.' },
+  { patterns: ['insurance', 'insured', 'policy', 'protect', 'health', 'medical', 'death', 'disability'], response: 'TERRASOCIAL Health Insurance (Assurance Masseu) covers you:\n\n💊 **Medical reimbursement**: medical bills reimbursed (2-week waiting period)\n♿ **Severe disability**: if you can no longer work, insurer pays remaining credit in full\n⚰️ **Death benefit**: 1,000,000 FCFA paid to beneficiaries\n\n💰 **Premium**: 350 FCFA/day/person (~127,750 FCFA/year)\n👨‍👩‍👧‍👦 **Unlimited insured persons** (spouse, children, parents)\n📝 **Subscribe**: digital form + first installment, no signup fees\n\nSubscribe from your dashboard!' },
   { patterns: ['lawyer', 'legal', 'contract', 'law'], response: 'Your contracts are supervised by Me TAMAKUE Jean Noel:\n\n⚖️ Legal verification of each registration\n📝 Certified contract templates\n🔒 Secure signature\n💬 Direct messaging with the law firm\n\nAll accessible from your client space.' },
   { patterns: ['payment', 'pay', 'installment', 'monthly'], response: 'Several payment methods available:\n\n📱 Orange Money\n📱 MTN MoMo\n💳 Credit card\n🏦 Bank transfer\n\nPayments are daily (Starter) or monthly (Standard/Comfort/Premium).' },
   { patterns: ['land', 'plot', 'available', 'area', 'size'], response: 'Our available plots:\n\n🏡 **Starter** - 200m² at 40,000 FCFA\n🏠 **Standard** - 200m² at 1,300,000 FCFA\n🏘️ **Comfort** - 400m² at 6,375,000 FCFA\n🏰 **Premium** - 500m² at 10,000,000 FCFA\n\n📍 Location: Yaounde area\n📄 All with verified land title' },
