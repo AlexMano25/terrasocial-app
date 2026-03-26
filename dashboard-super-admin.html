@@ -21,6 +21,7 @@
         <button data-panel="lots">Lots Disponibles</button>
         <button data-panel="documents">Documents</button>
         <button data-panel="roadmap">Roadmap & Status</button>
+        <button data-panel="sources">Sources</button>
       </nav>
       <p style="margin-top:16px;">Raccourci: <strong>Cmd/Ctrl + K</strong></p>
     </aside>
@@ -278,6 +279,56 @@
             <p style="color:var(--muted)">Génère l'historique de paiement client au format PDF professionnel.</p>
             <input id="pdf-user-id" type="number" placeholder="ID client">
             <button class="btn" id="btn-export-pdf">Imprimer Historique</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ SOURCES DE CONNAISSANCES ═══ -->
+      <section id="panel-sources" class="panel">
+        <div class="grid-2">
+          <div class="card">
+            <h3>Ajouter un document</h3>
+            <input id="source-file" type="file" accept=".pdf,.docx,.xlsx,.csv" style="margin-bottom:8px;">
+            <select id="source-file-type" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px;">
+              <option value="procedure">Procédure</option>
+              <option value="product">Produit</option>
+              <option value="legal">Juridique</option>
+              <option value="faq">FAQ</option>
+              <option value="other">Autre</option>
+            </select>
+            <textarea id="source-file-desc" placeholder="Description du document..." style="width:100%; min-height:60px; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px;"></textarea>
+            <button class="btn primary" id="btn-upload-source">Uploader le document</button>
+          </div>
+          <div class="card">
+            <h3>Ajouter une URL</h3>
+            <input id="source-url" type="url" placeholder="https://example.com/page" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px;">
+            <input id="source-url-title" type="text" placeholder="Titre de la source" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px;">
+            <select id="source-url-type" style="width:100%; padding:8px 12px; border:1px solid #ddd; border-radius:8px; margin-bottom:8px;">
+              <option value="procedure">Procédure</option>
+              <option value="product">Produit</option>
+              <option value="legal">Juridique</option>
+              <option value="faq">FAQ</option>
+              <option value="other">Autre</option>
+            </select>
+            <button class="btn primary" id="btn-add-source-url">Ajouter l'URL</button>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <h3>Sources de connaissances existantes</h3>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom</th>
+                  <th>Type</th>
+                  <th>Format</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="sources-tbody"></tbody>
+            </table>
           </div>
         </div>
       </section>

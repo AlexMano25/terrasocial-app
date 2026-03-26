@@ -18,6 +18,7 @@
     messages: [],
     reservations: [],
     agents: [],
+    sources: [],
     charts: { users: null, revenue: null }
   };
 
@@ -29,7 +30,8 @@
     agents: document.getElementById('panel-agents'),
     lots: document.getElementById('panel-lots'),
     documents: document.getElementById('panel-documents'),
-    roadmap: document.getElementById('panel-roadmap')
+    roadmap: document.getElementById('panel-roadmap'),
+    sources: document.getElementById('panel-sources')
   };
 
   function formatMoney(amount) {
@@ -522,10 +524,98 @@
     loadAgents(status).catch(function(e) { flash(e.message, 'err'); });
   });
 
+  // ═══ SOURCES DE CONNAISSANCES ═══
+
+  async function loadSources() {
+    var data = await TSApi.request('/api/super-admin/sources');
+    state.sources = data.sources || [];
+    renderSources();
+  }
+
+  function renderSources() {
+    var tbody = document.getElementById('sources-tbody');
+    if (!state.sources.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;">Aucune source enregistrée</td></tr>';
+      return;
+    }
+    tbody.innerHTML = state.sources.map(function(s) {
+      var dateStr = s.created_at ? new Date(s.created_at).toLocaleDateString('fr-FR') : '-';
+      var nameDisplay = s.source_type === 'url'
+        ? '<a href="' + TSUtils.escapeHtml(s.url || '') + '" target="_blank" rel="noopener">' + TSUtils.escapeHtml(s.name) + '</a>'
+        : TSUtils.escapeHtml(s.name);
+      return '<tr>'
+        + '<td>' + nameDisplay + '</td>'
+        + '<td>' + TSUtils.escapeHtml(s.content_type || '-') + '</td>'
+        + '<td>' + TSUtils.escapeHtml(s.file_format || '-') + '</td>'
+        + '<td>' + TSUtils.escapeHtml(s.description || '-') + '</td>'
+        + '<td>' + TSUtils.escapeHtml(dateStr) + '</td>'
+        + '<td><button class="btn-sm" data-action="delete-source" data-id="' + s.id + '" style="background:#c62828;color:#fff;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;">Supprimer</button></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  document.getElementById('btn-upload-source').addEventListener('click', async function() {
+    var fileInput = document.getElementById('source-file');
+    var file = fileInput.files[0];
+    if (!file) { flash('Veuillez sélectionner un fichier.', 'err'); return; }
+
+    var formData = new FormData();
+    formData.append('file', file);
+    formData.append('content_type', document.getElementById('source-file-type').value);
+    formData.append('description', document.getElementById('source-file-desc').value);
+
+    try {
+      var token = TSApi.getToken();
+      var baseUrl = (typeof TS_API_BASE !== 'undefined' && TS_API_BASE) ? TS_API_BASE : '';
+      var resp = await fetch(baseUrl + '/api/super-admin/sources/upload', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + token },
+        body: formData
+      });
+      var data = await resp.json();
+      if (!resp.ok) throw new Error(data.error || 'Erreur upload');
+      flash(data.message || 'Document uploadé.', 'ok');
+      fileInput.value = '';
+      document.getElementById('source-file-desc').value = '';
+      await loadSources();
+    } catch (err) { flash(err.message, 'err'); }
+  });
+
+  document.getElementById('btn-add-source-url').addEventListener('click', async function() {
+    var url = document.getElementById('source-url').value.trim();
+    var name = document.getElementById('source-url-title').value.trim();
+    var contentType = document.getElementById('source-url-type').value;
+
+    if (!url) { flash('Veuillez saisir une URL.', 'err'); return; }
+
+    try {
+      var data = await TSApi.request('/api/super-admin/sources/url', {
+        method: 'POST',
+        body: JSON.stringify({ url: url, name: name || url, content_type: contentType })
+      });
+      flash(data.message || 'URL ajoutée.', 'ok');
+      document.getElementById('source-url').value = '';
+      document.getElementById('source-url-title').value = '';
+      await loadSources();
+    } catch (err) { flash(err.message, 'err'); }
+  });
+
+  document.getElementById('sources-tbody').addEventListener('click', async function(e) {
+    var btn = e.target.closest('button');
+    if (!btn || btn.dataset.action !== 'delete-source') return;
+    var id = btn.dataset.id;
+    if (!confirm('Supprimer cette source de connaissances ?')) return;
+    try {
+      await TSApi.request('/api/super-admin/sources/' + id, { method: 'DELETE' });
+      flash('Source supprimée.', 'ok');
+      await loadSources();
+    } catch (err) { flash(err.message, 'err'); }
+  });
+
   async function loadAll() {
     document.getElementById('admin-meta').textContent = `${user.full_name} (${user.email})`;
 
-    var loaders = [loadOverview, loadUsers, loadMessages, loadLots, loadDocuments, loadReservations, loadAgents];
+    var loaders = [loadOverview, loadUsers, loadMessages, loadLots, loadDocuments, loadReservations, loadAgents, loadSources];
     await Promise.allSettled(loaders.map(function(fn) {
       return fn().catch(function(e) { console.warn(fn.name + ':', e.message); });
     }));

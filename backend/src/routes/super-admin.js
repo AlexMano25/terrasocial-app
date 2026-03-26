@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const multer = require('multer');
 const { all, get, run } = require('../db/connection');
 const { requireAuth, requireSuperAdmin } = require('../middleware/auth');
 const bcrypt = require('bcryptjs');
@@ -11,6 +12,30 @@ const { sendWelcomeEmail, isSmtpConfigured } = require('../services/email');
 const uploadsPath = process.env.VERCEL
     ? '/tmp/terrasocial-uploads'
     : path.join(__dirname, '..', '..', 'uploads');
+
+const knowledgeDir = path.join(uploadsPath, 'knowledge');
+if (!fs.existsSync(knowledgeDir)) {
+    fs.mkdirSync(knowledgeDir, { recursive: true });
+}
+
+const knowledgeStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => cb(null, knowledgeDir),
+    filename: (_req, file, cb) => {
+        const unique = Date.now() + '-' + Math.round(Math.random() * 1e6);
+        const ext = path.extname(file.originalname);
+        cb(null, unique + ext);
+    }
+});
+const knowledgeUpload = multer({
+    storage: knowledgeStorage,
+    limits: { fileSize: 20 * 1024 * 1024 },
+    fileFilter: (_req, file, cb) => {
+        const allowed = ['.pdf', '.docx', '.xlsx', '.csv'];
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (allowed.includes(ext)) return cb(null, true);
+        cb(new Error('Format non autorisé. Formats acceptés : PDF, DOCX, XLSX, CSV'));
+    }
+});
 
 const router = express.Router();
 
@@ -1344,6 +1369,85 @@ router.post('/agents/:id/suspend', async (req, res) => {
         return res.json({ ok: true });
     } catch (error) {
         return res.status(500).json({ error: 'Erreur suspension agent' });
+    }
+});
+
+// ═══ SOURCES DE CONNAISSANCES ═══
+
+// Liste toutes les sources
+router.get('/sources', async (req, res) => {
+    try {
+        const sources = await all('SELECT * FROM knowledge_sources ORDER BY created_at DESC');
+        return res.json({ sources });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur chargement des sources' });
+    }
+});
+
+// Upload d'un fichier source
+router.post('/sources/upload', knowledgeUpload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'Aucun fichier fourni' });
+
+        const contentType = sanitizeOptionalText(req.body.content_type, 50) || 'other';
+        const description = sanitizeOptionalText(req.body.description, 500) || '';
+        const ext = path.extname(req.file.originalname).toLowerCase().replace('.', '');
+        const name = sanitizeText(req.file.originalname, 255);
+
+        const result = await run(
+            `INSERT INTO knowledge_sources(source_type, name, file_path, content_type, description, file_format, uploaded_by)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            ['file', name, req.file.path, contentType, description, ext, req.user.id]
+        );
+
+        await req.audit?.('super_admin.knowledge_source_uploaded', { actor_id: req.user.id, file: name });
+        return res.json({ ok: true, id: result.id, message: 'Document uploadé avec succès' });
+    } catch (error) {
+        return res.status(500).json({ error: error.message || 'Erreur upload source' });
+    }
+});
+
+// Ajouter une URL source
+router.post('/sources/url', async (req, res) => {
+    try {
+        const url = sanitizeText(req.body.url, 2000);
+        const name = sanitizeText(req.body.name || req.body.url, 255);
+        const contentType = sanitizeOptionalText(req.body.content_type, 50) || 'other';
+
+        if (!url || !url.startsWith('http')) {
+            return res.status(400).json({ error: 'URL invalide' });
+        }
+
+        const result = await run(
+            `INSERT INTO knowledge_sources(source_type, name, url, content_type, file_format, uploaded_by)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            ['url', name, url, contentType, 'url', req.user.id]
+        );
+
+        await req.audit?.('super_admin.knowledge_source_url_added', { actor_id: req.user.id, url });
+        return res.json({ ok: true, id: result.id, message: 'URL ajoutée avec succès' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur ajout URL source' });
+    }
+});
+
+// Supprimer une source
+router.delete('/sources/:id', async (req, res) => {
+    try {
+        const sourceId = req.params.id;
+        const source = await get('SELECT * FROM knowledge_sources WHERE id = ?', [sourceId]);
+        if (!source) return res.status(404).json({ error: 'Source introuvable' });
+
+        // Supprimer le fichier physique si c'est un fichier
+        if (source.source_type === 'file' && source.file_path) {
+            try { fs.unlinkSync(source.file_path); } catch (e) { /* fichier déjà absent */ }
+        }
+
+        await run('DELETE FROM knowledge_sources WHERE id = ?', [sourceId]);
+        await req.audit?.('super_admin.knowledge_source_deleted', { actor_id: req.user.id, source_id: sourceId });
+        return res.json({ ok: true, message: 'Source supprimée' });
+    } catch (error) {
+        return res.status(500).json({ error: 'Erreur suppression source' });
     }
 });
 

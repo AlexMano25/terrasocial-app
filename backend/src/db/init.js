@@ -154,6 +154,18 @@ function statementsFor(client) {
                 source TEXT DEFAULT 'rules',
                 needs_escalation BOOLEAN DEFAULT FALSE,
                 created_at TIMESTAMPTZ DEFAULT NOW()
+            )`,
+            `CREATE TABLE IF NOT EXISTS knowledge_sources (
+                id BIGSERIAL PRIMARY KEY,
+                source_type TEXT NOT NULL,
+                name TEXT NOT NULL,
+                file_path TEXT,
+                url TEXT,
+                content_type TEXT,
+                description TEXT,
+                file_format TEXT,
+                uploaded_by BIGINT REFERENCES users(id),
+                created_at TIMESTAMPTZ DEFAULT NOW()
             )`
         ];
     }
@@ -328,6 +340,19 @@ function statementsFor(client) {
             needs_escalation INTEGER DEFAULT 0,
             created_at TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY(user_id) REFERENCES users(id)
+        )`,
+        `CREATE TABLE IF NOT EXISTS knowledge_sources (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            source_type TEXT NOT NULL,
+            name TEXT NOT NULL,
+            file_path TEXT,
+            url TEXT,
+            content_type TEXT,
+            description TEXT,
+            file_format TEXT,
+            uploaded_by INTEGER,
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY(uploaded_by) REFERENCES users(id)
         )`,
         `CREATE TABLE IF NOT EXISTS law_firms (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
