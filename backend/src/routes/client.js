@@ -473,6 +473,14 @@ router.post('/versement/:id/confirm', async (req, res) => {
 
         try { await sync.onPaymentConfirmed(payment.id, payment.reservation_id, userId); } catch(e) { console.error('[SYNC] payment confirmed:', e.message); }
 
+        // Send invoice email
+        try {
+            const { sendInvoiceForPayment } = require('../services/invoice-email');
+            await sendInvoiceForPayment(payment.id, userId, payment.reservation_id);
+        } catch (invoiceErr) {
+            console.error('[INVOICE-EMAIL] Error in versement confirm:', invoiceErr.message);
+        }
+
         await req.audit?.('client.versement_confirmed', {
             user_id: userId,
             payment_id: payment.id,

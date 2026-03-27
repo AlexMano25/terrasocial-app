@@ -62,6 +62,14 @@ router.post('/campay', async (req, res) => {
                 console.error('[WEBHOOK] Error recomputing score:', e.message);
             }
 
+            // Send invoice email
+            try {
+                const { sendInvoiceForPayment } = require('../services/invoice-email');
+                await sendInvoiceForPayment(payment.id, payment.user_id, payment.reservation_id);
+            } catch (invoiceErr) {
+                console.error('[WEBHOOK INVOICE-EMAIL] Error:', invoiceErr.message);
+            }
+
             console.log('[WEBHOOK] Payment confirmed:', payment.id, paymentRef);
         } else if (status === 'FAILED' || status === 'failed') {
             await run('DELETE FROM payments WHERE id = ?', [payment.id]);
